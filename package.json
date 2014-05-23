@@ -16,5 +16,8 @@
     "data-structures"
   ],
   "author": "Matthieu Nicolas",
-  "license": "ISC"
+  "licenses": [{
+      "type": "GPLv3",
+      "url": "http://www.gnu.org/licenses/gpl-3.0.txt"
+  }]
 }
