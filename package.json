@@ -1,6 +1,6 @@
 {
   "name": "mute-structs",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "NodeJS module providing data structures useful to implement a CRDT-based collaborative text editor in real-time",
   "main": "index.js",
   "dependencies": {
