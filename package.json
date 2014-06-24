@@ -1,10 +1,14 @@
 {
   "name": "mute-structs",
-  "version": "0.0.4",
+  "version": "0.0.7",
   "description": "NodeJS module providing data structures useful to implement a CRDT-based collaborative text editor in real-time",
   "main": "index.js",
   "dependencies": {
     "mute-utils": "*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MatthieuNICOLAS/mute-structs"
   },
   "devDependencies": {},
   "scripts": {
