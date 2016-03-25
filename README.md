@@ -1,4 +1,5 @@
-**mute-structs** is a NodeJS module. It provides some data structures useful for implementing a *collaborative text edition algorithm* based on CRDT.
+**mute-structs** is a NodeJS module that provides an implementation of the LogootSplit CRDT algorithm.
+It is useful for implementing a *real-time collaborative text editor* based on CRDT as MUTE. 
 
 # Installation
 
@@ -8,10 +9,9 @@ npm install mute-structs
 
 # See also
 
-* [**mute-demo**](https://github.com/MatthieuNICOLAS/mute-demo)
-* [**mute-client**](https://github.com/MatthieuNICOLAS/mute-client)
-* [**mute-server**](https://github.com/MatthieuNICOLAS/mute-server)
-* [**mute-utils**](https://github.com/MatthieuNICOLAS/mute-utils)
+* [**mute-demo**](https://github.com/coast-team/mute-demo)
+* [**mute-client**](https://github.com/coast-team/mute-client)
+* [**mute-server**](https://github.com/coast-team/mute-server)
 
 ## License
 

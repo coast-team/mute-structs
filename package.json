@@ -1,14 +1,14 @@
 {
   "name": "mute-structs",
   "version": "0.0.7",
-  "description": "NodeJS module providing data structures useful to implement a CRDT-based collaborative text editor in real-time",
+  "description": "NodeJS module providing an implementation of the LogootSplit CRDT algorithm",
   "main": "index.js",
   "dependencies": {
     "mute-utils": "*"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/MatthieuNICOLAS/mute-structs"
+    "url": "https://github.com/score-team/mute-structs"
   },
   "devDependencies": {},
   "scripts": {
@@ -19,9 +19,7 @@
     "ropes",
     "data-structures"
   ],
-  "author": "Matthieu Nicolas",
-  "licenses": [{
-      "type": "GPLv3",
-      "url": "http://www.gnu.org/licenses/gpl-3.0.txt"
-  }]
+  "author": "Matthieu Nicolas <matthieu.nicolas@loria.fr> ",
+  "contributors": ["Victorien Elvinger <victorien.elvinger@loria.fr>", "Gerald Oster <gerald.oster@loria.fr>"],
+  "license": "GPL-3.0"
 }
