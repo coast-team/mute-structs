@@ -4,7 +4,6 @@
   "description": "NodeJS module providing an implementation of the LogootSplit CRDT algorithm",
   "main": "index.js",
   "dependencies": {
-    "mute-utils": "*"
   },
   "repository": {
     "type": "git",
