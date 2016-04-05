@@ -1,17 +1,27 @@
-**mute-structs** is a NodeJS module. It provides some data structures useful for implementing a *collaborative text edition algorithm* based on CRDT.
+# MUTE-structs
 
-# Installation
+MUTE-structs is a Node.js module that provides an implementation of the
+LogootSplit CRDT algorithm [[André et al., 2013]](#ref-1). It is an optimistic replication
+algorithm that ensures eventual consistency on replicated text sequences.
+It is used in a *real-time collaborative text editor* based on CRDT named MUTE.,
+
+
+#### References
+
+[André et al., 2013]<a id="ref-1"> Luc André, Stéphane Martin, Gérald Oster et Claudia-Lavinia Ignat. **Supporting Adaptable Granularity of Changes for Massive-scale Collaborative Editing**. In *Proceedings of the international conference on collaborative computing: networking, applications and worksharing - CollaborateCom 2013*. IEEE Computer Society, Austin, Texas, USA, october 2013, pages 50–59. doi: [10.4108/icst.collaboratecom.2013.254123](https://dx.doi.org/10.4108/icst.collaboratecom.2013.254123). url: https://hal.inria.fr/hal-00903813/.
+
+
+## Installation
 
 ```
 npm install mute-structs
 ```
 
-# See also
+## See also
 
-* [**mute-demo**](https://github.com/MatthieuNICOLAS/mute-demo)
-* [**mute-client**](https://github.com/MatthieuNICOLAS/mute-client)
-* [**mute-server**](https://github.com/MatthieuNICOLAS/mute-server)
-* [**mute-utils**](https://github.com/MatthieuNICOLAS/mute-utils)
+* [**mute-demo**](https://github.com/coast-team/mute-demo)
+* [**mute-client**](https://github.com/coast-team/mute-client)
+* [**mute-server**](https://github.com/coast-team/mute-server)
 
 ## License
 
