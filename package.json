@@ -9,9 +9,17 @@
     "type": "git",
     "url": "https://github.com/score-team/mute-structs"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "ava": "^0.14.0",
+    "eslint": ">=2.5.3",
+    "eslint-plugin-promise": ">=1.0.8",
+    "eslint-plugin-extra-rules": ">=0.6.1",
+    "eslint-config-conaclos": "^1.1.0"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "eslint ./lib",
+    "test:unit": "ava",
+    "test": "npm run test:unit"
   },
   "keywords": [
     "crdt",
