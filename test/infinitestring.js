@@ -18,28 +18,28 @@
 import test from "ava"
 import InfiniteString from "../lib/infinitestring.js"
 
-test("has-naxt-prefix-less", (t) => {
+test("has-next-prefix-less", (t) => {
     const repeatredValue = Symbol()
     const stream = new InfiniteString([], repeatredValue)
 
     t.true(stream.hasNext())
 })
 
-test("has-naxt-prefix-less-null-value", (t) => {
+test("has-next-prefix-less-null-value", (t) => {
     const repeatredValue = null
     const stream = new InfiniteString([], repeatredValue)
 
     t.true(stream.hasNext())
 })
 
-test("has-next-prefix-less", (t) => {
+test("next-prefix-less", (t) => {
     const repeatredValue = Symbol()
     const stream = new InfiniteString([], repeatredValue)
 
     t.is(stream.next(), repeatredValue)
 })
 
-test("has-next-with-prefix", (t) => {
+test("next-with-prefix", (t) => {
     const repeatredValue = Symbol()
     const prefix = [Symbol(), Symbol()]
     const stream = new InfiniteString(prefix, repeatredValue)
@@ -48,3 +48,4 @@ test("has-next-with-prefix", (t) => {
     t.is(stream.next(), prefix[1])
     t.is(stream.next(), repeatredValue)
 })
+
