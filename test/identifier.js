@@ -18,6 +18,16 @@
 import test from "ava"
 import Identifier from "../lib/identifier.js"
 
+test("from-plain-factory", (t) => {
+    const plain = {
+        base: [-1, 1, 8],
+        last: 0,
+    }
+    const id = Identifier.fromPlain(plain)
+
+    t.deepEqual(id, plain)
+})
+
 test("compare-to-last", (t) => {
     const id1 = new Identifier([], 4)
     const id1Twin = new Identifier([], 4)
