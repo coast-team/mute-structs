@@ -26,6 +26,10 @@ test("two-contiguous-bases", (t) => {
     const id2 = new Identifier([], 4)
     const newBase = IdFactory.createBetweenPosition(id1, id2,
         replicaNumber, clock)
+    const newId = new Identifier(newBase, 0)
 
-    t.deepEqual(newBase, [2, replicaNumber, clock])
+    t.is(id1.compareTo(newId), -1, "id1 < newId")
+    t.is(newId.compareTo(id2), -1, "newId < id2")
+    t.is(newBase[0], 2)
 })
+
