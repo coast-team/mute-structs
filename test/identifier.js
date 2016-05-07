@@ -54,3 +54,27 @@ test("compare-to-base", (t) => {
     t.not(id1.compareTo(id4), 1)
     t.not(id1.compareTo(id5), -1)
 })
+
+test("hasPlaceAfter-same-base", (t) => {
+    const id1 = new Identifier([], 0)
+    const id2 = new Identifier([], 1)
+
+    t.true(id1.hasPlaceAfter(id2, 1))
+    t.false(id1.hasPlaceAfter(id2, 2))
+
+    t.false(id1.hasPlaceAfter(id1, 1))
+    t.false(id2.hasPlaceAfter(id1, 1))
+})
+
+test("hasPlaceBefore-same-base", (t) => {
+    const id1 = new Identifier([], 0)
+    const id2 = new Identifier([], 1)
+    const id3 = new Identifier([], 2)
+
+    t.true(id3.hasPlaceBefore(id1, 1))
+    t.false(id3.hasPlaceBefore(id1, 2))
+
+    t.false(id1.hasPlaceBefore(id1, 1))
+    t.false(id2.hasPlaceBefore(id1, 1))
+})
+
