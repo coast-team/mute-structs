@@ -20,7 +20,7 @@
 import {IdentifierInterval} from './identifierinterval'
 
 
-export enum IdentifierIteratorResults {
+export const enum IdentifierIteratorResults {
         B1_AFTER_B2,
         B1_BEFORE_B2,
         B1_INSIDE_B2,
