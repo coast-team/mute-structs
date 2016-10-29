@@ -16,7 +16,7 @@
  */
 
 import test from "ava"
-import IdentifierInterval from "../lib/identifierinterval.js"
+import {IdentifierInterval} from "../lib/identifierinterval.js"
 
 test("from-plain-factory", (t) => {
     const plain = {

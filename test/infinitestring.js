@@ -16,7 +16,7 @@
  */
 
 import test from "ava"
-import InfiniteString from "../lib/infinitestring.js"
+import {InfiniteString} from "../lib/infinitestring.js"
 
 test("has-next-prefix-less", (t) => {
     const repeatredValue = Symbol()

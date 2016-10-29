@@ -16,7 +16,7 @@
  */
 
 import test from "ava"
-import Identifier from "../lib/identifier.js"
+import {Identifier} from "../lib/identifier.js"
 
 test("from-plain-factory", (t) => {
     const plain = {

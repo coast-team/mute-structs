@@ -16,15 +16,15 @@
  */
 
 import test from "ava"
-import Identifier from "../lib/identifier.js"
-import IdFactory from "../lib/idfactory.js"
+import {Identifier} from "../lib/identifier.js"
+import {createBetweenPosition} from "../lib/idfactory.js"
 
 test("two-contiguous-bases", (t) => {
     const replicaNumber = 1
     const clock = 5
     const id1 = new Identifier([], 1)
     const id2 = new Identifier([], 4)
-    const newBase = IdFactory.createBetweenPosition(id1, id2,
+    const newBase = createBetweenPosition(id1, id2,
         replicaNumber, clock)
     const newId = new Identifier(newBase, 0)
 
@@ -38,7 +38,7 @@ test("prefix-preservation", (t) => {
     const prefix = [-42, 1, 8]
     const id1 = new Identifier(prefix, 1)
     const id2 = new Identifier(prefix, 4)
-    const newBase = IdFactory.createBetweenPosition(id1, id2,
+    const newBase = createBetweenPosition(id1, id2,
         replicaNumber, clock)
 
     t.true(prefix.length <= newBase.length)
