@@ -48,15 +48,26 @@ function rightChildOf (aNode: RopesNodes): RopesNodes | null {
 
 export class LogootSRopes {
 
-    constructor (replica = 0, clock = 0) {
+    constructor (replica = 0, clock = 0, root: RopesNodes | null = null, str = "") {
+
         console.assert(typeof replica === "number",
             "replicaNumber = " + replica)
 
         this.replicaNumber = replica
         this.clock = clock
-        this.root = null
-        this.mapBaseToBlock = {}
-        this.str = ''
+        this.root = root
+        this.str = str
+
+        const baseToBlock: {[key: string]: LogootSBlock} = {}
+        if (root !== null) {
+            const blocks = root.getBlocks()
+
+            for (const b of blocks) {
+                const key = b.id.base.join(",")
+                baseToBlock[key] = b
+            }
+        }
+        this.mapBaseToBlock = baseToBlock
     }
 
     static empty (): LogootSRopes {
@@ -68,26 +79,13 @@ export class LogootSRopes {
         const str = o.str
 
         if (typeof str === "string") {
-            const result = new LogootSRopes(replica, clock)
             const root = (plainRoot !== undefined && plainRoot !== null) ?
                 RopesNodes.fromPlain(plainRoot) :
                 null
+            const result = new LogootSRopes(replica, clock, root, str)
 
-            if (root !== null) {
-                result.root = root
-                result.str = str
-
-                const baseToBlock: {[key: string]: LogootSBlock} = {}
-                const blocks = root.getBlocks()
-
-                for (const b of blocks) {
-                    const key = b.id.base.join(",")
-                    baseToBlock[key] = b
-                }
-                result.mapBaseToBlock = baseToBlock
-
-                return result
-            } else if (str.length !== 0) {
+            if (str.length !== 0 && root === null) {
+                // FIXME: Need more checking (str's length compared to tree length?)
                 return null
             } else {
                 return result
