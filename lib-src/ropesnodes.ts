@@ -160,17 +160,6 @@ export class RopesNodes {
         return this.block.id.getBaseId(this.offset + this.length - 1)
     }
 
-    copy (): RopesNodes {
-        return new RopesNodes({
-            block: this.block.copy(),
-            offset: this.offset,
-            length: this.length,
-            height: this.height,
-            left: this.left !== null ? this.left.copy() : null,
-            right: this.right !== null ? this.right.copy() : null
-        })
-    }
-
     addString (length: number): void {
         console.assert(typeof length === "number", "length = " + length)
         // `length' may be negative

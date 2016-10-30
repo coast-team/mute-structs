@@ -746,29 +746,6 @@ export class LogootSRopes {
         }
     }
 
-    duplicate (newReplicaNumber: number): LogootSRopes {
-        console.assert(typeof newReplicaNumber === "number",
-            "newReplicaNumber = ", newReplicaNumber)
-        const copy = this.copy()
-        copy.replicaNumber = newReplicaNumber
-        copy.clock = 0
-        return copy
-    }
-
-    copy (): LogootSRopes {
-        const o = new LogootSRopes(this.replicaNumber)
-        o.str = this.str
-        o.clock = this.clock
-        o.root = this.root !== null ? this.root.copy() : null
-        o.mapBaseToBlock = {}
-        for (const key in this.mapBaseToBlock) {
-            if (this.mapBaseToBlock.hasOwnProperty(key)) {
-            o.mapBaseToBlock[key] = this.mapBaseToBlock[key]
-            }
-        }
-        return o
-    }
-
     /**
      * @deprecated
      */
