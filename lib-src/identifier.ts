@@ -82,10 +82,6 @@ export class Identifier {
         return "Id[" + this.base.concat(this.last).join(", ") + ']'
     }
 
-    copy (): Identifier {
-        return new Identifier(this.base.slice(0), this.last)
-    }
-
     hasPlaceAfter (next: Identifier, length: number): boolean {
         console.assert(next instanceof Identifier, "next = ", next)
         console.assert(typeof length === "number", "length = ", length)
