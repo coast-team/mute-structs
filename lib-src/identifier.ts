@@ -22,7 +22,10 @@ export class Identifier {
 // Creation
     constructor (base: number[], u: number) {
         console.assert(base instanceof Array, "base = ", base)
-        console.assert(typeof u === "number", "u = ", u)
+        console.assert(base.every((a: any) =>
+            typeof a === "number" && Number.isInteger(a)),
+            "Every items are integers. base = ", base)
+        console.assert(typeof u === "number" && Number.isInteger(u), "u = ", u)
 
         this.base = base
         this.last = u
@@ -33,7 +36,7 @@ export class Identifier {
         const last = o.last
         if (base instanceof Array && base.every((n: any) =>
                 typeof n === "number" && Number.isInteger(n)) &&
-            Number.isInteger(last)) {
+            typeof last === "number" && Number.isInteger(last)) {
 
             return new Identifier(base, last)
         } else {
@@ -46,7 +49,7 @@ export class Identifier {
 
     readonly last: number
 
-    compareTo (aOther: Identifier): 1 | 0 | -1 {
+    compareTo (aOther: Identifier): -1 | 0 | 1 {
         console.assert(aOther instanceof Identifier, "aOther = ", aOther)
 
         const extended = this.base.concat(this.last)
