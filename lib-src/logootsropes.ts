@@ -137,143 +137,141 @@ export class LogootSRopes {
             let split
 
             switch (ihi.computeResults()) {
-            case IdentifierIteratorResults.B1_AFTER_B2: {
-                if (from.right === null) {
-                    from.right = RopesNodes.leaf(this.getBlock(idi),
-                        idi.begin, str.length)
-                    i = i + from.leftSubtreeSize() + from.length
-                    result.push(new TextInsert(i, str))
-                    con = false
-                } else {
-                    i = i + from.leftSubtreeSize() + from.length
-                    from = from.right
-                }
-                break
-            }
-            case IdentifierIteratorResults.B1_BEFORE_B2: {
-                if (from.left === null) {
-                    from.left = RopesNodes.leaf(this.getBlock(idi),
-                        idi.begin, str.length)
-                    result.push(new TextInsert(i, str))
-                    con = false
-                } else {
-                    from = from.left
-                }
-                break
-            }
-            case IdentifierIteratorResults.B1_INSIDE_B2: {
-                // split b2 the object node
-                split = Math.min(from.maxOffset(), ihi.nextOffset)
-                const rp = RopesNodes.leaf(this.getBlock(idi),
-                    idi.begin, str.length)
-                path.push(from.split({
-                    node: rp,
-                    size: split - from.offset + 1
-                }))
-                i = i + from.leftSubtreeSize()
-                result.push(new TextInsert(i + split - from.offset + 1, str))
-                con = false
-                break
-            }
-            case IdentifierIteratorResults.B2_INSIDE_B1: {
-                // split b1 the node to insert
-                const split2 = /* Math.min(idi.getEnd(), */ihi.nextOffset/* ) */
-                let ls = str.substr(0, split2 + 1 - idi.begin)
-                let idi1 = new IdentifierInterval(idi.base,
-                        idi.begin, split2)
-                if (from.left === null) {
-                    from.left = RopesNodes.leaf(this.getBlock(idi1),
-                        idi1.begin, ls.length)
-                    result.push(new TextInsert(i, ls))
-                } else {
-                    Array.prototype.push.apply(result, this.addBlock({
-                        idi: idi1,
-                        str: ls,
-                        from: from.left,
-                        startOffset: i
-                    }))
-                }
-
-                // i=i+ls.size()
-
-                ls = str.substr(split2 + 1 - idi.begin, str.length)
-                idi1 = new IdentifierInterval(idi.base, split2 + 1, idi.end)
-                i = i + from.leftSubtreeSize() + from.length
-                if (from.right === null) {
-                    from.right = RopesNodes.leaf(this.getBlock(idi1),
-                        idi1.begin, ls.length)
-                    result.push(new TextInsert(i, ls))
-                } else {
-                    Array.prototype.push.apply(result, this.addBlock({
-                        idi: idi1,
-                        str: ls,
-                        from: from.right,
-                        startOffset: i
-                    }))
-                }
-                con = false
-                break
-            }
-            case IdentifierIteratorResults.B1_CONCAT_B2: {
-                // node to insert concat the node
-                if (from.left !== null) {
-                    split = from.getIdBegin().minOffsetAfterPrev(
-                            from.left.getIdEnd(), idi.begin)
-                    const l = str.substr(split - idi.begin, str.length)
-                    from.appendBegin(l.length)
-                    result.push(new TextInsert(i + from.leftSubtreeSize(), l))
-
-                    this.ascendentUpdate(path, l.length)
-
-                    // check if previous is smaller or not
-                    if ((split - 1) >= idi.begin) {
-                        str = str.substr(0, split - idi.begin)
-                        idi = new IdentifierInterval(idi.base, idi.begin, split - 1)
-                        from = from.left
-                    } else {
+                case IdentifierIteratorResults.B1_AFTER_B2: {
+                    if (from.right === null) {
+                        from.right = RopesNodes.leaf(this.getBlock(idi),
+                            idi.begin, str.length)
+                        i = i + from.leftSubtreeSize() + from.length
+                        result.push(new TextInsert(i, str))
                         con = false
-                    }
-                } else {
-                    result.push(new TextInsert(i, str))
-                    from.appendBegin(str.length)
-                    this.ascendentUpdate(path, str.length)
-                    con = false
-                }
-
-                break
-            }
-            case IdentifierIteratorResults.B2_CONCAT_B1: {
-                // concat at end
-                if (from.right !== null) {
-                    split = from.getIdEnd().maxOffsetBeforeNex(
-                            from.right.getIdBegin(), idi.end)
-                    const l = str.substr(0, split + 1 - idi.begin)
-                    i = i + from.leftSubtreeSize() + from.length
-                    from.appendEnd(l.length)
-                    result.push(new TextInsert(i, l))
-
-                    this.ascendentUpdate(path, l.length)
-
-                    if (idi.end >= (split + 1)) {
-                        str = str.substr(split + 1 - idi.begin, str.length)
-                        idi = new IdentifierInterval(idi.base, split + 1, idi.end)
+                    } else {
+                        i = i + from.leftSubtreeSize() + from.length
                         from = from.right
-                        i = i + l.length
+                    }
+                    break
+                }
+                case IdentifierIteratorResults.B1_BEFORE_B2: {
+                    if (from.left === null) {
+                        from.left = RopesNodes.leaf(this.getBlock(idi),
+                            idi.begin, str.length)
+                        result.push(new TextInsert(i, str))
+                        con = false
                     } else {
+                        from = from.left
+                    }
+                    break
+                }
+                case IdentifierIteratorResults.B1_INSIDE_B2: {
+                    // split b2 the object node
+                    split = Math.min(from.maxOffset(), ihi.nextOffset)
+                    const rp = RopesNodes.leaf(this.getBlock(idi),
+                        idi.begin, str.length)
+                    path.push(from.split({
+                        node: rp,
+                        size: split - from.offset + 1
+                    }))
+                    i = i + from.leftSubtreeSize()
+                    result.push(new TextInsert(i + split - from.offset + 1, str))
+                    con = false
+                    break
+                }
+                case IdentifierIteratorResults.B2_INSIDE_B1: {
+                    // split b1 the node to insert
+                    const split2 = /* Math.min(idi.getEnd(), */ihi.nextOffset/* ) */
+                    let ls = str.substr(0, split2 + 1 - idi.begin)
+                    let idi1 = new IdentifierInterval(idi.base,
+                            idi.begin, split2)
+                    if (from.left === null) {
+                        from.left = RopesNodes.leaf(this.getBlock(idi1),
+                            idi1.begin, ls.length)
+                        result.push(new TextInsert(i, ls))
+                    } else {
+                        Array.prototype.push.apply(result, this.addBlock({
+                            idi: idi1,
+                            str: ls,
+                            from: from.left,
+                            startOffset: i
+                        }))
+                    }
+
+                    // i=i+ls.size()
+
+                    ls = str.substr(split2 + 1 - idi.begin, str.length)
+                    idi1 = new IdentifierInterval(idi.base, split2 + 1, idi.end)
+                    i = i + from.leftSubtreeSize() + from.length
+                    if (from.right === null) {
+                        from.right = RopesNodes.leaf(this.getBlock(idi1),
+                            idi1.begin, ls.length)
+                        result.push(new TextInsert(i, ls))
+                    } else {
+                        Array.prototype.push.apply(result, this.addBlock({
+                            idi: idi1,
+                            str: ls,
+                            from: from.right,
+                            startOffset: i
+                        }))
+                    }
+                    con = false
+                    break
+                }
+                case IdentifierIteratorResults.B1_CONCAT_B2: {
+                    // node to insert concat the node
+                    if (from.left !== null) {
+                        split = from.getIdBegin().minOffsetAfterPrev(
+                                from.left.getIdEnd(), idi.begin)
+                        const l = str.substr(split - idi.begin, str.length)
+                        from.appendBegin(l.length)
+                        result.push(new TextInsert(i + from.leftSubtreeSize(), l))
+
+                        this.ascendentUpdate(path, l.length)
+
+                        // check if previous is smaller or not
+                        if ((split - 1) >= idi.begin) {
+                            str = str.substr(0, split - idi.begin)
+                            idi = new IdentifierInterval(idi.base, idi.begin, split - 1)
+                            from = from.left
+                        } else {
+                            con = false
+                        }
+                    } else {
+                        result.push(new TextInsert(i, str))
+                        from.appendBegin(str.length)
+                        this.ascendentUpdate(path, str.length)
                         con = false
                     }
-                } else {
-                    i = i + from.leftSubtreeSize() + from.length
-                    result.push(new TextInsert(i, str))
-                    from.appendEnd(str.length)
-                    this.ascendentUpdate(path, str.length)
-                    con = false
-                }
 
-                break
-            }
-            default:
-                console.error("Not implemented yet")
+                    break
+                }
+                case IdentifierIteratorResults.B2_CONCAT_B1: {
+                    // concat at end
+                    if (from.right !== null) {
+                        split = from.getIdEnd().maxOffsetBeforeNex(
+                                from.right.getIdBegin(), idi.end)
+                        const l = str.substr(0, split + 1 - idi.begin)
+                        i = i + from.leftSubtreeSize() + from.length
+                        from.appendEnd(l.length)
+                        result.push(new TextInsert(i, l))
+
+                        this.ascendentUpdate(path, l.length)
+
+                        if (idi.end >= (split + 1)) {
+                            str = str.substr(split + 1 - idi.begin, str.length)
+                            idi = new IdentifierInterval(idi.base, split + 1, idi.end)
+                            from = from.right
+                            i = i + l.length
+                        } else {
+                            con = false
+                        }
+                    } else {
+                        i = i + from.leftSubtreeSize() + from.length
+                        result.push(new TextInsert(i, str))
+                        from.appendEnd(str.length)
+                        this.ascendentUpdate(path, str.length)
+                        con = false
+                    }
+
+                    break
+                }
             }
         }
         this.balance(path)
@@ -478,8 +476,7 @@ export class LogootSRopes {
             const before = node1.leftSubtreeSize()
             if (pos < before) {
                 node1 = node1.left
-            }
-            else if (pos < before + node1.length) {
+            } else if (pos < before + node1.length) {
                 return new ResponseIntNode(pos - before, node1, path1)
             } else {
                 pos -= before + node1.length
@@ -521,6 +518,7 @@ export class LogootSRopes {
                 const length = end - id.begin + 1
                 l.push(new TextDelete(pos, length))
                 const t = node.deleteOffsets(id.begin, end)
+
                 if (node.length === 0) { // del node
                     this.delNode(path)
                 } else if (t !== null) {
@@ -529,6 +527,7 @@ export class LogootSRopes {
                 } else {
                     this.ascendentUpdate(path, id.begin - end - 1)
                 }
+
                 if (end === id.end) {
                     break
                 } else {
@@ -580,6 +579,7 @@ export class LogootSRopes {
         if (node.block.nbElement === 0) {
             delete this.mapBaseToBlock[node.block.id.base.join(",")]
         }
+
         if (node.right === null) {
             if (node === this.root) {
                 this.root = node.left
@@ -727,8 +727,7 @@ export class LogootSRopes {
                 }
             }
             return false
-        }
-        else {
+        }  else {
             path.push(node.right)
             this.getXest(leftChildOf, path)
             return true
@@ -736,7 +735,7 @@ export class LogootSRopes {
     }
 
     /**
-     * @deprecated
+     * @deprecated Prefer use LogootSRopes.fromPlain
      */
     copyFromJSON (ropes: {root: Object, str: string}): void {
         console.assert(typeof ropes === "object" &&
@@ -781,10 +780,9 @@ export class LogootSRopes {
             result = 11
             for (let i = 0; i < linearRpr.length; i++) {
                 result = (31 * result) + linearRpr.charCodeAt(i)
-                result = result | 0 // COnvert to 32bits integer
+                result = result | 0 // Convert to 32bits integer
             }
-        }
-        else {
+        }  else {
             result = 0
         }
         return result
