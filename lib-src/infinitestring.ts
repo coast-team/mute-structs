@@ -34,10 +34,6 @@ export class InfiniteString <G> {
 
     private currentIndex: number
 
-    hasNext (): boolean {
-        return true
-    }
-
     next (): G {
         if (this.currentIndex < this.prefix.length) {
             const result = this.prefix[this.currentIndex]
