@@ -36,7 +36,7 @@ export class ResponseIntNode {
 
     readonly node: RopesNodes
 
-    readonly path: any[]
+    readonly path: RopesNodes[]
 
 }
 
