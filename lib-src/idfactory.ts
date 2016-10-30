@@ -21,6 +21,10 @@ import {InfiniteString} from './infinitestring'
 import {Identifier} from './identifier'
 
 
+export function isMine (replica: number): (b: number[]) => boolean {
+    return (base: number[]) => base[base.length - 2] === replica
+}
+
 /**
  * Holds the minimum value an integer can have.
  */
@@ -59,6 +63,8 @@ export function createBetweenPosition (id1: Identifier | null,
     sb.push(replicaNumber)
     sb.push(clock)
 
+    console.assert(isMine(replicaNumber)(sb),
+        "replica = " + replicaNumber + " base = ", sb)
     return sb
 }
 

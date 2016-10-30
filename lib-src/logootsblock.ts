@@ -23,14 +23,24 @@ import {IdentifierInterval} from './identifierinterval'
 export class LogootSBlock {
 
 // Creation
-    constructor (id: IdentifierInterval, list: number) {
+    constructor (id: IdentifierInterval, nbElt: number, mine = false) {
         console.assert(id instanceof IdentifierInterval, "id = ", id)
-        console.assert(typeof list === "number", "list = ", "" + list)
-        console.assert(list >= 0, "" + list, ">= 0")
+        console.assert(typeof nbElt === "number" && Number.isInteger(nbElt),
+            "list = ", "" + nbElt)
+        console.assert(nbElt >= 0, "" + nbElt, ">= 0")
+        console.assert(typeof mine === "boolean", "mine = " + mine)
 
         this.id = id
-        this.nbElement = list
-        this.mine = false
+        this.nbElement = nbElt
+        this.mine = mine
+    }
+
+    static mine (idi: IdentifierInterval, nbElt: number): LogootSBlock {
+        return new LogootSBlock(idi, nbElt, true)
+    }
+
+    static foreign (idi: IdentifierInterval, nbElt: number): LogootSBlock {
+        return new LogootSBlock(idi, nbElt, false)
     }
 
     static fromPlain (o: {id?: Object | null, nbElement?: number}): LogootSBlock | null {
@@ -41,7 +51,8 @@ export class LogootSBlock {
 
             const id = IdentifierInterval.fromPlain(plainId)
             if (id !== null) {
-                return new LogootSBlock(id, nbElt)
+                return new LogootSBlock(id, nbElt, false)
+                    // FIXME: ALways not mine?
             } else {
                 return null
             }
@@ -55,7 +66,7 @@ export class LogootSBlock {
 
     nbElement: number
 
-    mine: boolean
+    readonly mine: boolean
 
     addBlock (pos: number, length: number): void {
             console.assert(typeof pos === "number", "pos = " + pos)

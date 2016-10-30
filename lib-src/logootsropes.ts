@@ -330,7 +330,7 @@ export class LogootSRopes {
 
         const base = IDFactory.createBetweenPosition(id1, id2, this.replicaNumber, this.clock++)
         const idi = new IdentifierInterval(base, 0, length - 1)
-        const newBlock = new LogootSBlock(idi, 0)
+        const newBlock = LogootSBlock.mine(idi, 0)
         this.mapBaseToBlock[idi.base.join(",")] = newBlock
         return RopesNodes.leaf(newBlock, 0, length)
     }
@@ -342,7 +342,6 @@ export class LogootSRopes {
 
         if (this.root === null) { // empty tree
             this.root = this.mkNode(null, null, l.length)
-            this.root.block.mine = true
             this.str = TextUtils.insert(this.str, pos, l)
             return new LogootSAdd(this.root.getIdBegin(), l)
         } else {
@@ -360,7 +359,6 @@ export class LogootSRopes {
                     return new LogootSAdd(id, l)
                 } else {// add node
                     newNode = this.mkNode(null, n.getIdBegin(), l.length)
-                    newNode.block.mine = true
                     n.left = newNode
                 }
             } else if (pos >= length) { // end
@@ -373,7 +371,6 @@ export class LogootSRopes {
                     return new LogootSAdd(id3, l)
                 } else {// add at end
                     newNode = this.mkNode(n.getIdEnd(), null, l.length)
-                    newNode.block.mine = true
                     n.right = newNode
                 }
             } else { // middle
@@ -383,7 +380,6 @@ export class LogootSRopes {
                     const id1 = inPos.node.block.id.getBaseId(inPos.node.offset + inPos.i - 1)
                     const id2 = inPos.node.block.id.getBaseId(inPos.node.offset + inPos.i)
                     newNode = this.mkNode(id1, id2, l.length)
-                    newNode.block.mine = true
                     path = inPos.path
                     path.push(inPos.node.split({
                         size: inPos.i,
@@ -414,7 +410,6 @@ export class LogootSRopes {
                     } else {
                         newNode = this.mkNode(prev.node.getIdEnd(),
                             inPos.node.getIdBegin(), l.length)
-                        newNode.block.mine = true
                         newNode.right = prev.node.right
                         prev.node.right = newNode
                         path = prev.path
