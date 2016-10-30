@@ -26,7 +26,7 @@ export class LogootSBlock {
     constructor (id: IdentifierInterval, nbElt: number, mine = false) {
         console.assert(id instanceof IdentifierInterval, "id = ", id)
         console.assert(typeof nbElt === "number" && Number.isInteger(nbElt),
-            "list = ", "" + nbElt)
+            "nbElt = ", "" + nbElt)
         console.assert(nbElt >= 0, "" + nbElt, ">= 0")
         console.assert(typeof mine === "boolean", "mine = " + mine)
 
@@ -51,7 +51,7 @@ export class LogootSBlock {
 
             const id = IdentifierInterval.fromPlain(plainId)
             if (id !== null) {
-                return new LogootSBlock(id, nbElt, false)
+                return LogootSBlock.foreign(id, nbElt)
                     // FIXME: ALways not mine?
             } else {
                 return null
