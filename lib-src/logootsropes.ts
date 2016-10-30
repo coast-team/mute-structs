@@ -63,45 +63,34 @@ export class LogootSRopes {
         return new LogootSRopes(0, 0)
     }
 
-    static fromPlain (replica: number, clock: number, o: {root?: any, str?: any, mapBaseToBlock?: any}): LogootSRopes | null {
+    static fromPlain (replica: number, clock: number, o: {root?: any, str?: any}): LogootSRopes | null {
         const plainRoot = o.root
         const str = o.str
-        const mapping = o.mapBaseToBlock
-        if (typeof str === "string" && mapping instanceof Object) {
-            let wellFormed = true
-            const baseToBlock: {[key: string]: LogootSBlock} = {}
 
-            for (const key in mapping) {
-                if (mapping.hasOwnProperty(key)) {
-                    const value = mapping[key]
-                    const block = value instanceof Object ?
-                        LogootSBlock.fromPlain(value) :
-                        null
-                    if (block !== null) {
-                        baseToBlock[key] = block
-                    } else {
-                        wellFormed = false
-                    }
-                }
-            }
+        if (typeof str === "string") {
+            const result = new LogootSRopes(replica, clock)
+            const root = (plainRoot !== undefined && plainRoot !== null) ?
+                RopesNodes.fromPlain(plainRoot) :
+                null
 
-            let root: RopesNodes | null = null
-            if (plainRoot !== undefined && plainRoot !== null) {
-                root = RopesNodes.fromPlain(plainRoot)
-                if (root === null) {
-                    wellFormed = false
-                }
-            }
-
-            if (wellFormed) {
-                const result = new LogootSRopes(replica, clock)
+            if (root !== null) {
                 result.root = root
                 result.str = str
+
+                const baseToBlock: {[key: string]: LogootSBlock} = {}
+                const blocks = root.getBlocks()
+
+                for (const b of blocks) {
+                    const key = b.id.base.join(",")
+                    baseToBlock[key] = b
+                }
                 result.mapBaseToBlock = baseToBlock
 
                 return result
-            } else {
+            } else if (str.length !== 0) {
                 return null
+            } else {
+                return result
             }
         } else {
             return null
@@ -114,7 +103,7 @@ export class LogootSRopes {
 
     root: RopesNodes | null
 
-    mapBaseToBlock: {[id: string]: LogootSBlock}
+    mapBaseToBlock: {[key: string]: LogootSBlock}
 
     str: string
 
@@ -749,26 +738,30 @@ export class LogootSRopes {
     /**
      * @deprecated
      */
-    copyFromJSON (ropes: {root: Object, str: string,
-            mapBaseToBlock: LogootSBlock[]}): void {
+    copyFromJSON (ropes: {root: Object, str: string}): void {
         console.assert(typeof ropes === "object" &&
             ropes.root === null || typeof ropes.root === "object" &&
-            typeof ropes.mapBaseToBlock === "object" &&
             typeof ropes.str === "string", "ropes = ", ropes)
-
-        const mapping = ropes.mapBaseToBlock
-        this.str = ropes.str
-
-        for (const key in mapping) {
-            if (mapping.hasOwnProperty(key)) {
-                this.mapBaseToBlock[key] = mapping[key]
-            }
-        }
 
         const plainRoot = ropes.root
         if (plainRoot !== null) {
-            this.root = RopesNodes.fromPlain(ropes.root)
+            const root = RopesNodes.fromPlain(ropes.root)
+            this.root = root
+
+            if (root !== null) {
+                const baseToBlock: {[key: string]: LogootSBlock} = {}
+                const blocks = root.getBlocks()
+
+                for (const b of blocks) {
+                    const key = b.id.base.join(",")
+                    baseToBlock[key] = b
+                }
+
+                this.mapBaseToBlock = baseToBlock
+            }
         }
+
+        console.warn("This method is bugged. Prefer use LogootSRopes.fromPlain")
     }
 
     view (): string {

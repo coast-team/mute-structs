@@ -330,5 +330,21 @@ export class RopesNodes {
         return new IdentifierInterval(this.block.id.base, this.offset, this.offset + this.length - 1)
     }
 
+    getBlocks (): LogootSBlock[] {
+        let result = [this.block]
+
+        const left = this.left
+        if (left !== null) {
+            result = result.concat(left.getBlocks())
+        }
+
+        const right = this.right
+        if (right !== null) {
+            result = result.concat(right.getBlocks())
+        }
+
+        return result
+    }
+
 }
 
