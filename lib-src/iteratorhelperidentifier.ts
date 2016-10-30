@@ -38,7 +38,6 @@ export class IteratorHelperIdentifier {
         this.id1 = id1
         this.id2 = id2
         this.nextOffset = -1
-        this.result = null
     }
 
     readonly id1: IdentifierInterval
@@ -46,8 +45,6 @@ export class IteratorHelperIdentifier {
     readonly id2: IdentifierInterval
 
     nextOffset: number
-
-    result: null | IdentifierIteratorResults
 
     compareBase (): IdentifierIteratorResults {
         const b1 = this.id1.base
@@ -96,13 +93,6 @@ export class IteratorHelperIdentifier {
         } else {
             return IdentifierIteratorResults.B1_BEFORE_B2
         }
-    }
-
-    computeResults (): IdentifierIteratorResults {
-        if (this.result === null) {
-            this.result = this.compareBase()
-        }
-        return this.result
     }
 
 }

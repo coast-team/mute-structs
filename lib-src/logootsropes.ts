@@ -134,7 +134,7 @@ export class LogootSRopes {
                     from.getIdentifierInterval())
             let split
 
-            switch (ihi.computeResults()) {
+            switch (ihi.compareBase()) {
                 case IdentifierIteratorResults.B1_AFTER_B2: {
                     if (from.right === null) {
                         from.right = RopesNodes.leaf(this.getBlock(idi),
