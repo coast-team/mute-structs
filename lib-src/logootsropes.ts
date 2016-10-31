@@ -184,12 +184,8 @@ export class LogootSRopes {
                             idi1.begin, ls.length)
                         result.push(new TextInsert(i, ls))
                     } else {
-                        Array.prototype.push.apply(result, this.addBlock({
-                            idi: idi1,
-                            str: ls,
-                            from: from.left,
-                            startOffset: i
-                        }))
+                        Array.prototype.push.apply(result,
+                            this.addBlockFrom(ls, idi1, from.left, i))
                     }
 
                     // i=i+ls.size()
@@ -202,12 +198,8 @@ export class LogootSRopes {
                             idi1.begin, ls.length)
                         result.push(new TextInsert(i, ls))
                     } else {
-                        Array.prototype.push.apply(result, this.addBlock({
-                            idi: idi1,
-                            str: ls,
-                            from: from.right,
-                            startOffset: i
-                        }))
+                        Array.prototype.push.apply(result,
+                            this.addBlockFrom(ls, idi1, from.right, i))
                     }
                     con = false
                     break
@@ -276,34 +268,17 @@ export class LogootSRopes {
         return result
     }
 
-    addBlock (args: {str: string, idi: IdentifierInterval, from: RopesNodes,
-            startOffset: number} | {id: Identifier}): TextInsert[] {
+    addBlock (str: string, id: Identifier): TextInsert[] {
+        const idi = new IdentifierInterval(id.base, id.last,
+                id.last + str.length - 1)
 
-        if (args.hasOwnProperty("idi")) {
-            const {str, idi, from, startOffset} = args as {
-                str: string,
-                idi: IdentifierInterval,
-                from: RopesNodes,
-                startOffset: number
-            }
-
-            return this.addBlockFrom(str, idi, from, startOffset)
+        if (this.root === null) {
+            const bl = new LogootSBlock(idi, 0)
+            this.mapBaseToBlock[bl.id.base.join(",")] = bl
+            this.root = RopesNodes.leaf(bl, id.last, str.length)
+            return [new TextInsert(0, str)]
         } else {
-            const {str, id} = args as {
-                str: string,
-                id: Identifier
-            }
-
-            const idi = new IdentifierInterval(id.base, id.last,
-                    id.last + str.length - 1)
-            if (this.root === null) {
-                const bl = new LogootSBlock(idi, 0)
-                this.mapBaseToBlock[bl.id.base.join(",")] = bl
-                this.root = RopesNodes.leaf(bl, id.last, str.length)
-                return [new TextInsert(0, str)]
-            } else {
-                return this.addBlockFrom(str, idi, this.root, 0)
-            }
+            return this.addBlockFrom(str, idi, this.root, 0)
         }
     }
 
@@ -425,7 +400,7 @@ export class LogootSRopes {
     /**
      * @deprecated
      */
-    search (args: {id?: Identifier, path?: RopesNodes[], pos?: number}): number | ResponseIntNode | null {
+    private search (args: {id?: Identifier, path?: RopesNodes[], pos?: number}): number | ResponseIntNode | null {
         console.assert(typeof args === "object")
 
         if (args.hasOwnProperty("id") && args.hasOwnProperty("path")) {
