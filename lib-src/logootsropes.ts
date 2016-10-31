@@ -432,7 +432,11 @@ export class LogootSRopes {
             if (pos < before) {
                 node1 = node1.left
             } else if (pos < before + node1.length) {
-                return new ResponseIntNode(pos - before, node1, path1)
+                return {
+                    i: pos - before,
+                    node: node1,
+                    path: path1
+                }
             } else {
                 pos -= before + node1.length
                 node1 = node1.right

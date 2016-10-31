@@ -20,17 +20,7 @@
 import {RopesNodes} from './ropesnodes'
 
 
-export class ResponseIntNode {
-
-    constructor (i: number, node: RopesNodes, path: any[]) {
-        console.assert(typeof i === "number", "i = ", i)
-        console.assert(node instanceof RopesNodes, "node = ", node)
-        console.assert(path instanceof Array, "path = ", path)
-
-        this.i = i
-        this.node = node
-        this.path = path
-    }
+export interface ResponseIntNode {
 
     readonly i: number
 
