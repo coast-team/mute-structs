@@ -53,39 +53,28 @@ function subtreeSizeOf (aNode: RopesNodes | null): number {
 export class RopesNodes {
 
 // Creation
-    constructor (args: {
-                block: LogootSBlock,
-                offset?: number, sizeNodeAndChildren?: number, length?: number,
-                left?: RopesNodes | null, right?: RopesNodes | null,
-                height?: number, newer?: boolean
-            }) {
-        console.assert(typeof args === "object", "args = " + args)
+    constructor (block: LogootSBlock, offset: number, length: number,
+        left: RopesNodes | null, right: RopesNodes | null, newer: boolean) {
 
-        this.block = args.block
-        this.offset = args.offset || 0
-        this.length = args.length || 0
-        this.sizeNodeAndChildren = this.length
-        this.left = args.left || null
-        this.right = args.right || null
-        this.height = args.height || 1
+        this.block = block
+        this.offset = offset
+        this.length = length
+        this.left = left
+        this.right = right
+        this.height = Math.max(heightOf(left), heightOf(right)) + 1
+        this.sizeNodeAndChildren = length +
+            subtreeSizeOf(left) + subtreeSizeOf(right)
 
-        const newer = args.newer || true
-        if (newer && this.block !== null) {
-            try {
-                this.block.addBlock(this.offset, this.length)
-            } catch (e) {
-                console.error('---- Exception dans new RopesNodes lors d\'addBlock ----')
-                console.error('Args : ', args)
-                console.error('Newer : ', newer)
-                console.error('This : ', this)
-            }
+        if (newer) {
+            this.block.addBlock(this.offset, this.length)
         }
     }
 
     static fromPlain (o: {
-                block?: any, offset?: any, sizeNodeAndChildren?: any,
-                left?: any, right?: any, height?: any
-            }): RopesNodes | null {
+            block?: any, offset?: any, sizeNodeAndChildren?: any,
+            left?: any, right?: any, height?: any
+        }): RopesNodes | null {
+
         const plainBlock = o.block
         const offset = o.offset
         const length = o.sizeNodeAndChildren
@@ -108,11 +97,7 @@ export class RopesNodes {
                 null
 
             if (block !== null) {
-                return new RopesNodes({
-                    block,
-                    offset, length, height,
-                    right, left
-                })
+                return new RopesNodes(block, offset, length, left, right, true)
             } else {
                 return null
             }
@@ -127,14 +112,7 @@ export class RopesNodes {
         console.assert(typeof aLength === "number", "aLength = " + aLength)
         console.assert(aLength > 0, "" + aLength, " > 0")
 
-        return new RopesNodes({
-            block: aBlock,
-            offset: aOffset,
-            length: aLength,
-            height: 1,
-            left: null,
-            right: null
-        })
+        return new RopesNodes(aBlock, aOffset, aLength, null, null, true)
     }
 
 // Access
@@ -217,33 +195,25 @@ export class RopesNodes {
         console.assert(typeof args === "object" &&
                 typeof args.size === "number", "args = ", args)
         const size = args.size
-        let n
 
         if (args.hasOwnProperty("node")) {
             console.assert(args.node instanceof RopesNodes,
                     "args.node = ", args.node)
+            const node = args.node as RopesNodes
 
             this.height++
-            n = this.split({size})
-            n.left = args.node
+            const n = this.split({size})
+            n.left = node
             n.height++
             return n
         } else {
             this.height++
-            n = new RopesNodes({
-                length: this.length - size,
-                offset: this.offset + size,
-                block: this.block,
-                newer: false
-            })
             this.length = size
-            if (this.right !== null) {
-                n.right = this.right
-                n.height += n.right.height + 1
-                n.sizeNodeAndChildren += n.right.sizeNodeAndChildren
-            }
-            this.right = n
-            return n
+            const newRight = new RopesNodes(
+                this.block, this.offset + size, this.length - size,
+                null, this.right, false)
+            this.right = newRight
+            return newRight
         }
     }
 
