@@ -132,7 +132,7 @@ export class RopesNodes {
     }
 
     getIdEnd (): Identifier {
-        return this.block.id.getBaseId(this.offset + this.length - 1)
+        return this.block.id.getBaseId(this.maxOffset())
     }
 
     addString (length: number): void {
@@ -255,7 +255,8 @@ export class RopesNodes {
     }
 
     getIdentifierInterval (): IdentifierInterval {
-        return new IdentifierInterval(this.block.id.base, this.offset, this.offset + this.length - 1)
+        return new IdentifierInterval(this.block.id.base,
+            this.offset, this.maxOffset())
     }
 
     getBlocks (): LogootSBlock[] {
