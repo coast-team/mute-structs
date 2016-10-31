@@ -397,27 +397,6 @@ export class LogootSRopes {
         return n
     }
 
-    /**
-     * @deprecated
-     */
-    private search (args: {id?: Identifier, path?: RopesNodes[], pos?: number}): number | ResponseIntNode | null {
-        console.assert(typeof args === "object")
-
-        if (args.hasOwnProperty("id") && args.hasOwnProperty("path")) {
-            const id = args.id as Identifier // precondition
-            const path = args.path as RopesNodes[] // precondition
-            console.assert(id instanceof Identifier, "args.id = ", id)
-            console.assert(path instanceof Array, "args.path = ", path)
-
-            return this.searchPos(id, path)
-        } else {
-            const pos = args.pos as number // precondition
-            console.assert(typeof args.pos === "number", "args.pos = ", pos)
-
-            return this.searchNode(pos)
-        }
-    }
-
     searchPos (id: Identifier, path: RopesNodes[]): number {
         console.assert(id instanceof Identifier, "args.id = ", id)
         console.assert(path instanceof Array, "args.path = ", path)
