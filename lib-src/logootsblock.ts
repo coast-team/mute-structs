@@ -62,7 +62,7 @@ export class LogootSBlock {
     }
 
 // Access
-    readonly id: IdentifierInterval
+    id: IdentifierInterval
 
     nbElement: number
 
@@ -74,8 +74,7 @@ export class LogootSBlock {
             console.assert(length > 0, "" + length, "> 0")
 
         this.nbElement += length
-        this.id.begin = Math.min(this.id.begin, pos)
-        this.id.end = Math.max(this.id.end, pos + length - 1)
+        this.id = this.id.union(pos, pos + length - 1)
     }
 
     delBlock (begin: number, end: number, nbElement: number): void {

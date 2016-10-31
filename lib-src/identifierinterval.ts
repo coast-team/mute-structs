@@ -53,12 +53,19 @@ export class IdentifierInterval {
 // Access
     readonly base: number[]
 
-    begin: number
+    readonly begin: number
 
-    end: number
+    readonly end: number
 
     copy (): IdentifierInterval {
         return new IdentifierInterval(this.base.slice(0), this.begin, this.end)
+    }
+
+    union (aBegin: number, aEnd: number): IdentifierInterval {
+        const minBegin = Math.min(this.begin, aBegin)
+        const maxEnd = Math.max(this.end, aEnd)
+
+        return new IdentifierInterval(this.base, minBegin, maxEnd)
     }
 
     getBaseId (u: number): Identifier {
