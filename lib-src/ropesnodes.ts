@@ -302,30 +302,6 @@ export class RopesNodes {
                 leftToString.replace(/(\t+)/g, "\t$1")
     }
 
-    viewRec (): string {
-        let str2 = ''
-        if (this.left !== null || this.right !== null) {
-            str2 += '( '
-        }
-        if (this.left !== null) {
-            str2 += this.left.viewRec()
-        }
-        if (this.left !== null || this.right !== null) {
-            str2 += ' //,// '
-        }
-        // str2 += this.str // TODO: Obsolete code?
-        if (this.left !== null || this.right !== null) {
-            str2 += ' \\\\,\\\\ '
-        }
-        if (this.right !== null) {
-            str2 += this.right.viewRec()
-        }
-        if (this.left !== null || this.right !== null) {
-            str2 += ' )'
-        }
-        return str2
-    }
-
     getIdentifierInterval (): IdentifierInterval {
         return new IdentifierInterval(this.block.id.base, this.offset, this.offset + this.length - 1)
     }

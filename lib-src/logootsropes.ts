@@ -309,7 +309,7 @@ export class LogootSRopes {
             return new LogootSAdd(this.root.getIdBegin(), l)
         } else {
             let newNode
-            const length = this.viewLength()
+            const length = this.str.length
             this.str = TextUtils.insert(this.str, pos, l)
             let path: RopesNodes[]
             if (pos === 0) { // begin of string
@@ -716,14 +716,6 @@ export class LogootSRopes {
         }
 
         console.warn("This method is bugged. Prefer use LogootSRopes.fromPlain")
-    }
-
-    view (): string {
-        return this.str
-    }
-
-    viewLength (): number {
-        return this.str.length
     }
 
     digest (): number {
