@@ -36,7 +36,7 @@ export class LogootSAdd {
         // is is structurally an Identifier
         console.assert(typeof id === "object" &&
         id.base instanceof Array &&
-        typeof id.last === "number", "id = ", id)
+        typeof id.last === "number" && Number.isInteger(id.last), "id = ", id)
         console.assert(typeof l === "string", "l = ", l)
 
         this.id = Identifier.fromPlain(id) as Identifier // precondition
@@ -68,6 +68,8 @@ export class LogootSAdd {
     * @return {TextInsert[]} the insertion to be applied on the sequence representing the document content.
     */
     execute (doc: LogootSRopes): TextInsert[] {
+        console.assert(doc instanceof LogootSRopes, "doc = ", doc)
+
         return doc.addBlock(this.l, this.id)
     }
 

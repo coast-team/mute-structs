@@ -102,7 +102,8 @@ export class Identifier {
 
     hasPlaceBefore (prev: Identifier, length: number): boolean {
             console.assert(prev instanceof Identifier, "prv = ", prev)
-        console.assert(typeof length === "number", "length = ", length)
+        console.assert(typeof length === "number" && Number.isInteger(length),
+            "length = ", length)
 
         const min = this.last - length
         const base = this.base
@@ -119,8 +120,9 @@ export class Identifier {
     }
 
     minOffsetAfterPrev (prev: Identifier, min: number): number {
-            console.assert(prev instanceof Identifier, "prev = ", prev)
-        console.assert(typeof min === "number", "min = ", min)
+        console.assert(prev instanceof Identifier, "prev = ", prev)
+        console.assert(typeof min === "number" && Number.isInteger(min),
+            "min = ", min)
 
         const base = this.base
         const prevExtended = prev.base.concat(prev.last)
@@ -140,8 +142,9 @@ export class Identifier {
     }
 
     maxOffsetBeforeNex (next: Identifier, max: number): number {
-            console.assert(next instanceof Identifier, "next = ", next)
-        console.assert(typeof max === "number", "mex = ", max)
+        console.assert(next instanceof Identifier, "next = ", next)
+        console.assert(typeof max === "number" && Number.isInteger(max),
+            "max = ", max)
 
         const base = this.base
         const nextExtended = next.base.concat(next.last)

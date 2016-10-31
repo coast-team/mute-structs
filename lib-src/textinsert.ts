@@ -31,7 +31,8 @@ export class TextInsert {
     * @param {string} content - the content to be inserted in the sequence.
     */
     constructor (offset: number, content: string) {
-        console.assert(typeof offset === "number", "offset = ", offset)
+        console.assert(typeof offset === "number" && Number.isInteger(offset),
+            "offset = ", offset)
         console.assert(typeof content === "string", "content = ", content)
 
         this.offset = offset
@@ -48,7 +49,7 @@ export class TextInsert {
     * @return {LogootSAdd} the logootsplit insertion that is related to the insertion that has been performed.
     */
     applyTo (doc: LogootSRopes): LogootSAdd {
-        console.assert(arguments.length === 1)
+        console.assert(doc instanceof LogootSRopes, "doc = ", doc)
 
         return doc.insertLocal(this.offset, this.content)
     }

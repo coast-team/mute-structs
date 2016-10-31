@@ -25,8 +25,10 @@ export class IdentifierInterval {
 // Creation
     constructor (base: number[], begin: number, end: number) {
         console.assert(base instanceof Array, "base = ", base)
-        console.assert(typeof begin === "number", "begin = ", begin)
-        console.assert(typeof end === "number", "end = ", end)
+        console.assert(typeof begin === "number" && Number.isInteger(begin),
+            "begin = ", begin)
+        console.assert(typeof end === "number" && Number.isInteger(end),
+            "end = ", end)
         console.assert(begin <= end, "" + begin + " <= ", end)
 
         this.base = base
@@ -65,7 +67,8 @@ export class IdentifierInterval {
     }
 
     getBaseId (u: number): Identifier {
-        console.assert(typeof u === "number", "u = ", u)
+        console.assert(typeof u === "number" && Number.isInteger(u),
+            "u = ", u)
 
         return new Identifier(this.base, u)
     }

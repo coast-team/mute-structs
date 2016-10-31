@@ -34,7 +34,7 @@ export class LogootSDel {
     * @constructor
     * @param {IdentifierInterval[]} lid - the list of identifier that localise the deletion in the logoot sequence.
     */
-    constructor(lid: Object[]) {
+    constructor(lid: any[]) {
         console.assert(lid instanceof Array &&
         lid.every((item: any): boolean =>
             typeof item === "object" && item.hasOwnProperty("base") &&
@@ -75,8 +75,10 @@ export class LogootSDel {
     * @return {TextDelete[]} the list of deletions to be applied on the sequence representing the document content.
     */
     execute (doc: LogootSRopes): TextDelete[] {
-    return arrayConcat.apply([], this.lid.map(
-        (aId: IdentifierInterval): TextDelete[] => doc.delBlock(aId)))
+        console.assert(doc instanceof LogootSRopes, "doc = ", doc)
+
+        return arrayConcat.apply([], this.lid.map(
+            (aId: IdentifierInterval): TextDelete[] => doc.delBlock(aId)))
     }
 
 }
