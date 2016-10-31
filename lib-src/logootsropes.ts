@@ -269,6 +269,9 @@ export class LogootSRopes {
     }
 
     addBlock (str: string, id: Identifier): TextInsert[] {
+        console.assert(typeof str === "string", "str = " + str)
+        console.log(id instanceof Identifier, "id = ", id)
+
         const idi = new IdentifierInterval(id.base, id.last,
                 id.last + str.length - 1)
 
@@ -398,8 +401,8 @@ export class LogootSRopes {
     }
 
     searchPos (id: Identifier, path: RopesNodes[]): number {
-        console.assert(id instanceof Identifier, "args.id = ", id)
-        console.assert(path instanceof Array, "args.path = ", path)
+        console.assert(id instanceof Identifier, "id = ", id)
+        console.assert(path instanceof Array, "path = ", path)
 
         let i = 0
         let node = this.root
@@ -418,7 +421,7 @@ export class LogootSRopes {
     }
 
     searchNode (pos: number): ResponseIntNode | null {
-        console.assert(typeof pos === "number", "args.pos = ", pos)
+        console.assert(typeof pos === "number", "pos = ", pos)
 
         let node1 = this.root
         let path1: RopesNodes[] = []
