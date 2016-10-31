@@ -86,10 +86,6 @@ export class LogootSBlock {
         this.nbElement -= nbElement
     }
 
-    copy (): LogootSBlock {
-        return new LogootSBlock(this.id.copy(), this.nbElement)
-    }
-
     toString (): string {
         return '{' + this.nbElement + ',' + this.id.toString() + ', ' + (this.mine ? 'mine' : 'its') + '}'
     }
