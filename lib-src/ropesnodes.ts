@@ -183,38 +183,24 @@ export class RopesNodes {
             this.length = this.length - end + this.offset - 1
             this.offset = end + 1
         } else {
-            ret = this.split({
-                size: (end - this.offset + 1)
-            })
+            ret = this.split(end - this.offset + 1, null)
             this.length = begin - this.offset
         }
         return ret
     }
 
-    split (args: {size: number, node?: RopesNodes}): RopesNodes {
-        console.assert(typeof args === "object" &&
-                typeof args.size === "number", "args = ", args)
-        const size = args.size
+    split (size: number, node: RopesNodes | null): RopesNodes {
+        console.assert(typeof size === "number", "size = ", size)
+        console.assert(node instanceof RopesNodes || node === null,
+            "node = ", node)
 
-        if (args.hasOwnProperty("node")) {
-            console.assert(args.node instanceof RopesNodes,
-                    "args.node = ", args.node)
-            const node = args.node as RopesNodes
-
-            this.height++
-            const n = this.split({size})
-            n.left = node
-            n.height++
-            return n
-        } else {
-            this.height++
-            this.length = size
-            const newRight = new RopesNodes(
-                this.block, this.offset + size, this.length - size,
-                null, this.right, false)
-            this.right = newRight
-            return newRight
-        }
+        this.length = size
+        const newRight = new RopesNodes(
+            this.block, this.offset + size, this.length - size,
+            node, this.right, false)
+        this.right = newRight
+        this.height = Math.max(this.height, newRight.height)
+        return newRight
     }
 
     maxOffset (): number {

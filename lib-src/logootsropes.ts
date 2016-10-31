@@ -164,10 +164,7 @@ export class LogootSRopes {
                     split = Math.min(from.maxOffset(), ihi.nextOffset)
                     const rp = RopesNodes.leaf(this.getBlock(idi),
                         idi.begin, str.length)
-                    path.push(from.split({
-                        node: rp,
-                        size: split - from.offset + 1
-                    }))
+                    path.push(from.split(split - from.offset + 1, rp))
                     i = i + from.leftSubtreeSize()
                     result.push(new TextInsert(i + split - from.offset + 1, str))
                     con = false
@@ -344,10 +341,7 @@ export class LogootSRopes {
                     const id2 = inPos.node.block.id.getBaseId(inPos.node.offset + inPos.i)
                     newNode = this.mkNode(id1, id2, l.length)
                     path = inPos.path
-                    path.push(inPos.node.split({
-                        size: inPos.i,
-                        node: newNode
-                    }))
+                    path.push(inPos.node.split(inPos.i, newNode))
                 } else {
                     const prev = this.searchNode(pos - 1) as ResponseIntNode
                         // TODO: why non-null?
