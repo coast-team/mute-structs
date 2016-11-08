@@ -9,7 +9,7 @@
  *  (at your option) any later version.
  *
  *  Mute-structs is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  but WITHOUT ANY WARRANTY without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
@@ -17,32 +17,16 @@
  *  along with Mute-structs.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*global console, module */
-"use strict";
+import {RopesNodes} from './ropesnodes'
 
-function InfiniteString (aPrefix, aFiller) {
-	console.assert(aPrefix instanceof Array, "aPrefix = ", aPrefix);
-	console.assert(typeof aFiller !== "undefined");
 
-	this.filler = aFiller;
-	this.prefix = aPrefix;
-	this.currentIndex = 0;
+export interface ResponseIntNode {
+
+    readonly i: number
+
+    readonly node: RopesNodes
+
+    readonly path: RopesNodes[]
+
 }
 
-InfiniteString.prototype.hasNext = function () {
-	return true;
-};
-
-InfiniteString.prototype.next = function () {
-		var result;
-		if(this.currentIndex < this.prefix.length) {
-				result = this.prefix[this.currentIndex];
-				this.currentIndex++;
-		}
-		else {
-				result = this.filler;
-		}
-		return result;
-};
-
-module.exports = InfiniteString;

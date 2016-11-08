@@ -1,0 +1,22 @@
+# Largely inspired by https://github.com/github/gitignore
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.swp
+
+# Dev configs
+.editorconfig
+.gitattributes
+.travis.yml
+
+# Dev artifacts
+lib-src
+*.map
+

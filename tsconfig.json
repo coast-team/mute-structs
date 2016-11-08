@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "declaration": false,
+    "lib": ["dom", "es6"],
+    "module": "commonjs",
+    "noEmitHelpers": true,
+    "sourceMap": true,
+    "target": "ES5",
+
+    "outDir": "lib",
+
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitAny" : false,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "strictNullChecks": true,
+
+    "pretty": true
+  },
+  "include": [
+    "lib-src/*"
+  ]
+}
+

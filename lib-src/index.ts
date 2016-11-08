@@ -17,19 +17,15 @@
  *  along with Mute-structs.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*global console, module, require */
-"use strict";
+export {Identifier} from './identifier'
+export {IdentifierInterval} from './identifierinterval'
 
-var RopesNodes = require('./ropesnodes');
+export {LogootSRopes} from './logootsropes'
 
-function ResponseIntNode (i, node, path) {
-	console.assert(typeof i === "number", "i = ", i);
-	console.assert(node instanceof RopesNodes, "node = ", node);
-	console.assert(path instanceof Array, "path = ", path);
+export {LogootSAdd} from './logootsadd'
+export {LogootSDel} from './logootsdel'
+export {TextDelete} from './textdelete'
+export {TextInsert} from './textinsert'
 
-	this.i = i;
-	this.node = node;
-	this.path = path;
-}
+export {insert, del, occurrences} from './textutils'
 
-module.exports = ResponseIntNode;

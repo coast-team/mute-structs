@@ -3,15 +3,23 @@
   "version": "0.0.7",
   "description": "NodeJS module providing an implementation of the LogootSplit CRDT algorithm",
   "main": "index.js",
-  "dependencies": {
-  },
+  "dependencies": {},
   "repository": {
     "type": "git",
     "url": "https://github.com/score-team/mute-structs"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "ava": "^0.14.0",
+    "tslint": "^3.15.1",
+    "typescript": "^2.0.6"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc",
+    "clean": "rm -rf lib",
+    "check": "tsc --noEmit",
+    "lint": "tslint --project tsconfig.json",
+    "test:unit": "ava",
+    "test": "npm run test:unit"
   },
   "keywords": [
     "crdt",
@@ -19,6 +27,9 @@
     "data-structures"
   ],
   "author": "Matthieu Nicolas <matthieu.nicolas@loria.fr> ",
-  "contributors": ["Victorien Elvinger <victorien.elvinger@loria.fr>", "Gerald Oster <gerald.oster@loria.fr>"],
+  "contributors": [
+    "Victorien Elvinger <victorien.elvinger@loria.fr>",
+    "Gerald Oster <gerald.oster@loria.fr>"
+  ],
   "license": "GPL-3.0"
 }
