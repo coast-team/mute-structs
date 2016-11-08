@@ -22,14 +22,14 @@ test("has-next-prefix-less", (t) => {
     const repeatredValue = Symbol()
     const stream = new InfiniteString([], repeatredValue)
 
-    t.true(stream.hasNext())
+    t.not(stream.next(), undefined)
 })
 
 test("has-next-prefix-less-null-value", (t) => {
     const repeatredValue = null
     const stream = new InfiniteString([], repeatredValue)
 
-    t.true(stream.hasNext())
+    t.not(stream.next(), undefined)
 })
 
 test("next-prefix-less", (t) => {
@@ -48,4 +48,3 @@ test("next-with-prefix", (t) => {
     t.is(stream.next(), prefix[1])
     t.is(stream.next(), repeatredValue)
 })
-
