@@ -163,21 +163,22 @@ export class RopesNodes {
     }
 
     deleteOffsets (begin: number, end: number): RopesNodes | null {
-        console.assert(typeof begin === "number", "begin = " + begin)
-        console.assert(typeof end === "number", "end = " + end)
+        console.assert(typeof begin === "number" && Number.isInteger(begin),
+            "begin = " + begin)
+        console.assert(typeof end === "number" && Number.isInteger(end),
+            "end = " + end)
         console.assert(begin <= end, "" + begin, " <= " + end)
 
         const sizeToDelete = end - begin + 1
         this.block.delBlock(begin, end, sizeToDelete)
+
+        let ret: RopesNodes | null = null
         if (sizeToDelete === this.length) {
             this.length = 0
-            return null
-        }
-        let ret: RopesNodes | null = null
-        if (end === (this.offset + this.length - 1)) {
+        } else if (end === this.maxOffset()) {
             this.length = begin - this.offset
         } else if (begin === this.offset) {
-            this.length = this.length - end + this.offset - 1
+            this.length = this.maxOffset() - end
             this.offset = end + 1
         } else {
             ret = this.split(end - this.offset + 1, null)
@@ -191,9 +192,9 @@ export class RopesNodes {
         console.assert(node instanceof RopesNodes || node === null,
             "node = ", node)
 
-        this.length = size
         const newRight = new RopesNodes(this.block,
             this.offset + size, this.length - size, node, this.right)
+        this.length = size
         this.right = newRight
         this.height = Math.max(this.height, newRight.height)
         return newRight
