@@ -95,13 +95,13 @@ export class LogootSRopes {
         }
     }
 
-    replicaNumber: number
+    readonly replicaNumber: number
 
     clock: number
 
     root: RopesNodes | null
 
-    mapBaseToBlock: {[key: string]: LogootSBlock}
+    readonly mapBaseToBlock: {[key: string]: LogootSBlock}
 
     str: string
 
@@ -491,7 +491,6 @@ export class LogootSRopes {
         return l
     }
 
-
     delLocal (begin: number, end: number): LogootSDel {
         console.assert(typeof begin === "number", "begin = " + begin)
         console.assert(typeof end === "number", "end = " + end)
@@ -685,35 +684,6 @@ export class LogootSRopes {
             this.getXest(leftChildOf, path)
             return true
         }
-    }
-
-    /**
-     * @deprecated Prefer use LogootSRopes.fromPlain
-     */
-    copyFromJSON (ropes: {root: Object, str: string}): void {
-        console.assert(typeof ropes === "object" &&
-            ropes.root === null || typeof ropes.root === "object" &&
-            typeof ropes.str === "string", "ropes = ", ropes)
-
-        const plainRoot = ropes.root
-        if (plainRoot !== null) {
-            const root = RopesNodes.fromPlain(ropes.root)
-            this.root = root
-
-            if (root !== null) {
-                const baseToBlock: {[key: string]: LogootSBlock} = {}
-                const blocks = root.getBlocks()
-
-                for (const b of blocks) {
-                    const key = b.id.base.join(",")
-                    baseToBlock[key] = b
-                }
-
-                this.mapBaseToBlock = baseToBlock
-            }
-        }
-
-        console.warn("This method is bugged. Prefer use LogootSRopes.fromPlain")
     }
 
     digest (): number {
