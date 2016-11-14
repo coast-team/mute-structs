@@ -22,7 +22,7 @@ import TextUtils from "../lib/textutils.js"
 test("basic-insert-del-string", (t) => {
     const replicaNumberA = 1
     const docA = new LogootSRopes(replicaNumberA)
-    const replicaNumberB = 1
+    const replicaNumberB = 2
     const docB = new LogootSRopes(replicaNumberB)
 
     const event1 = docA.insertLocal(0, "hello world")
@@ -50,3 +50,36 @@ test("basic-insert-del-string", (t) => {
     t.is(docA.str, docB.str, "docA.str = docB.str")
     t.is(docA.digest(), docB.digest(), "docA.digest() = docB.digest()")
 })
+
+test("commutative-insert", (t) => {
+    const replicaNumberA = 1
+    const docA = new LogootSRopes(replicaNumberA)
+    const replicaNumberB = 2
+    const docB = new LogootSRopes(replicaNumberB)
+
+    const a1 = docA.insertLocal(0, "hello world")
+    const b1 = docB.insertLocal(0, "Hello!")
+
+    const a1TxtOps = a1.execute(docB)
+    const b1TxtOps = b1.execute(docA)
+
+    t.is(docA.digest(), docB.digest(), "docA.digest() = docB.digest()")
+})
+
+test("commutative-deletion", (t) => {
+    const replicaNumberA = 1
+    const docA = new LogootSRopes(replicaNumberA)
+    const replicaNumberB = 2
+    const docB = new LogootSRopes(replicaNumberB)
+
+    const a1 = docA.insertLocal(0, "hello world")
+    a1.execute(docB)
+
+    const a2 = docA.delLocal(6, 9)
+    const b1 = docB.delLocal(6, 9)
+    const a2TxtOps = a2.execute(docB)
+    const b1TxtOps = b1.execute(docA)
+
+    t.is(docA.digest(), docB.digest(), "docA.digest() = docB.digest()")
+})
+
