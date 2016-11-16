@@ -66,6 +66,20 @@ test("commutative-insert", (t) => {
     t.is(docA.digest(), docB.digest(), "docA.digest() = docB.digest()")
 })
 
+test("idempotent-insert", (t) => {
+    const replicaNumberA = 1
+    const docA = new LogootSRopes(replicaNumberA)
+    const replicaNumberB = 2
+    const docB = new LogootSRopes(replicaNumberB)
+
+    const a1 = docA.insertLocal(0, "hello world")
+
+    a1.execute(docB)
+    a1.execute(docB)
+
+    t.is(docA.digest(), docB.digest(), "docA.digest() = docB.digest()")
+})
+
 test("commutative-deletion", (t) => {
     const replicaNumberA = 1
     const docA = new LogootSRopes(replicaNumberA)
@@ -83,3 +97,18 @@ test("commutative-deletion", (t) => {
     t.is(docA.digest(), docB.digest(), "docA.digest() = docB.digest()")
 })
 
+test("idempotent-deletion", (t) => {
+    const replicaNumberA = 1
+    const docA = new LogootSRopes(replicaNumberA)
+    const replicaNumberB = 2
+    const docB = new LogootSRopes(replicaNumberB)
+
+    const a1 = docA.insertLocal(0, "hello world")
+    a1.execute(docB)
+
+    const a2 = docA.delLocal(0, 3)
+    a2.execute(docB)
+    a2.execute(docB)
+
+    t.is(docA.digest(), docB.digest(), "docA.digest() = docB.digest()")
+})
