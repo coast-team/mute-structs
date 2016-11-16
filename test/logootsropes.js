@@ -75,7 +75,7 @@ test("commutative-deletion", (t) => {
     const a1 = docA.insertLocal(0, "hello world")
     a1.execute(docB)
 
-    const a2 = docA.delLocal(6, 9)
+    const a2 = docA.delLocal(0, 3)
     const b1 = docB.delLocal(6, 9)
     const a2TxtOps = a2.execute(docB)
     const b1TxtOps = b1.execute(docA)
