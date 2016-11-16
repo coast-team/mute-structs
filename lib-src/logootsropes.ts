@@ -386,10 +386,11 @@ export class LogootSRopes {
         console.assert(aPath instanceof Array, "aPath = ", aPath)
 
         let n = aPath[aPath.length - 1]
-        const child = aChildOf(n)
+        let child = aChildOf(n)
         while (child !== null) {
             n = child
-            aPath[aPath.length] = n
+            aPath[aPath.length] = child
+            child = aChildOf(child)
         }
         return n
     }
