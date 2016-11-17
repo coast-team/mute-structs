@@ -26,7 +26,8 @@ export const enum IdentifierIteratorResults {
         B1_INSIDE_B2,
         B2_INSIDE_B1,
         B1_CONCAT_B2,
-        B2_CONCAT_B1
+        B2_CONCAT_B1,
+        B1_EQUALS_B2
 }
 
 export class IteratorHelperIdentifier {
@@ -77,15 +78,23 @@ export class IteratorHelperIdentifier {
                 } else {
                     return IdentifierIteratorResults.B2_INSIDE_B1
                 }
-            } else { // both bases have the same size
-                if ((this.id1.end + 1) === this.id2.begin) {
+            } else { // both bases are the same
+                if (this.id1.begin === this.id2.begin && this.id1.end === this.id2.end) {
+                  return IdentifierIteratorResults.B1_EQUALS_B2
+                }
+                else if ((this.id1.end + 1) === this.id2.begin) {
                     return IdentifierIteratorResults.B1_CONCAT_B2
                 } else if (this.id1.begin === (this.id2.end + 1)) {
                     return IdentifierIteratorResults.B2_CONCAT_B1
                 } else if (this.id1.end < this.id2.begin) {
                     return IdentifierIteratorResults.B1_BEFORE_B2
-                } else {
+                } else if (this.id2.end < this.id1.begin ) {
                     return IdentifierIteratorResults.B1_AFTER_B2
+                } else {
+                  // This case should not occur
+                  // Only malicious users would generate such operations
+                  console.warn('IteratorHelperIdentifier.compareBase: ', this.id1, this.id2)
+                  return IdentifierIteratorResults.B1_EQUALS_B2
                 }
             }
         } else if (b1[i] > b2[i]) {
@@ -96,4 +105,3 @@ export class IteratorHelperIdentifier {
     }
 
 }
-

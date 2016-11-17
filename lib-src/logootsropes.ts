@@ -259,6 +259,10 @@ export class LogootSRopes {
 
                     break
                 }
+              case IdentifierIteratorResults.B1_EQUALS_B2: {
+                con = false
+                break
+              }
             }
         }
         this.balance(path)
@@ -705,4 +709,3 @@ export class LogootSRopes {
     }
 
 }
-
