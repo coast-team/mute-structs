@@ -610,12 +610,15 @@ export class LogootSRopes {
         console.assert(father === null || father instanceof RopesNodes,
             "father = ", father)
         console.assert(node.right !== null, "There exists a right node")
+        console.assert((node === this.root) === (father === null), "The father is null when we are rotating left the root")
 
         const r = node.right as RopesNodes // precondition
         if (node === this.root) {
             this.root = r
         } else {
+            // FIXME: Should we not replace the left child in this case?
             (father as RopesNodes).replaceChildren(node, r)
+            console.assert((father as RopesNodes).left !== null, "There exists a left node")
         }
         node.right = r.left
         r.left = node
@@ -629,12 +632,15 @@ export class LogootSRopes {
         console.assert(father === null || father instanceof RopesNodes,
             "father = ", father)
         console.assert(node.left !== null, "There exists a left node")
+        console.assert((node === this.root) === (father === null), "The father is null when we are rotating right the root")
 
         const r = node.left as RopesNodes // precondition
         if (node === this.root) {
             this.root = r
         } else {
+            // FIXME: Should we not replace the right child in this case?
             (father as RopesNodes).replaceChildren(node, r)
+            console.assert((father as RopesNodes).right !== null, "There exists a right node")
         }
         node.left = r.right
         r.right = node
@@ -651,7 +657,6 @@ export class LogootSRopes {
         const rightNode = node.right as RopesNodes // precondition
         console.assert(rightNode.left !== null,
             "There exists a left node of the right node")
-        console.assert(node.left !== null, "There exists a left node")
 
         this.rotateRight(rightNode, node)
         return this.rotateLeft(node, father)
@@ -665,7 +670,6 @@ export class LogootSRopes {
         const leftNode = node.left as RopesNodes // precondition
         console.assert(leftNode.right !== null,
             "There exists a right node of the left node")
-        console.assert(node.right !== null, "There exists a right node")
 
         this.rotateLeft(leftNode, node)
         return this.rotateRight(node, father)
