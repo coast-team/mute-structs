@@ -271,7 +271,7 @@ export class LogootSRopes {
 
     addBlock (str: string, id: Identifier): TextInsert[] {
         console.assert(typeof str === "string", "str = " + str)
-        console.log(id instanceof Identifier, "id = ", id)
+        console.assert(id instanceof Identifier, "id = ", id)
 
         const idi = new IdentifierInterval(id.base, id.last,
                 id.last + str.length - 1)
