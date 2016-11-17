@@ -51,6 +51,22 @@ test("basic-insert-del-string", (t) => {
     t.is(docA.digest(), docB.digest(), "docA.digest() = docB.digest()")
 })
 
+test("insert-should-append-to-splitting-block", (t) => {
+  const replicaNumberA = 1
+  const docA = new LogootSRopes(replicaNumberA)
+
+  // Insert the initial block
+  const event1 = docA.insertLocal(0, "hello world")
+
+  // Split the root and generate a new block
+  const event2 = docA.insertLocal(5, "X")
+  // Append some text to the previous block
+  const event3 = docA.insertLocal(6, "Y")
+
+  t.is(docA.str, "helloXY world", "docA.str = 'helloXY world'")
+  t.deepEqual(event2.id.base, event3.id.base, "event2.id.base = event3.id.base")
+})
+
 test("commutative-insert", (t) => {
     const replicaNumberA = 1
     const docA = new LogootSRopes(replicaNumberA)
