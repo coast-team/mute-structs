@@ -2,7 +2,8 @@
   "name": "mute-structs",
   "version": "0.0.7",
   "description": "NodeJS module providing an implementation of the LogootSplit CRDT algorithm",
-  "main": "index.js",
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
   "dependencies": {},
   "repository": {
     "type": "git",
