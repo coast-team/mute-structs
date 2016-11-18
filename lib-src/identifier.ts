@@ -110,22 +110,31 @@ export class Identifier {
     }
 
     hasPlaceBefore (prev: Identifier, length: number): boolean {
-            console.assert(prev instanceof Identifier, "prv = ", prev)
+        console.assert(prev instanceof Identifier, "prv = ", prev)
         console.assert(typeof length === "number" && Number.isInteger(length),
             "length = ", length)
 
-        const min = this.last - length
         const base = this.base
-        const prevExtended = prev.base.concat(prev.last)
-        const minLength = Math.min(base.length, prevExtended.length)
 
-        let i = 0
-        while (i < minLength && base[i] === prevExtended[i]) {
-            i++
+        if (base.length > prev.base.length) {
+          return true
+        } else {
+          const prevExtended = prev.base.concat(prev.last)
+          const minLength = Math.min(base.length, prevExtended.length)
+
+          let i = 0
+          while (i < minLength && base[i] === prevExtended[i]) {
+              i++
+          }
+
+          if (i !== minLength) {
+            // Bases differ
+            return true
+          } else {
+            const min = this.last - length
+            return prevExtended[i] < min
+          }
         }
-
-        return i === minLength &&
-            (i >= prevExtended.length || prevExtended[i] < min)
     }
 
     minOffsetAfterPrev (prev: Identifier, min: number): number {
@@ -173,4 +182,3 @@ export class Identifier {
     }
 
 }
-
