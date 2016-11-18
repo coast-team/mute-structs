@@ -67,6 +67,22 @@ test("insert-should-append-to-splitting-block", (t) => {
   t.deepEqual(event2.id.base, event3.id.base, "event2.id.base = event3.id.base")
 })
 
+test("insert-should-prepend-to-splitting-block", (t) => {
+  const replicaNumberA = 1
+  const docA = new LogootSRopes(replicaNumberA)
+
+  // Insert the initial block
+  const event1 = docA.insertLocal(0, "hello world")
+
+  // Split the root and generate a new block
+  const event2 = docA.insertLocal(5, "YZ")
+  // Prepend some text to the previous block
+  const event3 = docA.insertLocal(5, "X")
+
+  t.is(docA.str, "helloXYZ world", "docA.str = 'helloXYZ world'")
+  t.deepEqual(event2.id.base, event3.id.base, "event2.id.base = event3.id.base")
+})
+
 test("commutative-insert", (t) => {
     const replicaNumberA = 1
     const docA = new LogootSRopes(replicaNumberA)
