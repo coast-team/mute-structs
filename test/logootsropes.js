@@ -61,9 +61,9 @@ test("insert-should-append-to-splitting-block", (t) => {
   // Split the root and generate a new block
   const event2 = docA.insertLocal(5, "X")
   // Append some text to the previous block
-  const event3 = docA.insertLocal(6, "Y")
+  const event3 = docA.insertLocal(6, "YZ")
 
-  t.is(docA.str, "helloXY world", "docA.str = 'helloXY world'")
+  t.is(docA.str, "helloXYZ world", "docA.str = 'helloXYZ world'")
   t.deepEqual(event2.id.base, event3.id.base, "event2.id.base = event3.id.base")
 })
 
