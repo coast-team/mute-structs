@@ -31,22 +31,6 @@ test("basic-insert-del-string", (t) => {
     const textop_seq1 = event1.execute(docB)
     const textop_seq2 = event2.execute(docB)
 
-    // str attribute is not updated when apply LogootS operations (see issue #4)
-    // Array.prototype.forEach.call(textop_seq1.concat(textop_seq2), to => {
-    textop_seq1.concat(textop_seq2).forEach(to => {
-          // Must identify which type of text operation it is
-          if(to.content !== undefined && to.offset !== undefined &&
-            to.content !== null && to.offset !== null) {
-              // Insertion
-              docB.str = TextUtils.insert(docB.str, to.offset, to.content)
-          }
-          else if(to.length !== undefined && to.length !== null &&
-                 to.offset !== undefined && to.offset !== null) {
-              // Deletion
-              docB.str = TextUtils.del(docB.str, to.offset, to.offset + to.length - 1)
-          }
-    })
-
     t.is(docA.str, docB.str, "docA.str = docB.str")
     t.is(docA.digest(), docB.digest(), "docA.digest() = docB.digest()")
 })

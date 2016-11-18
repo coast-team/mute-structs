@@ -266,7 +266,21 @@ export class LogootSRopes {
             }
         }
         this.balance(path)
+        result.forEach((textInsert: TextInsert) => {
+          this.applyTextInsert(textInsert)
+        })
         return result
+    }
+
+    // FIXME: Put this function elsewhere?
+    applyTextInsert (textInsert: TextInsert): void {
+      this.str = TextUtils.insert(this.str, textInsert.offset, textInsert.content)
+    }
+
+    // FIXME: Put this function elsewhere?
+    applyTextDelete (textDelete: TextDelete): void {
+      const end: number = textDelete.offset + textDelete.length - 1
+      this.str = TextUtils.del(this.str, textDelete.offset, end)
     }
 
     addBlock (str: string, id: Identifier): TextInsert[] {
@@ -280,7 +294,9 @@ export class LogootSRopes {
             const bl = new LogootSBlock(idi, 0)
             this.mapBaseToBlock[bl.id.base.join(",")] = bl
             this.root = RopesNodes.leaf(bl, id.last, str.length)
-            return [new TextInsert(0, str)]
+            const textInsert: TextInsert = new TextInsert(0, str)
+            this.applyTextInsert(textInsert)
+            return [textInsert]
         } else {
             return this.addBlockFrom(str, idi, this.root, 0)
         }
@@ -349,7 +365,6 @@ export class LogootSRopes {
                 } else {
                     const prev = this.searchNode(pos - 1) as ResponseIntNode
                         // TODO: why non-null?
-
                     if (inPos.node.isAppendableBefore() &&
                             inPos.node.getIdBegin().hasPlaceBefore(
                                 prev.node.getIdEnd(), l.length)) {
@@ -467,7 +482,7 @@ export class LogootSRopes {
                     id = new IdentifierInterval(id.base, id.begin + 1,
                             id.end)
                 } else {
-                    return l
+                    break
                 }
             } else {
                 const node = path[path.length - 1] as RopesNodes // TODO: why?
@@ -493,6 +508,11 @@ export class LogootSRopes {
                 }
             }
         }
+
+        l.forEach((textDelete: TextDelete) => {
+          this.applyTextDelete(textDelete)
+        })
+
         return l
     }
 
