@@ -86,18 +86,27 @@ export class Identifier {
         console.assert(next instanceof Identifier, "next = ", next)
         console.assert(typeof length === "number", "length = ", length)
 
-        const max = length + this.last
         const base = this.base
-        const nextExtended = next.base.concat(next.last)
-        const minLength = Math.min(base.length, nextExtended.length)
 
-        let i = 0
-        while (i < minLength && base[i] === nextExtended[i]) {
-            i++
+        if (base.length > next.base.length) {
+          return true
+        } else {
+          const nextExtended = next.base.concat(next.last)
+          const minLength = Math.min(base.length, nextExtended.length)
+
+          let i = 0
+          while (i < minLength && base[i] === nextExtended[i]) {
+              i++
+          }
+
+          if (i !== minLength) {
+            // Bases differ
+            return true
+          } else {
+            const max = length + this.last
+            return nextExtended[i] >= max
+          }
         }
-
-        return i === minLength &&
-            (i >= nextExtended.length || nextExtended[i] >= max)
     }
 
     hasPlaceBefore (prev: Identifier, length: number): boolean {
