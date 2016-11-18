@@ -18,5 +18,8 @@ pids
 
 # Dev artifacts
 lib-src
+test
 *.map
 
+# Pack artifacts
+mute-structs-*.tgz
