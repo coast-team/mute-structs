@@ -20,7 +20,9 @@
 export {Identifier} from './identifier'
 export {IdentifierInterval} from './identifierinterval'
 
+export {LogootSBlock} from './logootsblock'
 export {LogootSRopes} from './logootsropes'
+export {RopesNodes} from './ropesnodes'
 
 export {LogootSAdd} from './logootsadd'
 export {LogootSDel} from './logootsdel'
@@ -28,4 +30,3 @@ export {TextDelete} from './textdelete'
 export {TextInsert} from './textinsert'
 
 export {insert, del, occurrences} from './textutils'
-
