@@ -91,7 +91,7 @@ export class RopesNodes {
 
             if (block !== null &&
                 block.id.begin <= offset &&
-                (block.id.end - block.id.begin) >= length) {
+                (block.id.end - block.id.begin) >= length - 1) {
 
                 return new RopesNodes(block, offset, length, left, right)
             } else {
@@ -277,4 +277,3 @@ export class RopesNodes {
     }
 
 }
-
