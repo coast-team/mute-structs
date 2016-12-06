@@ -34,9 +34,9 @@ export class LogootSDel {
     * @constructor
     * @param {IdentifierInterval[]} lid - the list of identifier that localise the deletion in the logoot sequence.
     */
-    constructor(lid: any[]) {
+    constructor(lid: IdentifierInterval[]) {
         console.assert(lid instanceof Array &&
-        lid.every((item: any): boolean =>
+        lid.every((item: IdentifierInterval): boolean =>
             typeof item === "object" && item.hasOwnProperty("base") &&
             item.hasOwnProperty("begin") && item.hasOwnProperty("end")
         ), "lid = ", lid)
@@ -82,4 +82,3 @@ export class LogootSDel {
     }
 
 }
-

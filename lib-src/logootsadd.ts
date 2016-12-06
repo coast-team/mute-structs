@@ -29,10 +29,10 @@ export class LogootSAdd {
 
     /**
     * @constructor
-    * @param {IdentifierInterval} id - the identifier that localise the insertion in the logoot sequence.
+    * @param {Identifier} id - the identifier that localise the insertion in the logoot sequence.
     * @param {string} l - the content of the block to be inserted.
     */
-    constructor (id: {base: number[], last: number}, l: string) {
+    constructor (id: Identifier, l: string) {
         // is is structurally an Identifier
         console.assert(typeof id === "object" &&
         id.base instanceof Array &&
@@ -74,4 +74,3 @@ export class LogootSAdd {
     }
 
 }
-
