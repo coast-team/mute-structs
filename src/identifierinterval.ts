@@ -81,6 +81,12 @@ export class IdentifierInterval {
         return this.getBaseId(this.end)
     }
 
+    digest (): number {
+        // '| 0' converts to 32bits integer
+        const baseDigest = this.base.reduce((prev, v) => (prev * 17 + v) | 0, 0)
+        return ((this.begin * 17 + this.end) * 17 + baseDigest) | 0
+    }
+
     toString (): string {
         return 'Id[' + this.base.join(",") + ', ' +
                 this.begin + ' .. ' + this.end + ']'

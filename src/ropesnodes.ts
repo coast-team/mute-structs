@@ -286,6 +286,17 @@ export class RopesNodes {
                 leftToString.replace(/(\t+)/g, "\t$1")
     }
 
+    /**
+     * @return linear representation
+     */
+    toList (): IdentifierInterval[] {
+        const idi = new IdentifierInterval(this.block.id.base,
+            this.offset, this.maxOffset())
+        const leftList =  (this.left !== null) ? this.left.toList() : []
+        const rightList = (this.right !== null) ? this.right.toList() : []
+        return leftList.concat(idi, rightList)
+    }
+
     getIdentifierInterval (): IdentifierInterval {
         return new IdentifierInterval(this.block.id.base,
             this.offset, this.maxOffset())
