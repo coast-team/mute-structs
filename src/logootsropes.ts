@@ -744,19 +744,18 @@ export class LogootSRopes {
         }
     }
 
+    /**
+     * @return tree digest
+     */
     digest (): number {
-        let result
+        let result = 0
         const root = this.root
         if (root !== null) {
-            const linearRpr = (root.toString() + "\n")
-                .replace(/\t+|(?:#\n)/g, "") + "\n"
-            result = 11
-            for (let i = 0; i < linearRpr.length; i++) {
-                result = (31 * result) + linearRpr.charCodeAt(i)
-                result = result | 0 // Convert to 32bits integer
+            const linearRpr = root.toList()
+            for (let idi of linearRpr) {
+                result = (result * 17 + idi.digest()) | 0
+                    // Convert to 32bits integer
             }
-        }  else {
-            result = 0
         }
         return result
     }
