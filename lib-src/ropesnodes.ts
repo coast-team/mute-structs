@@ -121,8 +121,18 @@ export class RopesNodes {
 
     block: LogootSBlock
 
+    /**
+     * The current position of the beginning of the block
+     *
+     * Should always ensure that block.id.begin <= offset <= block.id.end
+     */
     offset: number
 
+    /**
+     * The current length of the block
+     *
+     * Should always ensure that length <= to block.id.end - block.id.begin + 1
+     */
     length: number
 
     sizeNodeAndChildren: number
@@ -162,12 +172,23 @@ export class RopesNodes {
         return this.getIdBegin()
     }
 
+    /**
+     * Delete a interval of identifiers belonging to this node
+     * Reduces the node's {@link RopesNodes#length} and/or shifts its {@link RopesNodes#offset}
+     * May also trigger a split of the current node if the deletion cuts it in two parts
+     *
+     * @param {number} begin The start of the interval to delete
+     * @param {number} end The end of the interval to delete
+     * @returns {RopesNodes | null} The resulting block if a split occured, null otherwise
+     */
     deleteOffsets (begin: number, end: number): RopesNodes | null {
         console.assert(typeof begin === "number" && Number.isInteger(begin),
             "begin = " + begin)
         console.assert(typeof end === "number" && Number.isInteger(end),
             "end = " + end)
-        console.assert(begin <= end, "" + begin, " <= " + end)
+        console.assert(begin <= end, "begin <= end: " + begin, " <= " + end)
+        console.assert(this.block.id.begin <= begin, "this.block.id.begin <= to begin: " + this.block.id.begin, " <= " + begin)
+        console.assert(end <= this.block.id.end, "end <= this.block.id.end: " + end, " <= " + this.block.id.end)
 
         const sizeToDelete = end - begin + 1
         this.block.delBlock(begin, end, sizeToDelete)
