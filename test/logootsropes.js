@@ -96,6 +96,40 @@ test("idempotent-insert", (t) => {
     t.is(docA.digest(), docB.digest(), "docA.digest() = docB.digest()")
 })
 
+test("commutative-split", (t) => {
+    const replicaNumberA = 1
+    const docA = new LogootSRopes(replicaNumberA)
+    const replicaNumberB = 2
+    const docB = new LogootSRopes(replicaNumberB)
+
+    const a1 = docA.insertLocal(0, "hello world")
+    const a2 = docA.insertLocal(5, "SPLIT")
+
+    a2.execute(docB)
+    a1.execute(docB)
+
+    t.is(docA.str, docB.str, "docA.str = docB.str")
+    t.is(docA.digest(), docB.digest(), "docA.digest() = docB.digest()")
+})
+
+test("commutative-split-deletion", (t) => {
+    const replicaNumberA = 1
+    const docA = new LogootSRopes(replicaNumberA)
+    const replicaNumberB = 2
+    const docB = new LogootSRopes(replicaNumberB)
+
+    const a1 = docA.insertLocal(0, "hello world")
+    const a2 = docA.insertLocal(5, "SPLIT")
+    const a3 = docA.delLocal(5, 4+"SPLIT".length)
+
+    a2.execute(docB)
+    a3.execute(docB)
+    a1.execute(docB)
+
+    t.is(docA.str, docB.str, "docA.str = docB.str")
+    t.is(docA.digest(), docB.digest(), "docA.digest() = docB.digest()")
+})
+
 test("commutative-deletion", (t) => {
     const replicaNumberA = 1
     const docA = new LogootSRopes(replicaNumberA)
