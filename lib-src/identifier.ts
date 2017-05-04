@@ -78,6 +78,17 @@ export class Identifier {
         }
     }
 
+    /**
+     * Check if the identifier's {@link Identifier#base} is equals to another identifier's one
+     *
+     * @param {Identifier} aOther The other identifier
+     * @returns {boolean} Are the bases equals
+     */
+    equalsBase (aOther: Identifier): boolean {
+      return this.base.length === aOther.base.length
+        && this.base.every((value, index) => aOther.base[index] === value)
+    }
+
     toString (): string {
         return "Id[" + this.base.concat(this.last).join(", ") + ']'
     }
