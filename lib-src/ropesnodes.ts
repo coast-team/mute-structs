@@ -190,21 +190,31 @@ export class RopesNodes {
         console.assert(this.block.id.begin <= begin, "this.block.id.begin <= to begin: " + this.block.id.begin, " <= " + begin)
         console.assert(end <= this.block.id.end, "end <= this.block.id.end: " + end, " <= " + this.block.id.end)
 
-        const sizeToDelete = end - begin + 1
-        this.block.delBlock(begin, end, sizeToDelete)
-
         let ret: RopesNodes | null = null
-        if (sizeToDelete === this.length) {
-            this.length = 0
-        } else if (end === this.maxOffset()) {
-            this.length = begin - this.offset
-        } else if (begin === this.offset) {
-            this.length = this.maxOffset() - end
-            this.offset = end + 1
-        } else {
-            ret = this.split(end - this.offset + 1, null)
-            this.length = begin - this.offset
+
+        // Some identifiers may have already been deleted by a previous operation
+        // Need to update the range of the deletion accordingly
+        // NOTE: actualEnd can be < to actualBegin if all the range has previously been deleted
+        const actualBegin: number = Math.max(this.offset, begin)
+        const actualEnd: number = Math.min(this.maxOffset(), end)
+
+        if (actualBegin <= actualEnd) {
+          const sizeToDelete = actualEnd - actualBegin + 1
+          this.block.delBlock(actualBegin, actualEnd, sizeToDelete)
+
+          if (sizeToDelete !== this.length) {
+            if (actualBegin === this.offset) {
+              // Deleting the beginning of the block
+              this.offset = actualEnd + 1
+            } else if (actualEnd !== this.maxOffset()) {
+              // Deleting the middle of the block
+              ret = this.split(actualEnd - this.offset + 1, null)
+            }
+          }
+
+          this.length = this.length - sizeToDelete
         }
+
         return ret
     }
 
