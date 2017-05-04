@@ -428,9 +428,15 @@ export class LogootSRopes {
                 i = i + node.leftSubtreeSize() + node.length
                 node = node.right
             } else {
-                return i + node.leftSubtreeSize()
+                if (id.equalsBase(node.getIdBegin())) {
+                  return i + node.leftSubtreeSize()
+                } else {
+                  // Could not find the identifier, stop the search
+                  node = null
+                }
             }
         }
+        // FIXME: Clear path?
         return -1
     }
 
