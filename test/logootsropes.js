@@ -67,7 +67,7 @@ test("insert-should-prepend-to-splitting-block", (t) => {
   t.deepEqual(event2.id.base, event3.id.base, "event2.id.base = event3.id.base")
 })
 
-test("commutative-insert", (t) => {
+test("commutative-insert1-insert2", (t) => {
     const replicaNumberA = 1
     const docA = new LogootSRopes(replicaNumberA)
     const replicaNumberB = 2
@@ -96,17 +96,42 @@ test("idempotent-insert", (t) => {
     t.is(docA.digest(), docB.digest(), "docA.digest() = docB.digest()")
 })
 
-test("commutative-split", (t) => {
+test("idempotent-insert-after-split", (t) => {
     const replicaNumberA = 1
     const docA = new LogootSRopes(replicaNumberA)
     const replicaNumberB = 2
     const docB = new LogootSRopes(replicaNumberB)
 
     const a1 = docA.insertLocal(0, "hello world")
-    const a2 = docA.insertLocal(5, "SPLIT")
-
-    a2.execute(docB)
     a1.execute(docB)
+
+    const a2 = docB.insertLocal(5, "SPLIT")
+    a2.execute(docA)
+
+    const a31 = docA.delLocal(5, 5+"SPLIT".length)
+    const a32 = docB.insertLocal(6, "toto")
+
+    a31.execute(docB)
+    a32.execute(docA)
+
+    // Replay the first insertion
+    a1.execute(docB)
+
+    t.is(docA.str, docB.str, "docA.str = docB.str")
+    t.is(docA.digest(), docB.digest(), "docA.digest() = docB.digest()")
+})
+
+test("commutative-insert-split", (t) => {
+    const replicaNumberA = 1
+    const docA = new LogootSRopes(replicaNumberA)
+    const replicaNumberB = 2
+    const docB = new LogootSRopes(replicaNumberB)
+
+    const insertOp = docA.insertLocal(0, "hello world")
+    const splitOp = docA.insertLocal(5, "SPLIT")
+
+    splitOp.execute(docB)
+    insertOp.execute(docB)
 
     t.is(docA.str, docB.str, "docA.str = docB.str")
     t.is(docA.digest(), docB.digest(), "docA.digest() = docB.digest()")
@@ -118,19 +143,72 @@ test("commutative-split-deletion", (t) => {
     const replicaNumberB = 2
     const docB = new LogootSRopes(replicaNumberB)
 
-    const a1 = docA.insertLocal(0, "hello world")
-    const a2 = docA.insertLocal(5, "SPLIT")
-    const a3 = docA.delLocal(5, 4+"SPLIT".length)
+    const insertOp = docA.insertLocal(0, "hello world")
+    const splitOp = docA.insertLocal(5, "SPLIT")
+    const deleteOp = docA.delLocal(5, 4+"SPLIT".length)
 
-    a2.execute(docB)
-    a3.execute(docB)
-    a1.execute(docB)
+    splitOp.execute(docB)
+    deleteOp.execute(docB)
+    insertOp.execute(docB)
 
     t.is(docA.str, docB.str, "docA.str = docB.str")
     t.is(docA.digest(), docB.digest(), "docA.digest() = docB.digest()")
 })
 
-test("commutative-deletion", (t) => {
+test("commutative-insert-append", (t) => {
+    const replicaNumberA = 1
+    const docA = new LogootSRopes(replicaNumberA)
+    const replicaNumberB = 2
+    const docB = new LogootSRopes(replicaNumberB)
+
+    const insertOp = docA.insertLocal(0, "hello world")
+    const appendOp = docA.insertLocal(11, "APPEND")
+
+    appendOp.execute(docB)
+    insertOp.execute(docB)
+
+    t.is(docA.str, docB.str, "docA.str = docB.str")
+    t.is(docA.digest(), docB.digest(), "docA.digest() = docB.digest()")
+})
+
+test("commutative-append1-append2", (t) => {
+    const replicaNumberA = 1
+    const docA = new LogootSRopes(replicaNumberA)
+    const replicaNumberB = 2
+    const docB = new LogootSRopes(replicaNumberB)
+
+    const insertOp = docA.insertLocal(0, "hello world")
+    const appendOp1 = docA.insertLocal(11, "1")
+    const appendOp2 = docA.insertLocal(12, "2")
+
+    insertOp.execute(docB)
+    appendOp2.execute(docB)
+    appendOp1.execute(docB)
+
+    t.is(docA.str, docB.str, "docA.str = docB.str")
+    t.is(docA.digest(), docB.digest(), "docA.digest() = docB.digest()")
+})
+
+test("commutative-append-split", (t) => {
+  const replicaNumberA = 1
+  const docA = new LogootSRopes(replicaNumberA)
+  const replicaNumberB = 2
+  const docB = new LogootSRopes(replicaNumberB)
+
+  const event1 = docA.insertLocal(0, "hello")
+  const event2 = docA.insertLocal(5, " world")
+  const event3 = docA.insertLocal(7, "SPLIT")
+
+  event1.execute(docB)
+  event3.execute(docB)
+  event2.execute(docB)
+
+  t.is(docA.str, docB.str, 'docA.str = docB.str')
+  t.is(docA.digest(), docB.digest(), "docA.digest() = docB.digest()")
+})
+
+
+test("commutative-deletion1-deletion2", (t) => {
     const replicaNumberA = 1
     const docA = new LogootSRopes(replicaNumberA)
     const replicaNumberB = 2
@@ -144,6 +222,7 @@ test("commutative-deletion", (t) => {
     const a2TxtOps = a2.execute(docB)
     const b1TxtOps = b1.execute(docA)
 
+    t.is(docA.str, docB.str, 'docA.str = docB.str')
     t.is(docA.digest(), docB.digest(), "docA.digest() = docB.digest()")
 })
 
