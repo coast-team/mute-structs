@@ -124,6 +124,15 @@ export class LogootSRopes {
 
     addBlockFrom (str: string, idi: IdentifierInterval,
             from: RopesNodes, startOffset: number): TextInsert[] {
+        const result: TextInsert[] = this.addBlockFromRec(str, idi, from, startOffset)
+        result.forEach((textInsert: TextInsert) => {
+          this.applyTextInsert(textInsert)
+        })
+        return result
+    }
+
+    addBlockFromRec (str: string, idi: IdentifierInterval,
+            from: RopesNodes, startOffset: number): TextInsert[] {
         const path: RopesNodes[] = []
         const result: TextInsert[] = []
         let con = true
@@ -182,7 +191,7 @@ export class LogootSRopes {
                         result.push(new TextInsert(i, ls))
                     } else {
                         Array.prototype.push.apply(result,
-                            this.addBlockFrom(ls, idi1, from.left, i))
+                            this.addBlockFromRec(ls, idi1, from.left, i))
                     }
 
                     // i=i+ls.size()
@@ -196,7 +205,7 @@ export class LogootSRopes {
                         result.push(new TextInsert(i, ls))
                     } else {
                         Array.prototype.push.apply(result,
-                            this.addBlockFrom(ls, idi1, from.right, i))
+                            this.addBlockFromRec(ls, idi1, from.right, i))
                     }
                     con = false
                     break
@@ -266,9 +275,6 @@ export class LogootSRopes {
             }
         }
         this.balance(path)
-        result.forEach((textInsert: TextInsert) => {
-          this.applyTextInsert(textInsert)
-        })
         return result
     }
 
