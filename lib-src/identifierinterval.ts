@@ -29,7 +29,7 @@ export class IdentifierInterval {
             "begin = ", begin)
         console.assert(typeof end === "number" && Number.isInteger(end),
             "end = ", end)
-        console.assert(begin <= end, "" + begin + " <= ", end)
+        console.assert(begin <= end, "begin <= end: " + begin + " <= ", end)
 
         this.base = base
         this.begin = begin
@@ -87,4 +87,3 @@ export class IdentifierInterval {
     }
 
 }
-

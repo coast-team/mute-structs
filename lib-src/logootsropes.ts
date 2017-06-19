@@ -122,6 +122,14 @@ export class LogootSRopes {
         return result
     }
 
+    /**
+     * Add a interval of identifiers and its corresponding string to the model
+     *
+     * @param {string} str The inserted string
+     * @param {IdentifierInterval} idi The corresponding interval of identifiers
+     * @param {RopesNodes} from The starting point of the search
+     * @param {number} startOffset ???
+     **/
     addBlockFrom (str: string, idi: IdentifierInterval,
             from: RopesNodes, startOffset: number): TextInsert[] {
         const result: TextInsert[] = this.addBlockFromRec(str, idi, from, startOffset)
@@ -143,6 +151,8 @@ export class LogootSRopes {
                     from.getIdentifierInterval())
             let split
 
+            // B1 is the block we are adding
+            // B2 is the block to which we are comparing
             switch (ihi.compareBase()) {
                 case IdentifierIteratorResults.B1_AFTER_B2: {
                     if (from.right === null) {
@@ -490,14 +500,17 @@ export class LogootSRopes {
             const path: RopesNodes[] = []
             i = this.searchPos(id.getBeginId(), path)
             if (i === -1) {
+                // Could not find the first identifier from the interval
                 if (id.begin < id.end) {
+                    // Shifting the interval and resuming the search
                     id = new IdentifierInterval(id.base, id.begin + 1,
                             id.end)
                 } else {
                     break
                 }
             } else {
-                const node = path[path.length - 1] as RopesNodes // TODO: why?
+                // Was able to find the position of the identifier
+                const node = path[path.length - 1] as RopesNodes // Retrieving the node containing the identifier
                 const end = Math.min(id.end, node.maxOffset())
                 const pos = i + id.begin - node.offset
                 const length = end - id.begin + 1
@@ -510,12 +523,14 @@ export class LogootSRopes {
                     path.push(t)
                     this.balance(path)
                 } else {
+                    // TODO: Check second argument
                     this.ascendentUpdate(path, id.begin - end - 1)
                 }
 
                 if (end === id.end) {
                     break
                 } else {
+                    // TODO: Check if still valid
                     id = new IdentifierInterval(id.base, end, id.end)
                 }
             }
