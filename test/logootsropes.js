@@ -205,7 +205,7 @@ test.failing("commutative-append1-append2", (t) => {
     t.is(docA.digest(), docB.digest(), "docA.digest() = docB.digest()")
 })
 
-test.failing("commutative-insert-append-split-1", (t) => {
+test("commutative-insert-append-split-1", (t) => {
   const replicaNumberA = 1
   const docA = new LogootSRopes(replicaNumberA)
 

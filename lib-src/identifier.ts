@@ -186,7 +186,7 @@ export class Identifier {
 
         if (i === minLength && i < nextExtended.length) {
             // base is a prefix of nextBase
-            return Math.max(nextExtended[i], max)
+            return Math.min(nextExtended[i], max)
         } else {
             return max
         }
