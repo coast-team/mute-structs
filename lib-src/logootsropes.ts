@@ -251,7 +251,7 @@ export class LogootSRopes {
                 case IdentifierIteratorResults.B2_CONCAT_B1: {
                     // concat at end
                     if (from.right !== null) {
-                        split = from.getIdEnd().maxOffsetBeforeNex(
+                        split = from.getIdEnd().maxOffsetBeforeNext(
                                 from.right.getIdBegin(), idi.end)
                         const l = str.substr(0, split + 1 - idi.begin)
                         i = i + from.leftSubtreeSize() + from.length

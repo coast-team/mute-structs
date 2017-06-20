@@ -170,7 +170,7 @@ export class Identifier {
         }
     }
 
-    maxOffsetBeforeNex (next: Identifier, max: number): number {
+    maxOffsetBeforeNext (next: Identifier, max: number): number {
         console.assert(next instanceof Identifier, "next = ", next)
         console.assert(typeof max === "number" && Number.isInteger(max),
             "max = ", max)
