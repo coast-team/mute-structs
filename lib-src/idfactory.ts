@@ -17,23 +17,13 @@
  *  along with Mute-structs.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {Identifier, INT_32_MIN_VALUE, INT_32_MAX_VALUE} from './identifier'
 import {InfiniteString} from './infinitestring'
-import {Identifier} from './identifier'
 
 
 export function isMine (replica: number): (b: number[]) => boolean {
     return (base: number[]) => base[base.length - 2] === replica
 }
-
-/**
- * Holds the minimum value an integer can have.
- */
-const INT_32_MIN_VALUE = - 0x80000000
-
-/**
- * Holds the maximum value an integer can have.
- */
-const INT_32_MAX_VALUE = 0x7fffffff
 
 export function createBetweenPosition (id1: Identifier | null,
         id2: Identifier | null, replicaNumber: number, clock: number): number[] {
@@ -51,7 +41,7 @@ export function createBetweenPosition (id1: Identifier | null,
         const b1 = s1.next()
         const b2 = s2.next()
         if (b2 - b1 > 2) {
-            const f = (Math.random() * (b2 - b1 - 2)) + b1 + 1
+            const f = (Math.random() * (b2 - b1 - 2)) + b1 + 1 // Generate a random number ∈ ]b1, b2[
             const i = f | 0 // Truncate the float in order to get a 32bits int
             sb.push(i)
             break
@@ -67,4 +57,3 @@ export function createBetweenPosition (id1: Identifier | null,
         "replica = " + replicaNumber + " base = ", sb)
     return sb
 }
-

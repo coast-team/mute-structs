@@ -17,6 +17,16 @@
  *  along with Mute-structs.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+  * Holds the minimum value an integer can have.
+  */
+export const INT_32_MIN_VALUE = - 0x80000000
+
+/**
+ * Holds the maximum value an integer can have.
+ */
+export const INT_32_MAX_VALUE = 0x7fffffff
+
 export class Identifier {
 
 // Creation
@@ -24,8 +34,12 @@ export class Identifier {
         console.assert(base instanceof Array, "base = ", base)
         console.assert(base.every((a: any) =>
             typeof a === "number" && Number.isInteger(a)),
-            "Every items are integers. base = ", base)
+            "Every item is an integer. base = ", base)
+        console.assert(base.every((a: number) => a >= INT_32_MIN_VALUE && a <= INT_32_MAX_VALUE),
+            "Every item ∈ [INT_32_MIN_VALUE, INT_32_MAX_VALUE]")
         console.assert(typeof u === "number" && Number.isInteger(u), "u = ", u)
+        console.assert(u > INT_32_MIN_VALUE && u <= INT_32_MAX_VALUE,
+            "u ∈ ]INT_32_MIN_VALUE, INT_32_MAX_VALUE]")
 
         this.base = base
         this.last = u
@@ -45,8 +59,14 @@ export class Identifier {
     }
 
 // Access
+    /**
+     * Each value of the base is contained in [INT_32_MIN_VALUE, INT_32_MAX_VALUE]
+     */
     readonly base: number[]
 
+    /**
+     * The value of last is contained in ]INT_32_MIN_VALUE, INT_32_MAX_VALUE]
+     */
     readonly last: number
 
     compareTo (aOther: Identifier): -1 | 0 | 1 {
