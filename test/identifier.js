@@ -16,7 +16,7 @@
  */
 
 import test from "ava"
-import {Identifier} from "../lib/identifier.js"
+import {Identifier, INT_32_MIN_VALUE, INT_32_MAX_VALUE} from "../lib/identifier.js"
 
 test("from-plain-factory", (t) => {
     const plain = {
@@ -66,6 +66,14 @@ test("hasPlaceAfter-same-base", (t) => {
     t.false(id2.hasPlaceAfter(id1, 1))
 })
 
+test("hasPlaceAfter-max-last", (t) => {
+    const id1 = new Identifier([0, 0, 0], INT_32_MAX_VALUE - 1)
+    const id2 = new Identifier([1, 1, 0], 0)
+
+    t.true(id1.hasPlaceAfter(id2, 1))
+    t.false(id1.hasPlaceAfter(id2, 2))
+})
+
 test("hasPlaceBefore-same-base", (t) => {
     const id1 = new Identifier([], 0)
     const id2 = new Identifier([], 1)
@@ -78,3 +86,10 @@ test("hasPlaceBefore-same-base", (t) => {
     t.false(id2.hasPlaceBefore(id1, 1))
 })
 
+test("hasPlaceBefore-min-last", (t) => {
+    const id1 = new Identifier([0, 0, 0], 0)
+    const id2 = new Identifier([1, 0, 0], INT_32_MIN_VALUE + 2)
+
+    t.true(id2.hasPlaceBefore(id1, 1))
+    t.false(id2.hasPlaceBefore(id1, 2))
+})

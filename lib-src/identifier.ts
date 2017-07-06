@@ -119,7 +119,11 @@ export class Identifier {
 
         const base = this.base
 
-        if (base.length > next.base.length) {
+        if (this.last > INT_32_MAX_VALUE - length) {
+          // last should never be greater than INT_32_MAX_VALUE because of its constraints
+          return false
+        }
+        else if (base.length > next.base.length) {
           return true
         } else {
           const nextExtended = next.base.concat(next.last)
@@ -147,7 +151,11 @@ export class Identifier {
 
         const base = this.base
 
-        if (base.length > prev.base.length) {
+        if (this.last <= INT_32_MIN_VALUE + length) {
+          // last should never be less than or equal to INT_32_MIN_VALUE because of its constraints
+          return false
+        }
+        else if (base.length > prev.base.length) {
           return true
         } else {
           const prevExtended = prev.base.concat(prev.last)
