@@ -35,6 +35,25 @@ test("basic-insert-del-string", (t) => {
     t.is(docA.digest(), docB.digest(), "docA.digest() = docB.digest()")
 })
 
+test("deletion-over-several-identifiers", (t) => {
+  const replicaNumberA = 1
+  const docA = new LogootSRopes(replicaNumberA)
+  const replicaNumberB = 2
+  const docB = new LogootSRopes(replicaNumberB)
+
+  const insertOp1 = docA.insertLocal(0, "world")
+  insertOp1.execute(docB)
+
+  const insertOp2 = docB.insertLocal(0, "hello ")
+  insertOp2.execute(docA)
+
+  const deleteOp = docA.delLocal(4, 3+"lo wor".length)
+  deleteOp.execute(docB)
+
+  t.is(docA.str, docB.str, "docA.str = docB.str")
+  t.is(docA.digest(), docB.digest(), "docA.digest() = docB.digest()")
+})
+
 test("insert-should-append-to-splitting-block", (t) => {
   const replicaNumberA = 1
   const docA = new LogootSRopes(replicaNumberA)
