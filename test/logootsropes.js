@@ -167,6 +167,24 @@ test("commutative-insert-split", (t) => {
     t.is(docA.digest(), docB.digest(), "docA.digest() = docB.digest()")
 })
 
+test("commutative-deletion-split", (t) => {
+  const replicaNumberA = 1
+  const docA = new LogootSRopes(replicaNumberA)
+  const replicaNumberB = 2
+  const docB = new LogootSRopes(replicaNumberB)
+
+  const insertOp = docA.insertLocal(0, "hello world")
+  insertOp.execute(docB)
+
+  const deleteOp = docA.delLocal(4, 3+"o wor".length)
+  const splitOp = docB.insertLocal(5, "SPLIT")
+  splitOp.execute(docA)
+  deleteOp.execute(docB)
+
+  t.is(docA.str, docB.str, "docA.str = docB.str")
+  t.is(docA.digest(), docB.digest(), "docA.digest() = docB.digest()")
+})
+
 test.failing("commutative-split-deletion", (t) => {
     const replicaNumberA = 1
     const docA = new LogootSRopes(replicaNumberA)
