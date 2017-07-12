@@ -102,20 +102,15 @@ test("idempotent-insert-after-split", (t) => {
     const replicaNumberB = 2
     const docB = new LogootSRopes(replicaNumberB)
 
-    const a1 = docA.insertLocal(0, "hello world")
-    a1.execute(docB)
+    const insertOp1 = docA.insertLocal(0, "hello world")
+    insertOp1.execute(docB)
 
-    const a2 = docB.insertLocal(5, "SPLIT")
-    a2.execute(docA)
+    const insertOp2 = docB.insertLocal(5, "SPLIT")
+    insertOp2.execute(docA)
 
-    const a31 = docA.delLocal(5, 5+"SPLIT".length)
-    const a32 = docB.insertLocal(6, "toto")
+    insertOp1.execute(docB)
 
-    a31.execute(docB)
-    a32.execute(docA)
 
-    // Replay the first insertion
-    a1.execute(docB)
 
     t.is(docA.str, docB.str, "docA.str = docB.str")
     t.is(docA.digest(), docB.digest(), "docA.digest() = docB.digest()")
