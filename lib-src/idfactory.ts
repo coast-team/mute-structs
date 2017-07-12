@@ -46,7 +46,12 @@ export function createBetweenPosition (id1: Identifier | null,
             sb.push(i)
             break
         } else {
+            // Copy the whole tuple <random, replicaNumber, clock, offset>
             sb.push(b1)
+            for (let i = 0; i < 3; i++) {
+              sb.push(s1.next())
+              s2.next()
+            }
         }
     } while (true)
 
