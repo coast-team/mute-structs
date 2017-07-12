@@ -35,6 +35,25 @@ test("basic-insert-del-string", (t) => {
     t.is(docA.digest(), docB.digest(), "docA.digest() = docB.digest()")
 })
 
+test("nested-splits", (t) => {
+    const replicaNumberA = 1
+    const docA = new LogootSRopes(replicaNumberA)
+    const replicaNumberB = 2
+    const docB = new LogootSRopes(replicaNumberB)
+
+    const insertOp1 = docA.insertLocal(0, "hello world")
+    insertOp1.execute(docB)
+
+    const insertOp2 = docB.insertLocal(5, "SPLIT")
+    insertOp2.execute(docA)
+
+    const insertOp3 = docB.insertLocal(6, "split")
+    insertOp3.execute(docA)
+
+    t.is(docA.str, docB.str, "docA.str = docB.str")
+    t.is(docA.digest(), docB.digest(), "docA.digest() = docB.digest()")
+})
+
 test("deletion-over-several-identifiers", (t) => {
   const replicaNumberA = 1
   const docA = new LogootSRopes(replicaNumberA)
@@ -128,8 +147,6 @@ test("idempotent-insert-after-split", (t) => {
     insertOp2.execute(docA)
 
     insertOp1.execute(docB)
-
-
 
     t.is(docA.str, docB.str, "docA.str = docB.str")
     t.is(docA.digest(), docB.digest(), "docA.digest() = docB.digest()")
