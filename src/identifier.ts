@@ -17,6 +17,8 @@
  *  along with Mute-structs.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {Ordering} from './ordering'
+
 /**
   * Holds the minimum value an integer can have.
   */
@@ -69,7 +71,7 @@ export class Identifier {
      */
     readonly last: number
 
-    compareTo (aOther: Identifier): -1 | 0 | 1 {
+    compareTo (aOther: Identifier): Ordering {
         console.assert(aOther instanceof Identifier, "aOther = ", aOther)
 
         const extended = this.base.concat(this.last)
@@ -83,17 +85,17 @@ export class Identifier {
 
         if (i === minLength) {
             if (extended.length > minLength) {
-                return 1
+                return Ordering.Greater
             } else if (otherExtended.length > minLength) {
-                return -1
+                return Ordering.Less
             } else {
-                return 0
+                return Ordering.Equal
             }
         } else {
             if (extended[i] < otherExtended[i]) {
-                return -1
+                return Ordering.Less
             } else {
-                return 1
+                return Ordering.Greater
             }
         }
     }

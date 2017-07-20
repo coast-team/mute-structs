@@ -17,6 +17,7 @@
 
 import test from "ava"
 import {Identifier, INT_32_MIN_VALUE, INT_32_MAX_VALUE} from "../src/identifier"
+import {Ordering} from "../src/ordering"
 
 test("from-plain-factory", (t) => {
     const plain = {
@@ -59,9 +60,9 @@ test("compare-to-last", (t) => {
     const id2 = new Identifier([], 1)
     const id3 = new Identifier([], 9)
 
-    t.is(id1.compareTo(id1Twin), 0)
-    t.not(id1.compareTo(id2), -1)
-    t.not(id1.compareTo(id3), 1)
+    t.is(id1.compareTo(id1Twin), Ordering.Equal)
+    t.not(id1.compareTo(id2), Ordering.Less)
+    t.not(id1.compareTo(id3), Ordering.Greater)
 })
 
 test("compare-to-base", (t) => {
@@ -73,11 +74,11 @@ test("compare-to-base", (t) => {
     const id4 = new Identifier([1, 3], last)
     const id5 = new Identifier([1, 1], last)
 
-    t.is(id1.compareTo(id1Twin), 0)
-    t.not(id1.compareTo(id2), 1)
-    t.not(id1.compareTo(id3), -1)
-    t.not(id1.compareTo(id4), 1)
-    t.not(id1.compareTo(id5), -1)
+    t.is(id1.compareTo(id1Twin), Ordering.Equal)
+    t.not(id1.compareTo(id2), Ordering.Greater)
+    t.not(id1.compareTo(id3), Ordering.Less)
+    t.not(id1.compareTo(id4), Ordering.Greater)
+    t.not(id1.compareTo(id5), Ordering.Less)
 })
 
 test("hasPlaceAfter-same-base", (t) => {
