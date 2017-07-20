@@ -16,8 +16,8 @@
  */
 
 import test from "ava"
-import {LogootSRopes} from "../lib/logootsropes.js"
-import TextUtils from "../lib/textutils.js"
+import {LogootSRopes} from "../src/logootsropes.js"
+import * as TextUtils from "../src/textutils.js"
 
 test("basic-insert-del-string", (t) => {
     const replicaNumberA = 1
@@ -28,8 +28,8 @@ test("basic-insert-del-string", (t) => {
     const event1 = docA.insertLocal(0, "hello world")
     const event2 = docA.delLocal(6, 9)
 
-    const textop_seq1 = event1.execute(docB)
-    const textop_seq2 = event2.execute(docB)
+    event1.execute(docB)
+    event2.execute(docB)
 
     t.is(docA.str, docB.str, "docA.str = docB.str")
     t.is(docA.digest(), docB.digest(), "docA.digest() = docB.digest()")
@@ -66,7 +66,7 @@ test("deletion-over-several-identifiers", (t) => {
   const insertOp2 = docB.insertLocal(0, "hello ")
   insertOp2.execute(docA)
 
-  const deleteOp = docA.delLocal(4, 3+"lo wor".length)
+  const deleteOp = docA.delLocal(4, 3 + "lo wor".length)
   deleteOp.execute(docB)
 
   t.is(docA.str, docB.str, "docA.str = docB.str")
@@ -159,7 +159,7 @@ test.failing("commutative-insert-deletion", (t) => {
   const docB = new LogootSRopes(replicaNumberB)
 
   const insertOp = docA.insertLocal(0, "hello world")
-  const deleteOp = docA.delLocal(5, 5+" world".length)
+  const deleteOp = docA.delLocal(5, 5 + " world".length)
 
   deleteOp.execute(docB)
   insertOp.execute(docB)
@@ -193,7 +193,7 @@ test("commutative-deletion-split", (t) => {
   const insertOp = docA.insertLocal(0, "hello world")
   insertOp.execute(docB)
 
-  const deleteOp = docA.delLocal(4, 3+"o wor".length)
+  const deleteOp = docA.delLocal(4, 3 + "o wor".length)
   const splitOp = docB.insertLocal(5, "SPLIT")
   splitOp.execute(docA)
   deleteOp.execute(docB)
@@ -210,7 +210,7 @@ test.failing("commutative-split-deletion", (t) => {
 
     const insertOp = docA.insertLocal(0, "hello world")
     const splitOp = docA.insertLocal(5, "SPLIT")
-    const deleteOp = docA.delLocal(5, 4+"SPLIT".length)
+    const deleteOp = docA.delLocal(5, 4 + "SPLIT".length)
 
     splitOp.execute(docB)
     deleteOp.execute(docB)
