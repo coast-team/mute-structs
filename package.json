@@ -10,6 +10,7 @@
     "url": "https://github.com/coast-team/mute-structs"
   },
   "devDependencies": {
+    "@types/node": "^8.0.14",
     "ava": "^0.20.0",
     "tslint": "^3.15.1",
     "typescript": "^2.4.2"
