@@ -83,7 +83,7 @@ function everyLogsConvergeMacro(t, logFiles, expected) {
 	t.is(everyEqualsTo(actualStrings, expectedString), expected)
 }
 
-const ct3LogsPath = "../logs/logs-ct3"
+const ct3LogsPath = "logs/logs-ct3"
 const ct3LogsSet1 = [`${ct3LogsPath}/log-claudia-ct3.json`, `${ct3LogsPath}/log-long-ct3.json`]
 const ct3LogsSet2 = [`${ct3LogsPath}/log-le-ct3.json`, `${ct3LogsPath}/log-philippe-ct3.json`]
 const ct3LogsSet3 = [`${ct3LogsPath}/log-claudia-ct3.json`, `${ct3LogsPath}/log-philippe-ct3.json`]
@@ -92,7 +92,7 @@ test("convergent-logs-ct3-set-1", everyLogsConvergeMacro, ct3LogsSet1, true)
 test("convergent-logs-ct3-set-2", everyLogsConvergeMacro, ct3LogsSet2, true)
 test("divergent-logs-ct3-set-1", everyLogsConvergeMacro, ct3LogsSet3, false)
 
-const ct17LogsPath = "../logs/logs-ct17"
+const ct17LogsPath = "logs/logs-ct17"
 const ct17LogFile = "log-ct17-genius-shallow-program"
 const ct17Users = ["claudia", "gerald", "laurent", "philippe", "vinh"]
 const ct17LogsSet1 = ct17Users.map((user) => `${ct17LogsPath}/${ct17LogFile}-${user}.json`)

@@ -25,7 +25,8 @@ test("from-plain-factory", (t) => {
     }
     const id = Identifier.fromPlain(plain)
 
-    t.deepEqual(id, plain)
+    t.is(id.base, plain.base)
+    t.is(id.last, plain.last)
 })
 
 test("compare-to-last", (t) => {

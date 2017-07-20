@@ -26,7 +26,8 @@ test("from-plain-factory", (t) => {
     }
     const idi = IdentifierInterval.fromPlain(plain)
 
-    t.deepEqual(idi, plain)
+    t.is(idi.begin, plain.begin)
+    t.is(idi.end, plain.end)
 })
 
 test("get-base-id", (t) => {
@@ -62,4 +63,3 @@ test("get-begin-id", (t) => {
     t.is(id.last, upperBound)
     t.deepEqual(id.base, base)
 })
-
