@@ -16,7 +16,7 @@
  */
 
 import test from "ava"
-import {IdentifierInterval} from "../lib/identifierinterval.js"
+import {IdentifierInterval} from "../src/identifierinterval.js"
 
 test("from-plain-factory", (t) => {
     const plain = {
@@ -24,10 +24,15 @@ test("from-plain-factory", (t) => {
         begin: -5,
         end: 10,
     }
-    const idi = IdentifierInterval.fromPlain(plain)
+    const idi: IdentifierInterval | null = IdentifierInterval.fromPlain(plain)
 
-    t.is(idi.begin, plain.begin)
-    t.is(idi.end, plain.end)
+    if (idi === null) {
+      t.fail("The identifier interval should have been correctly instantiated")
+    } else {
+      t.is(idi.base, plain.base)
+      t.is(idi.begin, plain.begin)
+      t.is(idi.end, plain.end)
+    }
 })
 
 test("get-base-id", (t) => {
