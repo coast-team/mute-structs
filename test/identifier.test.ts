@@ -33,6 +33,16 @@ test("from-plain-factory", (t) => {
     }
 })
 
+test("from-plain-factory-wrong-property", (t) => {
+    const plain = {
+        base: [-1, 1, 8],
+        wrongProperty: 0,
+    }
+    const id: Identifier | null = Identifier.fromPlain(plain)
+
+    t.is(id, null)
+})
+
 test("compare-to-last", (t) => {
     const id1 = new Identifier([], 4)
     const id1Twin = new Identifier([], 4)
