@@ -214,7 +214,11 @@ export class Identifier {
 
         if (i === minLength && i < nextExtended.length) {
             // base is a prefix of nextBase
-            return Math.min(nextExtended[i], max)
+            if (base.length < next.base.length) {
+              // length of base is less than length of nextBase
+              return Math.min(nextExtended[i], max)
+            }
+            return Math.min(nextExtended[i] - 1, max)
         } else {
             return max
         }

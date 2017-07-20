@@ -94,7 +94,7 @@ test("hasPlaceBefore-min-last", (t) => {
     t.false(id2.hasPlaceBefore(id1, 2))
 })
 
-test.failing("maxOffsetBeforeNext-same-base", (t) => {
+test("maxOffsetBeforeNext-same-base", (t) => {
   const id1 = new Identifier([0, 0, 0], 3)
   const id2 = new Identifier([0, 0, 0], 5)
 
