@@ -16,8 +16,8 @@
  */
 
 import test from "ava"
-import {Identifier} from "../lib/identifier.js"
-import {createBetweenPosition} from "../lib/idfactory.js"
+import {Identifier} from "../src/identifier.js"
+import {createBetweenPosition} from "../src/idfactory.js"
 
 test("two-contiguous-bases", (t) => {
     const replicaNumber = 1
@@ -44,4 +44,3 @@ test("prefix-preservation", (t) => {
     t.true(prefix.length <= newBase.length)
     t.deepEqual(prefix, newBase.slice(0, prefix.length))
 })
-
