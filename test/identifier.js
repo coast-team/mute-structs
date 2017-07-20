@@ -93,3 +93,43 @@ test("hasPlaceBefore-min-last", (t) => {
     t.true(id2.hasPlaceBefore(id1, 1))
     t.false(id2.hasPlaceBefore(id1, 2))
 })
+
+test.failing("maxOffsetBeforeNext-same-base", (t) => {
+  const id1 = new Identifier([0, 0, 0], 3)
+  const id2 = new Identifier([0, 0, 0], 5)
+
+  const expected = 4
+  const actual = id1.maxOffsetBeforeNext(id2, 10)
+
+  t.is(actual, expected)
+})
+
+test("maxOffsetBeforeNext-base-is-prefix", (t) => {
+  const id1 = new Identifier([0, 0, 0], 3)
+  const id2 = new Identifier([0, 0, 0, 5, 0, 0, 1], 0)
+
+  const expected = 5
+  const actual = id1.maxOffsetBeforeNext(id2, 10)
+
+  t.is(actual, expected)
+})
+
+test("minOffsetAfterPrev-same-base", (t) => {
+  const id1 = new Identifier([0, 0, 0], 3)
+  const id2 = new Identifier([0, 0, 0], 5)
+
+  const expected = 4
+  const actual = id2.minOffsetAfterPrev(id1, 0)
+
+  t.is(actual, expected)
+})
+
+test("minOffsetAfterPrev-base-is-prefix", (t) => {
+  const id1 = new Identifier([0, 0, 0, 3, 0, 0, 1], 0)
+  const id2 = new Identifier([0, 0, 0], 5)
+
+  const expected = 4
+  const actual = id2.minOffsetAfterPrev(id1, 0)
+
+  t.is(actual, expected)
+})
