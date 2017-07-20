@@ -4,7 +4,7 @@
 node_modules
 
 # Generated code
-lib
+dist
 
 # Generated pack
 mute-structs-*.tgz

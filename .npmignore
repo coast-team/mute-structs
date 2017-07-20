@@ -17,7 +17,7 @@ pids
 .travis.yml
 
 # Dev artifacts
-lib-src
+src
 test
 *.map
 
