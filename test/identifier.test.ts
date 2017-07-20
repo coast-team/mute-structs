@@ -16,17 +16,21 @@
  */
 
 import test from "ava"
-import {Identifier, INT_32_MIN_VALUE, INT_32_MAX_VALUE} from "../lib/identifier.js"
+import {Identifier, INT_32_MIN_VALUE, INT_32_MAX_VALUE} from "../src/identifier"
 
 test("from-plain-factory", (t) => {
     const plain = {
         base: [-1, 1, 8],
         last: 0,
     }
-    const id = Identifier.fromPlain(plain)
+    const id: Identifier | null = Identifier.fromPlain(plain)
 
-    t.is(id.base, plain.base)
-    t.is(id.last, plain.last)
+    if (id === null) {
+      t.fail("The identifier should have been correctly instantiated")
+    } else {
+      t.is(id.base, plain.base)
+      t.is(id.last, plain.last)
+    }
 })
 
 test("compare-to-last", (t) => {
