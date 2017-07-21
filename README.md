@@ -1,9 +1,11 @@
 # MUTE-structs
 
-MUTE-structs is a Node.js module that provides an implementation of the
+[![Build Status](https://travis-ci.org/coast-team/mute-structs.svg?branch=master)](https://travis-ci.org/coast-team/mute-structs)
+
+MUTE-structs is a Typescript library that provides an implementation of the
 LogootSplit CRDT algorithm [[André et al., 2013]](#ref-1). It is an optimistic replication
 algorithm that ensures eventual consistency on replicated text sequences.
-It is used in a *real-time collaborative text editor* based on CRDT named MUTE.,
+It is used in a *real-time collaborative text editor* based on CRDT named MUTE.
 
 
 #### References
@@ -19,9 +21,8 @@ npm install mute-structs
 
 ## See also
 
-* [**mute-demo**](https://github.com/coast-team/mute-demo)
-* [**mute-client**](https://github.com/coast-team/mute-client)
-* [**mute-server**](https://github.com/coast-team/mute-server)
+* [**mute**](https://github.com/coast-team/mute)
+* [**mute-core**](https://github.com/coast-team/mute-core)
 
 ## License
 
