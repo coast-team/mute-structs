@@ -1,0 +1,12 @@
+language: node_js
+node_js:
+- latest
+- '7'
+- '6'
+deploy:
+  provider: npm
+  email: nicolasmatthieu57@gmail.com
+  api_key:
+    secure: qK6L6KMH6BHPsFeFz8wSSXHhgZNDUf7/ou7n4wnLSI/+Og+ztSD1RvLqj8IlAEnFTNPExYXLFd4n4cE6jbZUL/rpTV6bktG8srtJ2d0BHwIFv7cA4r0S1EsPG6E+xfCLP2NQxQ3kSmc/8ZYoLKSs9Hxi5vFXbfXeguQRkbcvGr8=
+  on:
+    tags: true
