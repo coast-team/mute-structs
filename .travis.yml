@@ -1,8 +1,8 @@
 language: node_js
 node_js:
-- latest
-- '7'
-- '6'
+- "node"
+- "7"
+- "6"
 deploy:
   provider: npm
   email: nicolasmatthieu57@gmail.com
