@@ -17,6 +17,7 @@
 
 import * as fs from "fs"
 import test from "ava"
+import {AssertContext} from "ava"
 import {LogootSAdd} from "../src/logootsadd.js"
 import {LogootSDel} from "../src/logootsdel.js"
 import {LogootSRopes} from "../src/logootsropes.js"
@@ -24,21 +25,21 @@ import {LogootSRopes} from "../src/logootsropes.js"
 /**
  * Check if every element of the array provided is equals to the expected value
  *
- * @param {any[]} inputs - An array
+ * @param {T[]} inputs - An array
  * @param {any} expected - The expected value of each element
  */
-function everyEqualsTo(inputs, expected): boolean {
+function everyEqualsTo<T>(inputs: T[], expected: T): boolean {
   return inputs.every((input) => input === expected)
 }
 
 /**
  * Macro to check if all logs from a provided set converge
  *
- * @param {any} t - The test tool, provided by Ava
+ * @param {AssertContext} t - The test tool, provided by Ava
  * @param {string[]} logFiles - The set of files containing the logs to compare
  * @param {boolean} expected - Should the logs converge or not
  */
-function everyLogsConvergeMacro(t, logFiles, expected): void {
+function everyLogsConvergeMacro(t: AssertContext, logFiles: string[], expected: boolean): void {
   const logs: (LogootSAdd | LogootSDel)[][] = []
 
   // Retrieve operation logs from files
