@@ -13,12 +13,15 @@ pids
 
 # Dev configs
 .editorconfig
+.eslintrc.json
 .gitattributes
 .travis.yml
+tslint.json
 
 # Dev artifacts
-src
+/src
 test
+tsconfig.json
 *.map
 
 # Pack artifacts
