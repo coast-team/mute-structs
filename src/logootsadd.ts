@@ -30,26 +30,26 @@ export class LogootSAdd {
     /**
     * @constructor
     * @param {Identifier} id - the identifier that localise the insertion in the logoot sequence.
-    * @param {string} l - the content of the block to be inserted.
+    * @param {string} content - the content of the block to be inserted.
     */
-    constructor (id: Identifier, l: string) {
+    constructor (id: Identifier, content: string) {
         // is is structurally an Identifier
         console.assert(typeof id === "object" &&
         id.base instanceof Array &&
         typeof id.last === "number" && Number.isInteger(id.last), "id = ", id)
-        console.assert(typeof l === "string", "l = ", l)
+        console.assert(typeof content === "string", "content = ", content)
 
         this.id = Identifier.fromPlain(id) as Identifier // precondition
-        this.l = l
+        this.content = content
     }
 
-    static fromPlain (o: {id?: any, l?: any}): LogootSAdd | null {
+    static fromPlain (o: {id?: any, content?: any}): LogootSAdd | null {
         const plainId = o.id
-        const l = o.l
-        if (plainId instanceof Object && typeof l === "string") {
+        const content = o.content
+        if (plainId instanceof Object && typeof content === "string") {
             const id = Identifier.fromPlain(plainId)
             if (id !== null) {
-                return new LogootSAdd(id, l)
+                return new LogootSAdd(id, content)
             } else {
                 return null
             }
@@ -60,7 +60,7 @@ export class LogootSAdd {
 
     readonly id: Identifier
 
-    readonly l: string
+    readonly content: string
 
     /**
     * Apply the current insert operation to a LogootSplit document.
@@ -70,7 +70,7 @@ export class LogootSAdd {
     execute (doc: LogootSRopes): TextInsert[] {
         console.assert(doc instanceof LogootSRopes, "doc = ", doc)
 
-        return doc.addBlock(this.l, this.id)
+        return doc.addBlock(this.content, this.id)
     }
 
 }
