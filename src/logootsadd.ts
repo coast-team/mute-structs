@@ -33,13 +33,9 @@ export class LogootSAdd {
     * @param {string} content - the content of the block to be inserted.
     */
     constructor (id: Identifier, content: string) {
-        // is is structurally an Identifier
-        console.assert(typeof id === "object" &&
-        id.base instanceof Array &&
-        typeof id.last === "number" && Number.isInteger(id.last), "id = ", id)
-        console.assert(typeof content === "string", "content = ", content)
+        console.assert(content.length > 0, "content must not be empty")
 
-        this.id = Identifier.fromPlain(id) as Identifier // precondition
+        this.id = id
         this.content = content
     }
 
@@ -47,7 +43,7 @@ export class LogootSAdd {
         if (typeof o === "object" && o !== null) {
             const plainId: SafeAny<Identifier> = o.id
             const content: SafeAny<string> = o.content
-            if (typeof content === "string") {
+            if (typeof content === "string" && content.length > 0) {
                 const id: Identifier | null = Identifier.fromPlain(plainId)
                 if (id !== null) {
                     return new LogootSAdd(id, content)
