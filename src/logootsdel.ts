@@ -35,36 +35,33 @@ export class LogootSDel {
     * @param {IdentifierInterval[]} lid - the list of identifier that localise the deletion in the logoot sequence.
     */
     constructor(lid: IdentifierInterval[]) {
-        console.assert(lid instanceof Array &&
-        lid.every((item: IdentifierInterval): boolean =>
-            typeof item === "object" && item.hasOwnProperty("base") &&
-            item.hasOwnProperty("begin") && item.hasOwnProperty("end")
-        ), "lid = ", lid)
+        console.assert(lid.length > 0, "lid must not be empty")
 
-        this.lid = lid.map(IdentifierInterval.fromPlain) as IdentifierInterval[]
-            // ASSERT: precondition
+        this.lid = lid
     }
 
-    static fromPlain (o: {lid?: any}): LogootSDel | null {
-        const plainLid = o.lid
-        if (plainLid instanceof Array) {
-            const lid = plainLid.map((a: any): IdentifierInterval | null => {
-                if (a instanceof Object) {
-                    return IdentifierInterval.fromPlain(a)
-                } else {
-                    return null
+    static fromPlain (o: SafeAny<LogootSDel>): LogootSDel | null {
+        if (typeof o === "object" && o !== null) {
+            const plainLid: SafeAny<IdentifierInterval[]> = o.lid
+            if (plainLid instanceof Array && plainLid.length > 0) {
+                let isOk = true
+                let i = 0
+                const lid: IdentifierInterval[] = []
+                while (isOk && i < plainLid.length) {
+                    const idi: IdentifierInterval | null = IdentifierInterval.fromPlain(plainLid[i])
+                    if (idi !== null) {
+                      lid.push(idi)
+                    } else {
+                      isOk = false
+                    }
+                    i++
                 }
-            })
-
-            if (lid.every((a: IdentifierInterval | null): boolean => a !== null)) {
-                return new LogootSDel(lid as IdentifierInterval[])
-                    // ASSERT: if condition
-            } else {
-                return null
+                if (isOk) {
+                    return new LogootSDel(lid)
+                }
             }
-        } else {
-            return null
         }
+        return null
     }
 
     readonly lid: IdentifierInterval[]
