@@ -46,18 +46,40 @@ function everyLogsConvergeMacro(t: AssertContext, logFiles: string[], expected: 
   logFiles.forEach((file) => {
     const data = fs.readFileSync(file, 'utf8')
     const log = JSON.parse(data)
-    const richLogootSOps = log.richLogootSOps
 
-    const logootSOps: (LogootSAdd | LogootSDel)[] = richLogootSOps.map((richLogootSOp) => {
-      const plainLogootSOp: any = richLogootSOp.logootSOp
-      if (plainLogootSOp.lid !== undefined) {
-        return LogootSDel.fromPlain(plainLogootSOp)
-      } else {
-        return LogootSAdd.fromPlain(plainLogootSOp)
+    // Has to set explicitly the type of richLogootSOps
+    // so that TypeScript does its job and infers the return type of richLogootSOps.map(...)
+    const richLogootSOps: SafeAny<{richLogootSOps: SafeAny<LogootSAdd | LogootSDel>[]}> = log.richLogootSOps
+
+
+    if (richLogootSOps instanceof Array && richLogootSOps.length > 0) {
+      let isOk = true
+      let i = 0
+
+      const logootSOps: (LogootSAdd | LogootSDel)[] = []
+
+      while (isOk && i < richLogootSOps.length) {
+        const plainLogootSOp: SafeAny<LogootSAdd | LogootSDel> = richLogootSOps[i].logootSOp
+        let logootSOp: LogootSAdd | LogootSDel | null = LogootSDel.fromPlain(plainLogootSOp)
+        if (logootSOp === null) {
+          logootSOp = LogootSAdd.fromPlain(plainLogootSOp)
+        }
+        if (logootSOp === null) {
+          isOk = false
+        } else {
+          logootSOps.push(logootSOp)
+        }
+        i++
       }
-    })
 
-    logs.push(logootSOps)
+      if (isOk) {
+        logs.push(logootSOps)
+      } else {
+        t.fail("the log must contains only valid logoots operations")
+      }
+    } else {
+      t.fail("the log must not be empty")
+    }
   })
   const docs: LogootSRopes[] = []
   let i = 0
