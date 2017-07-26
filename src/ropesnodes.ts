@@ -66,40 +66,32 @@ export class RopesNodes {
             subtreeSizeOf(left) + subtreeSizeOf(right)
     }
 
-    static fromPlain (o: {
-            block?: any, offset?: any, length?: any, left?: any, right?: any
-        }): RopesNodes | null {
+    static fromPlain (o: SafeAny<RopesNodes>): RopesNodes | null {
+        if (typeof o === "object" && o !== null) {
+          const plainBlock: SafeAny<LogootSBlock> = o.block
+          const offset: SafeAny<number> = o.offset
+          const length: SafeAny<number> = o.length
+          const plainLeft: SafeAny<RopesNodes> = o.left
+          const plainRight: SafeAny<RopesNodes> = o.right
 
-        const plainBlock = o.block
-        const offset = o.offset
-        const length = o.length
-        const plainLeft = o.left
-        const plainRight = o.right
+          if (plainBlock instanceof Object &&
+              typeof offset === "number" && Number.isInteger(offset) &&
+              typeof length === "number" && Number.isInteger(length) &&
+              length >= 0) {
 
-        if (plainBlock instanceof Object &&
-            typeof offset === "number" && Number.isInteger(offset) &&
-            typeof length === "number" && Number.isInteger(length) &&
-            length >= 0) {
+              const block: LogootSBlock | null = LogootSBlock.fromPlain(plainBlock)
+              const right: RopesNodes | null = RopesNodes.fromPlain(plainRight)
+              const left: RopesNodes | null = RopesNodes.fromPlain(plainLeft)
 
-            const block = LogootSBlock.fromPlain(plainBlock)
-            const right = plainRight instanceof Object ?
-                RopesNodes.fromPlain(plainRight) :
-                null
-            const left = plainLeft instanceof Object ?
-                RopesNodes.fromPlain(plainLeft) :
-                null
+              if (block !== null &&
+                  block.id.begin <= offset &&
+                  (block.id.end - block.id.begin) >= length - 1) {
 
-            if (block !== null &&
-                block.id.begin <= offset &&
-                (block.id.end - block.id.begin) >= length - 1) {
-
-                return new RopesNodes(block, offset, length, left, right)
-            } else {
-                return null
-            }
-        } else {
-            return null
+                  return new RopesNodes(block, offset, length, left, right)
+              }
+          }
         }
+        return null
     }
 
     static leaf (aBlock: LogootSBlock, aOffset: number, aLength: number): RopesNodes {
