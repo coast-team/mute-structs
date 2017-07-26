@@ -74,25 +74,20 @@ export class LogootSRopes {
         return new LogootSRopes(0, 0)
     }
 
-    static fromPlain (replica: number, clock: number, o: {root?: any, str?: any}): LogootSRopes | null {
-        const plainRoot = o.root
-        const str = o.str
+    static fromPlain (replica: number, clock: number, o: SafeAny<LogootSRopes>): LogootSRopes | null {
+        if (typeof o === "object" && o !== null) {
+            const str = o.str
+            const plainRoot = o.root
 
-        if (typeof str === "string") {
-            const root = (plainRoot !== undefined && plainRoot !== null) ?
-                RopesNodes.fromPlain(plainRoot) :
-                null
-            const result = new LogootSRopes(replica, clock, root, str)
-
-            if (str.length !== 0 && root === null) {
-                // FIXME: Need more checking (str's length compared to tree length?)
-                return null
-            } else {
-                return result
+            if (typeof str === "string") {
+                const root: RopesNodes | null = RopesNodes.fromPlain(plainRoot)
+                if (str.length === 0 && root !== null) {
+                    // FIXME: Need more checking (str's length compared to tree length?)
+                    return new LogootSRopes(replica, clock, root, str)
+                }
             }
-        } else {
-            return null
         }
+        return null
     }
 
     readonly replicaNumber: number
