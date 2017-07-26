@@ -43,19 +43,18 @@ export class LogootSAdd {
         this.content = content
     }
 
-    static fromPlain (o: {id?: any, content?: any}): LogootSAdd | null {
-        const plainId = o.id
-        const content = o.content
-        if (plainId instanceof Object && typeof content === "string") {
-            const id = Identifier.fromPlain(plainId)
-            if (id !== null) {
-                return new LogootSAdd(id, content)
-            } else {
-                return null
+    static fromPlain (o: SafeAny<LogootSAdd>): LogootSAdd | null {
+        if (typeof o === "object" && o !== null) {
+            const plainId: SafeAny<Identifier> = o.id
+            const content: SafeAny<string> = o.content
+            if (typeof content === "string") {
+                const id: Identifier | null = Identifier.fromPlain(plainId)
+                if (id !== null) {
+                    return new LogootSAdd(id, content)
+                }
             }
-        } else {
-            return null
         }
+        return null
     }
 
     readonly id: Identifier

@@ -36,20 +36,21 @@ export class IdentifierInterval {
         this.end = end
     }
 
-    static fromPlain (o: {base?: any, begin?: any, end?: any}): IdentifierInterval | null {
-        const base = o.base
-        const begin = o.begin
-        const end = o.end
-        if (base instanceof Array && base.every((n: any) =>
-                    typeof n === "number" && Number.isInteger(n)) &&
+    static fromPlain (o: SafeAny<IdentifierInterval>): IdentifierInterval | null {
+        if (typeof o === "object" && o !== null) {
+            const base: SafeAny<number[]> = o.base
+            const begin: SafeAny<number> = o.begin
+            const end: SafeAny<number> = o.end
+            if (base instanceof Array && base.every((n: SafeAny<number>) =>
+                typeof n === "number" && Number.isInteger(n)) &&
                 typeof begin === "number" && typeof end === "number" &&
                 Number.isInteger(begin) && Number.isInteger(end) &&
                 begin <= end) {
 
-            return new IdentifierInterval(base, begin, end)
-        } else {
-            return null
+                return new IdentifierInterval(base, begin, end)
+            }
         }
+        return null
     }
 
 // Access

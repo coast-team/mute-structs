@@ -43,22 +43,21 @@ export class LogootSBlock {
         return new LogootSBlock(idi, nbElt, false)
     }
 
-    static fromPlain (o: {id?: Object | null, nbElement?: number}): LogootSBlock | null {
-        const plainId = o.id
-        const nbElt = o.nbElement
-        if (plainId instanceof Object && typeof nbElt === "number" &&
-            Number.isInteger(nbElt) && nbElt >= 0) {
+    static fromPlain (o: SafeAny<LogootSBlock>): LogootSBlock | null {
+        if (typeof o === "object" && o !== null) {
+            const plainId: SafeAny<IdentifierInterval> = o.id
+            const nbElt: SafeAny<number> = o.nbElement
+            if (plainId instanceof Object && typeof nbElt === "number" &&
+                Number.isInteger(nbElt) && nbElt >= 0) {
 
-            const id = IdentifierInterval.fromPlain(plainId)
-            if (id !== null) {
-                return LogootSBlock.foreign(id, nbElt)
-                    // FIXME: ALways not mine?
-            } else {
-                return null
+                const id = IdentifierInterval.fromPlain(plainId)
+                if (id !== null) {
+                    return LogootSBlock.foreign(id, nbElt)
+                        // FIXME: Always not mine?
+                }
             }
-        } else {
-            return null
         }
+        return null
     }
 
 // Access
@@ -91,4 +90,3 @@ export class LogootSBlock {
     }
 
 }
-

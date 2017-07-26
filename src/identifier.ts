@@ -47,17 +47,17 @@ export class Identifier {
         this.last = u
     }
 
-    static fromPlain (o: {base?: any, last?: any}): Identifier | null {
-        const base = o.base
-        const last = o.last
-        if (base instanceof Array && base.every((n: any) =>
-                typeof n === "number" && Number.isInteger(n)) &&
-            typeof last === "number" && Number.isInteger(last)) {
-
-            return new Identifier(base, last)
-        } else {
-            return null
+    static fromPlain (o: SafeAny<Identifier>): Identifier | null {
+        if (typeof o === "object" && o !== null) {
+            const base: SafeAny<number[]> = o.base
+            const last: SafeAny<number> = o.last
+            if (base instanceof Array &&
+              base.every((n: SafeAny<number>) => typeof n === "number" && Number.isInteger(n)) &&
+              typeof last === "number" && Number.isInteger(last)) {
+                return new Identifier(base, last)
+            }
         }
+        return null
     }
 
 // Access
