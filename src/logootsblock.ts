@@ -23,29 +23,25 @@ import {IdentifierInterval} from './identifierinterval'
 export class LogootSBlock {
 
 // Creation
-    constructor (id: IdentifierInterval, nbElt: number, mine = false) {
-        console.assert(id instanceof IdentifierInterval, "id = ", id)
-        console.assert(typeof nbElt === "number" && Number.isInteger(nbElt),
-            "nbElt = ", "" + nbElt)
-        console.assert(nbElt >= 0, "" + nbElt, ">= 0")
-        console.assert(typeof mine === "boolean", "mine = " + mine)
+    constructor (idInterval: IdentifierInterval, nbElt: number, mine = false) {
+        console.assert(Number.isInteger(nbElt) && nbElt >= 0, "nbElt must be a positive integer")
 
-        this.id = id
+        this.idInterval = idInterval
         this.nbElement = nbElt
         this.mine = mine
     }
 
-    static mine (idi: IdentifierInterval, nbElt: number): LogootSBlock {
-        return new LogootSBlock(idi, nbElt, true)
+    static mine (idInterval: IdentifierInterval, nbElt: number): LogootSBlock {
+        return new LogootSBlock(idInterval, nbElt, true)
     }
 
-    static foreign (idi: IdentifierInterval, nbElt: number): LogootSBlock {
-        return new LogootSBlock(idi, nbElt, false)
+    static foreign (idInterval: IdentifierInterval, nbElt: number): LogootSBlock {
+        return new LogootSBlock(idInterval, nbElt, false)
     }
 
     static fromPlain (o: SafeAny<LogootSBlock>): LogootSBlock | null {
         if (typeof o === "object" && o !== null) {
-            const plainId: SafeAny<IdentifierInterval> = o.id
+            const plainId: SafeAny<IdentifierInterval> = o.idInterval
             const nbElt: SafeAny<number> = o.nbElement
             if (plainId instanceof Object && typeof nbElt === "number" &&
                 Number.isInteger(nbElt) && nbElt >= 0) {
@@ -61,19 +57,17 @@ export class LogootSBlock {
     }
 
 // Access
-    id: IdentifierInterval
+    idInterval: IdentifierInterval
 
     nbElement: number
 
     readonly mine: boolean
 
     addBlock (pos: number, length: number): void {
-            console.assert(typeof pos === "number", "pos = " + pos)
-            console.assert(typeof length === "number", "length = " + length)
-            console.assert(length > 0, "" + length, "> 0")
+        console.assert(Number.isInteger(length) && length > 0, "length must be a positive integer")
 
         this.nbElement += length
-        this.id = this.id.union(pos, pos + length - 1)
+        this.idInterval = this.idInterval.union(pos, pos + length - 1)
     }
 
     delBlock (nbElt: number): void {
@@ -83,7 +77,7 @@ export class LogootSBlock {
     }
 
     toString (): string {
-        return '{' + this.nbElement + ',' + this.id.toString() + ', ' + (this.mine ? 'mine' : 'its') + '}'
+        return '{' + this.nbElement + ',' + this.idInterval.toString() + ', ' + (this.mine ? 'mine' : 'its') + '}'
     }
 
 }

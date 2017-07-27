@@ -84,8 +84,8 @@ export class RopesNodes {
               const left: RopesNodes | null = RopesNodes.fromPlain(plainLeft)
 
               if (block !== null &&
-                  block.id.begin <= offset &&
-                  (block.id.end - block.id.begin) >= length - 1) {
+                  block.idInterval.begin <= offset &&
+                  (block.idInterval.end - block.idInterval.begin) >= length - 1) {
 
                   return new RopesNodes(block, offset, length, left, right)
               }
@@ -116,25 +116,25 @@ export class RopesNodes {
     /**
      * The current position of the beginning of the block
      *
-     * Should always ensure that block.id.begin <= offset <= block.id.end
+     * Should always ensure that block.idInterval.begin <= offset <= block.idInterval.end
      */
     offset: number
 
     /**
      * The current length of the block
      *
-     * Should always ensure that length <= to block.id.end - block.id.begin + 1
+     * Should always ensure that length <= to block.idInterval.end - block.idInterval.begin + 1
      */
     length: number
 
     sizeNodeAndChildren: number
 
     getIdBegin (): Identifier {
-        return this.block.id.getBaseId(this.offset)
+        return this.block.idInterval.getBaseId(this.offset)
     }
 
     getIdEnd (): Identifier {
-        return this.block.id.getBaseId(this.maxOffset())
+        return this.block.idInterval.getBaseId(this.maxOffset())
     }
 
     addString (length: number): void {
@@ -151,7 +151,7 @@ export class RopesNodes {
         const b = this.maxOffset() + 1
         this.length += length
         this.block.addBlock(b, length)
-        return this.block.id.getBaseId(b)
+        return this.block.idInterval.getBaseId(b)
     }
 
     appendBegin (length: number): Identifier {
@@ -179,8 +179,8 @@ export class RopesNodes {
         console.assert(typeof end === "number" && Number.isInteger(end),
             "end = " + end)
         console.assert(begin <= end, "begin <= end: " + begin, " <= " + end)
-        console.assert(this.block.id.begin <= begin, "this.block.id.begin <= to begin: " + this.block.id.begin, " <= " + begin)
-        console.assert(end <= this.block.id.end, "end <= this.block.id.end: " + end, " <= " + this.block.id.end)
+        console.assert(this.block.idInterval.begin <= begin, "this.block.idInterval.begin <= to begin: " + this.block.idInterval.begin, " <= " + begin)
+        console.assert(end <= this.block.idInterval.end, "end <= this.block.idInterval.end: " + end, " <= " + this.block.idInterval.end)
 
         let ret: RopesNodes | null = null
 
@@ -261,15 +261,15 @@ export class RopesNodes {
     }
 
     isAppendableAfter (): boolean {
-        return this.block.mine && this.block.id.end === this.maxOffset()
+        return this.block.mine && this.block.idInterval.end === this.maxOffset()
     }
 
     isAppendableBefore (): boolean {
-        return this.block.mine && this.block.id.begin === this.offset
+        return this.block.mine && this.block.idInterval.begin === this.offset
     }
 
     toString (): string {
-        const current = (new IdentifierInterval(this.block.id.base,
+        const current = (new IdentifierInterval(this.block.idInterval.base,
             this.offset, this.maxOffset())).toString()
         const leftToString = (this.left !== null) ? this.left.toString() : "\t#"
         const rightToString = (this.right !== null) ? this.right.toString() : "\t#"
@@ -282,15 +282,15 @@ export class RopesNodes {
      * @return linear representation
      */
     toList (): IdentifierInterval[] {
-        const idi = new IdentifierInterval(this.block.id.base,
+        const idInterval = new IdentifierInterval(this.block.idInterval.base,
             this.offset, this.maxOffset())
         const leftList =  (this.left !== null) ? this.left.toList() : []
         const rightList = (this.right !== null) ? this.right.toList() : []
-        return leftList.concat(idi, rightList)
+        return leftList.concat(idInterval, rightList)
     }
 
     getIdentifierInterval (): IdentifierInterval {
-        return new IdentifierInterval(this.block.id.base,
+        return new IdentifierInterval(this.block.idInterval.base,
             this.offset, this.maxOffset())
     }
 

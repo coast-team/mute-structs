@@ -63,7 +63,7 @@ export class LogootSRopes {
             const blocks = root.getBlocks()
 
             for (const b of blocks) {
-                const key = b.id.base.join(",")
+                const key = b.idInterval.base.join(",")
                 baseToBlock[key] = b
             }
         }
@@ -303,7 +303,7 @@ export class LogootSRopes {
 
         if (this.root === null) {
             const bl = new LogootSBlock(idi, 0)
-            this.mapBaseToBlock[bl.id.base.join(",")] = bl
+            this.mapBaseToBlock[bl.idInterval.base.join(",")] = bl
             this.root = RopesNodes.leaf(bl, id.last, str.length)
             const textInsert: TextInsert = new TextInsert(0, str)
             this.applyTextInsert(textInsert)
@@ -368,8 +368,8 @@ export class LogootSRopes {
                 const inPos = this.searchNode(pos) as ResponseIntNode
                     // TODO: why non-null?
                 if (inPos.i > 0) { // split
-                    const id1 = inPos.node.block.id.getBaseId(inPos.node.offset + inPos.i - 1)
-                    const id2 = inPos.node.block.id.getBaseId(inPos.node.offset + inPos.i)
+                    const id1 = inPos.node.block.idInterval.getBaseId(inPos.node.offset + inPos.i - 1)
+                    const id2 = inPos.node.block.idInterval.getBaseId(inPos.node.offset + inPos.i)
                     newNode = this.mkNode(id1, id2, l.length)
                     path = inPos.path
                     path.push(inPos.node.split(inPos.i, newNode))
@@ -551,7 +551,7 @@ export class LogootSRopes {
             if (start !== null) {
                 const be = start.node.offset + start.i
                 const en = Math.min(be + length - 1, start.node.maxOffset())
-                li.push(new IdentifierInterval(start.node.block.id.base, be, en))
+                li.push(new IdentifierInterval(start.node.block.idInterval.base, be, en))
                 const r = start.node.deleteOffsets(be, en)
                 length -= en - be + 1
 
@@ -576,7 +576,7 @@ export class LogootSRopes {
 
         const node = path[path.length - 1]
         if (node.block.nbElement === 0) {
-            delete this.mapBaseToBlock[node.block.id.base.join(",")]
+            delete this.mapBaseToBlock[node.block.idInterval.base.join(",")]
         }
 
         if (node.right === null) {
