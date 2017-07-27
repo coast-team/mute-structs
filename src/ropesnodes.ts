@@ -192,7 +192,7 @@ export class RopesNodes {
 
         if (actualBegin <= actualEnd) {
           const sizeToDelete = actualEnd - actualBegin + 1
-          this.block.delBlock(actualBegin, actualEnd, sizeToDelete)
+          this.block.delBlock(sizeToDelete)
 
           if (sizeToDelete !== this.length) {
             if (actualBegin === this.offset) {

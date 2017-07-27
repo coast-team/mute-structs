@@ -76,13 +76,10 @@ export class LogootSBlock {
         this.id = this.id.union(pos, pos + length - 1)
     }
 
-    delBlock (begin: number, end: number, nbElement: number): void {
-        console.assert(typeof begin === "number", "begin = " + begin)
-        console.assert(typeof end === "number", "end = ", end)
-        console.assert(typeof nbElement === "number", "nbElement = " + nbElement)
-        console.assert(nbElement > 0, "" + nbElement, " > 0")
+    delBlock (nbElt: number): void {
+        console.assert(Number.isInteger(nbElt) && nbElt > 0, "nbElt must be a positive integer")
 
-        this.nbElement -= nbElement
+        this.nbElement -= nbElt
     }
 
     toString (): string {
