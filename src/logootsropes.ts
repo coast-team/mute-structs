@@ -178,9 +178,9 @@ export class LogootSRopes {
                     split = Math.min(from.maxOffset(), ihi.nextOffset)
                     const rp = RopesNodes.leaf(this.getBlock(idi),
                         idi.begin, str.length)
-                    path.push(from.split(split - from.offset + 1, rp))
+                    path.push(from.split(split - from.actualBegin + 1, rp))
                     i = i + from.leftSubtreeSize()
-                    result.push(new TextInsert(i + split - from.offset + 1, str))
+                    result.push(new TextInsert(i + split - from.actualBegin + 1, str))
                     con = false
                     break
                 }
@@ -368,8 +368,8 @@ export class LogootSRopes {
                 const inPos = this.searchNode(pos) as ResponseIntNode
                     // TODO: why non-null?
                 if (inPos.i > 0) { // split
-                    const id1 = inPos.node.block.idInterval.getBaseId(inPos.node.offset + inPos.i - 1)
-                    const id2 = inPos.node.block.idInterval.getBaseId(inPos.node.offset + inPos.i)
+                    const id1 = inPos.node.block.idInterval.getBaseId(inPos.node.actualBegin + inPos.i - 1)
+                    const id2 = inPos.node.block.idInterval.getBaseId(inPos.node.actualBegin + inPos.i)
                     newNode = this.mkNode(id1, id2, l.length)
                     path = inPos.path
                     path.push(inPos.node.split(inPos.i, newNode))
@@ -507,7 +507,7 @@ export class LogootSRopes {
                 // Was able to find the position of the identifier
                 const node = path[path.length - 1] as RopesNodes // Retrieving the node containing the identifier
                 const end = Math.min(id.end, node.maxOffset())
-                const pos = i + id.begin - node.offset
+                const pos = i + id.begin - node.actualBegin
                 const length = end - id.begin + 1
                 l.push(new TextDelete(pos, length))
                 const t = node.deleteOffsets(id.begin, end)
@@ -549,7 +549,7 @@ export class LogootSRopes {
         do {
             const start = this.searchNode(begin)
             if (start !== null) {
-                const be = start.node.offset + start.i
+                const be = start.node.actualBegin + start.i
                 const en = Math.min(be + length - 1, start.node.maxOffset())
                 li.push(new IdentifierInterval(start.node.block.idInterval.base, be, en))
                 const r = start.node.deleteOffsets(be, en)

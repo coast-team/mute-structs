@@ -53,11 +53,14 @@ function subtreeSizeOf (aNode: RopesNodes | null): number {
 export class RopesNodes {
 
 // Creation
-    constructor (block: LogootSBlock, offset: number, length: number,
+    constructor (block: LogootSBlock, actualBegin: number, length: number,
         left: RopesNodes | null, right: RopesNodes | null) {
 
+        console.assert(Number.isInteger(actualBegin), "actualBegin must be an integer")
+        console.assert(block.idInterval.begin <= actualBegin, "actualBegin must be greater than or equal to idInterval.begin")
+
         this.block = block
-        this.offset = offset
+        this.actualBegin = actualBegin
         this.length = length
         this.left = left
         this.right = right
@@ -69,13 +72,13 @@ export class RopesNodes {
     static fromPlain (o: SafeAny<RopesNodes>): RopesNodes | null {
         if (typeof o === "object" && o !== null) {
           const plainBlock: SafeAny<LogootSBlock> = o.block
-          const offset: SafeAny<number> = o.offset
+          const actualBegin: SafeAny<number> = o.actualBegin
           const length: SafeAny<number> = o.length
           const plainLeft: SafeAny<RopesNodes> = o.left
           const plainRight: SafeAny<RopesNodes> = o.right
 
           if (plainBlock instanceof Object &&
-              typeof offset === "number" && Number.isInteger(offset) &&
+              typeof actualBegin === "number" && Number.isInteger(actualBegin) &&
               typeof length === "number" && Number.isInteger(length) &&
               length >= 0) {
 
@@ -84,10 +87,10 @@ export class RopesNodes {
               const left: RopesNodes | null = RopesNodes.fromPlain(plainLeft)
 
               if (block !== null &&
-                  block.idInterval.begin <= offset &&
+                  block.idInterval.begin <= actualBegin &&
                   (block.idInterval.end - block.idInterval.begin) >= length - 1) {
 
-                  return new RopesNodes(block, offset, length, left, right)
+                  return new RopesNodes(block, actualBegin, length, left, right)
               }
           }
         }
@@ -116,9 +119,9 @@ export class RopesNodes {
     /**
      * The current position of the beginning of the block
      *
-     * Should always ensure that block.idInterval.begin <= offset <= block.idInterval.end
+     * Should always ensure that block.idInterval.begin <= actualBegin <= block.idInterval.end
      */
-    offset: number
+    actualBegin: number
 
     /**
      * The current length of the block
@@ -130,7 +133,7 @@ export class RopesNodes {
     sizeNodeAndChildren: number
 
     getIdBegin (): Identifier {
-        return this.block.idInterval.getBaseId(this.offset)
+        return this.block.idInterval.getBaseId(this.actualBegin)
     }
 
     getIdEnd (): Identifier {
@@ -158,9 +161,9 @@ export class RopesNodes {
         console.assert(typeof length === "number", "length = ", length)
         console.assert(length > 0, "" + length, " > 0")
 
-        this.offset -= length
+        this.actualBegin -= length
         this.length += length
-        this.block.addBlock(this.offset, length)
+        this.block.addBlock(this.actualBegin, length)
         return this.getIdBegin()
     }
 
@@ -187,7 +190,7 @@ export class RopesNodes {
         // Some identifiers may have already been deleted by a previous operation
         // Need to update the range of the deletion accordingly
         // NOTE: actualEnd can be < to actualBegin if all the range has previously been deleted
-        const actualBegin: number = Math.max(this.offset, begin)
+        const actualBegin: number = Math.max(this.actualBegin, begin)
         const actualEnd: number = Math.min(this.maxOffset(), end)
 
         if (actualBegin <= actualEnd) {
@@ -195,12 +198,12 @@ export class RopesNodes {
           this.block.delBlock(sizeToDelete)
 
           if (sizeToDelete !== this.length) {
-            if (actualBegin === this.offset) {
+            if (actualBegin === this.actualBegin) {
               // Deleting the beginning of the block
-              this.offset = actualEnd + 1
+              this.actualBegin = actualEnd + 1
             } else if (actualEnd !== this.maxOffset()) {
               // Deleting the middle of the block
-              ret = this.split(actualEnd - this.offset + 1, null)
+              ret = this.split(actualEnd - this.actualBegin + 1, null)
             }
           }
 
@@ -216,7 +219,7 @@ export class RopesNodes {
             "node = ", node)
 
         const newRight = new RopesNodes(this.block,
-            this.offset + size, this.length - size, node, this.right)
+            this.actualBegin + size, this.length - size, node, this.right)
         this.length = size
         this.right = newRight
         this.height = Math.max(this.height, newRight.height)
@@ -224,7 +227,7 @@ export class RopesNodes {
     }
 
     maxOffset (): number {
-        return this.offset + this.length - 1
+        return this.actualBegin + this.length - 1
     }
 
     leftSubtreeSize (): number {
@@ -256,7 +259,7 @@ export class RopesNodes {
     become (node: RopesNodes): void {
         this.sizeNodeAndChildren = -this.length + node.length
         this.length = node.length
-        this.offset = node.offset
+        this.actualBegin = node.actualBegin
         this.block = node.block
     }
 
@@ -265,12 +268,12 @@ export class RopesNodes {
     }
 
     isAppendableBefore (): boolean {
-        return this.block.mine && this.block.idInterval.begin === this.offset
+        return this.block.mine && this.block.idInterval.begin === this.actualBegin
     }
 
     toString (): string {
         const current = (new IdentifierInterval(this.block.idInterval.base,
-            this.offset, this.maxOffset())).toString()
+            this.actualBegin, this.maxOffset())).toString()
         const leftToString = (this.left !== null) ? this.left.toString() : "\t#"
         const rightToString = (this.right !== null) ? this.right.toString() : "\t#"
         return rightToString.replace(/(\t+)/g, "\t$1") + "\n" +
@@ -283,7 +286,7 @@ export class RopesNodes {
      */
     toList (): IdentifierInterval[] {
         const idInterval = new IdentifierInterval(this.block.idInterval.base,
-            this.offset, this.maxOffset())
+            this.actualBegin, this.maxOffset())
         const leftList =  (this.left !== null) ? this.left.toList() : []
         const rightList = (this.right !== null) ? this.right.toList() : []
         return leftList.concat(idInterval, rightList)
@@ -291,7 +294,7 @@ export class RopesNodes {
 
     getIdentifierInterval (): IdentifierInterval {
         return new IdentifierInterval(this.block.idInterval.base,
-            this.offset, this.maxOffset())
+            this.actualBegin, this.maxOffset())
     }
 
     getBlocks (): LogootSBlock[] {
