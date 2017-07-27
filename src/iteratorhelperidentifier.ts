@@ -32,24 +32,21 @@ export const enum IdentifierIteratorResults {
 
 export class IteratorHelperIdentifier {
 
-    constructor (id1: IdentifierInterval, id2: IdentifierInterval) {
-        console.assert(id1 instanceof IdentifierInterval, "id1 = ", id1)
-        console.assert(id2 instanceof IdentifierInterval, "id2 = ", id2)
-
-        this.id1 = id1
-        this.id2 = id2
+    constructor (idInterval1: IdentifierInterval, idInterval2: IdentifierInterval) {
+        this.idInterval1 = idInterval1
+        this.idInterval2 = idInterval2
         this.nextOffset = -1
     }
 
-    readonly id1: IdentifierInterval
+    readonly idInterval1: IdentifierInterval
 
-    readonly id2: IdentifierInterval
+    readonly idInterval2: IdentifierInterval
 
     nextOffset: number
 
     compareBase (): IdentifierIteratorResults {
-        const b1 = this.id1.base
-        const b2 = this.id2.base
+        const b1 = this.idInterval1.base
+        const b2 = this.idInterval2.base
         const minLength = Math.min(b1.length, b2.length)
 
         let i = 0
@@ -61,9 +58,9 @@ export class IteratorHelperIdentifier {
             if (b1.length > minLength) { // b2 is shorter than b1
                 this.nextOffset = b1[i]
 
-                if (this.nextOffset < this.id2.begin) {
+                if (this.nextOffset < this.idInterval2.begin) {
                     return IdentifierIteratorResults.B1_BEFORE_B2
-                } else if (this.nextOffset >= this.id2.end) {
+                } else if (this.nextOffset >= this.idInterval2.end) {
                     return IdentifierIteratorResults.B1_AFTER_B2
                 } else {
                     return IdentifierIteratorResults.B1_INSIDE_B2
@@ -71,29 +68,29 @@ export class IteratorHelperIdentifier {
             } else if (b2.length > minLength) { // b1 is shorter than b2
                 this.nextOffset = b2[i]
 
-                if (this.nextOffset < this.id1.begin) {
+                if (this.nextOffset < this.idInterval1.begin) {
                     return IdentifierIteratorResults.B1_AFTER_B2
-                } else if (this.nextOffset >= this.id1.end) {
+                } else if (this.nextOffset >= this.idInterval1.end) {
                     return IdentifierIteratorResults.B1_BEFORE_B2
                 } else {
                     return IdentifierIteratorResults.B2_INSIDE_B1
                 }
             } else { // both bases are the same
-                if (this.id1.begin === this.id2.begin && this.id1.end === this.id2.end) {
+                if (this.idInterval1.begin === this.idInterval2.begin && this.idInterval1.end === this.idInterval2.end) {
                   return IdentifierIteratorResults.B1_EQUALS_B2
                 }
-                else if ((this.id1.end + 1) === this.id2.begin) {
+                else if ((this.idInterval1.end + 1) === this.idInterval2.begin) {
                     return IdentifierIteratorResults.B1_CONCAT_B2
-                } else if (this.id1.begin === (this.id2.end + 1)) {
+                } else if (this.idInterval1.begin === (this.idInterval2.end + 1)) {
                     return IdentifierIteratorResults.B2_CONCAT_B1
-                } else if (this.id1.end < this.id2.begin) {
+                } else if (this.idInterval1.end < this.idInterval2.begin) {
                     return IdentifierIteratorResults.B1_BEFORE_B2
-                } else if (this.id2.end < this.id1.begin ) {
+                } else if (this.idInterval2.end < this.idInterval1.begin ) {
                     return IdentifierIteratorResults.B1_AFTER_B2
                 } else {
                   // This case should not occur
                   // Only malicious users would generate such operations
-                  console.warn('IteratorHelperIdentifier.compareBase: ', this.id1, this.id2)
+                  console.warn('IteratorHelperIdentifier.compareBase: ', this.idInterval1, this.idInterval2)
                   return IdentifierIteratorResults.B1_EQUALS_B2
                 }
             }
