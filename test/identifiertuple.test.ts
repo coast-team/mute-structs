@@ -27,61 +27,61 @@ import {Ordering} from "../src/ordering"
  * Macro to check if compareTo() returns the expected result
  */
 function compareTuplesMacro(t: AssertContext, tuple: IdentifierTuple, other: IdentifierTuple, expected: Ordering): void {
-  const actual: Ordering = tuple.compareTo(other)
-  t.is(actual, expected)
+    const actual: Ordering = tuple.compareTo(other)
+    t.is(actual, expected)
 }
 
 /**
  * Macro to check if equalsBase() returns the expected result
  */
 function equalsBaseMacro(t: AssertContext, tuple: IdentifierTuple, other: IdentifierTuple, expected: boolean): void {
-  const actual: boolean = tuple.equalsBase(other)
-  t.is(actual, expected)
+    const actual: boolean = tuple.equalsBase(other)
+    t.is(actual, expected)
 }
 
 test("fromPlain", (t: AssertContext) => {
-  const plain = {
-    random: 42,
-    replicaNumber: 1,
-    clock: 10,
-    offset: -5
-  }
+    const plain = {
+        random: 42,
+        replicaNumber: 1,
+        clock: 10,
+        offset: -5
+    }
 
-  const tuple: IdentifierTuple | null = IdentifierTuple.fromPlain(plain)
+    const tuple: IdentifierTuple | null = IdentifierTuple.fromPlain(plain)
 
-  if (tuple === null) {
-    t.fail("The identifier tuple should have been correctly instantiated")
-  } else {
-    t.is(tuple.random, plain.random)
-    t.is(tuple.replicaNumber, plain.replicaNumber)
-    t.is(tuple.clock, plain.clock)
-    t.is(tuple.offset, plain.offset)
-  }
+    if (tuple === null) {
+        t.fail("The identifier tuple should have been correctly instantiated")
+    } else {
+        t.is(tuple.random, plain.random)
+        t.is(tuple.replicaNumber, plain.replicaNumber)
+        t.is(tuple.clock, plain.clock)
+        t.is(tuple.offset, plain.offset)
+    }
 })
 
 test("fromPlain-missing-property", (t: AssertContext) => {
-  const plain = {
-    replicaNumber: 1,
-    clock: 10,
-    offset: -5
-  }
+    const plain = {
+        replicaNumber: 1,
+        clock: 10,
+        offset: -5
+    }
 
-  const tuple: IdentifierTuple | null = IdentifierTuple.fromPlain(plain)
+    const tuple: IdentifierTuple | null = IdentifierTuple.fromPlain(plain)
 
-  t.is(tuple, null)
+    t.is(tuple, null)
 })
 
 test("fromPlain-wrong-type", (t: AssertContext) => {
-  const plain = {
-    random: 42.7,
-    replicaNumber: 1,
-    clock: 10,
-    offset: -5
-  }
+    const plain = {
+        random: 42.7,
+        replicaNumber: 1,
+        clock: 10,
+        offset: -5
+    }
 
-  const tuple: IdentifierTuple | null = IdentifierTuple.fromPlain(plain)
+    const tuple: IdentifierTuple | null = IdentifierTuple.fromPlain(plain)
 
-  t.is(tuple, null)
+    t.is(tuple, null)
 })
 
 const tuple0000: IdentifierTuple = new IdentifierTuple(0, 0, 0, 0)
@@ -110,15 +110,15 @@ test("equalsBase-tuple-different-other-2", equalsBaseMacro, tuple0000, tuple0100
 test("equalsBase-tuple-different-other-3", equalsBaseMacro, tuple0000, tuple0010, false)
 
 test("asArray-properties-order", (t: AssertContext) => {
-  const random = 42
-  const replicaNumber = 1
-  const clock = 10
-  const offset = -5
+    const random = 42
+    const replicaNumber = 1
+    const clock = 10
+    const offset = -5
 
-  const tuple: IdentifierTuple = new IdentifierTuple(random, replicaNumber, clock, offset)
+    const tuple: IdentifierTuple = new IdentifierTuple(random, replicaNumber, clock, offset)
 
-  const expected: number[] = [random, replicaNumber, clock, offset]
-  const actual = tuple["asArray"]() // Hack to test this private function
+    const expected: number[] = [random, replicaNumber, clock, offset]
+    const actual = tuple["asArray"]() // Hack to test this private function
 
-  t.deepEqual(actual, expected)
+    t.deepEqual(actual, expected)
 })
