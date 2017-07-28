@@ -42,7 +42,7 @@
     "use-isnan": true,
 
     "eofline": true,
-    "indent": [true, "spaces"],
+    "indent": [true, "spaces", 4],
     "no-default-export": true,
     "no-require-imports": true,
     "no-trailing-whitespace": true,
