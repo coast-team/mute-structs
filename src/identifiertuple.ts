@@ -115,4 +115,12 @@ export class IdentifierTuple {
     private asArray (): number[] {
         return [this.random, this.replicaNumber, this.clock, this.offset]
     }
+
+    digest (): number {
+        return this.asArray().reduce((prev, v) => (prev * 17 + v) | 0, 0)
+    }
+
+    toString (): string {
+        return `${this.random},${this.replicaNumber},${this.clock},${this.offset}`
+    }
 }
