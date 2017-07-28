@@ -2,7 +2,7 @@
   "compilerOptions": {
     "allowJs": false,
     "declaration": true,
-    "lib": ["dom", "es6"],
+    "lib": ["es6"],
     "module": "commonjs",
     "noEmitHelpers": true,
     "sourceMap": true,

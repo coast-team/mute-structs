@@ -175,7 +175,7 @@ export class LogootSRopes {
                 }
                 case IdentifierIteratorResults.B1_INSIDE_B2: {
                     // split b2 the object node
-                    split = Math.min(from.maxOffset(), ihi.nextOffset)
+                    split = Math.min(from.actualEnd, ihi.nextOffset)
                     const rp = RopesNodes.leaf(this.getBlock(idi),
                         idi.begin, str.length)
                     path.push(from.split(split - from.actualBegin + 1, rp))
@@ -506,7 +506,7 @@ export class LogootSRopes {
             } else {
                 // Was able to find the position of the identifier
                 const node = path[path.length - 1] as RopesNodes // Retrieving the node containing the identifier
-                const end = Math.min(id.end, node.maxOffset())
+                const end = Math.min(id.end, node.actualEnd)
                 const pos = i + id.begin - node.actualBegin
                 const length = end - id.begin + 1
                 l.push(new TextDelete(pos, length))
@@ -550,7 +550,7 @@ export class LogootSRopes {
             const start = this.searchNode(begin)
             if (start !== null) {
                 const be = start.node.actualBegin + start.i
-                const en = Math.min(be + length - 1, start.node.maxOffset())
+                const en = Math.min(be + length - 1, start.node.actualEnd)
                 li.push(new IdentifierInterval(start.node.block.idInterval.base, be, en))
                 const r = start.node.deleteOffsets(be, en)
                 length -= en - be + 1
