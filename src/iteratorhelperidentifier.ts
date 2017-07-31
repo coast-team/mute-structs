@@ -42,6 +42,14 @@ export class IteratorHelperIdentifier {
 
     readonly idInterval2: IdentifierInterval
 
+    /**
+     * The offset of the identifier interval where to split if
+     * {@link IteratorHelperIdentifier.compareBase()}
+     * returns
+     * {@link IdentifierIteratorResults.B1_INSIDE_B2}
+     * or
+     * {@link IdentifierIteratorResults.B2_INSIDE_B1}
+     */
     nextOffset: number
 
     compareBase (): IdentifierIteratorResults {
