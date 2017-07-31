@@ -21,13 +21,13 @@ import {IdentifierInterval} from './identifierinterval'
 
 
 export const enum IdentifierIteratorResults {
-        B1_AFTER_B2,
-        B1_BEFORE_B2,
-        B1_INSIDE_B2,
-        B2_INSIDE_B1,
-        B1_CONCAT_B2,
-        B2_CONCAT_B1,
-        B1_EQUALS_B2
+    B1_AFTER_B2,
+    B1_BEFORE_B2,
+    B1_INSIDE_B2,
+    B2_INSIDE_B1,
+    B1_CONCAT_B2,
+    B2_CONCAT_B1,
+    B1_EQUALS_B2
 }
 
 export class IteratorHelperIdentifier {
@@ -77,7 +77,7 @@ export class IteratorHelperIdentifier {
                 }
             } else { // both bases are the same
                 if (this.idInterval1.begin === this.idInterval2.begin && this.idInterval1.end === this.idInterval2.end) {
-                  return IdentifierIteratorResults.B1_EQUALS_B2
+                    return IdentifierIteratorResults.B1_EQUALS_B2
                 }
                 else if ((this.idInterval1.end + 1) === this.idInterval2.begin) {
                     return IdentifierIteratorResults.B1_CONCAT_B2
@@ -88,10 +88,15 @@ export class IteratorHelperIdentifier {
                 } else if (this.idInterval2.end < this.idInterval1.begin ) {
                     return IdentifierIteratorResults.B1_AFTER_B2
                 } else {
-                  // This case should not occur
-                  // Only malicious users would generate such operations
-                  console.warn('IteratorHelperIdentifier.compareBase: ', this.idInterval1, this.idInterval2)
-                  return IdentifierIteratorResults.B1_EQUALS_B2
+                    /*
+                        (B2 ⊂ B1) || (B1 ⊂ B2)  || (B1 ∩ B2 !== {})
+                        It happens only in the following cases:
+                            - An already applied operation is delivered again, but the interval has since then been updated (append, prepend, deletion at the bounds)
+                            - It is a malicious operation which try to insert again some identifiers
+                        For now, do not do anything in both cases.
+                    */
+                    console.warn('Trying to duplicate existing identifiers: ', this.idInterval1, this.idInterval2)
+                    return IdentifierIteratorResults.B1_EQUALS_B2
                 }
             }
         } else if (b1[i] > b2[i]) {
