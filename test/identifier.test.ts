@@ -17,28 +17,44 @@
 
 import test from "ava"
 import {Identifier, INT_32_MIN_VALUE, INT_32_MAX_VALUE} from "../src/identifier"
+import {IdentifierTuple} from "../src/identifiertuple"
 import {Ordering} from "../src/ordering"
 
 test("from-plain-factory", (t) => {
+    const plainTuples = [{
+        random: 42,
+        replicaNumber: 1,
+        clock: 10,
+        offset: -5
+    }, {
+        random: 53,
+        replicaNumber: 2,
+        clock: 0,
+        offset: 0
+    }]
     const plain = {
-        base: [-1, 1, 8],
-        last: 0,
+        tuples: plainTuples
     }
     const id: Identifier | null = Identifier.fromPlain(plain)
 
     if (id === null) {
-      t.fail("The identifier should have been correctly instantiated")
+        t.fail("The identifier should have been correctly instantiated")
     } else {
-      t.is(id.base, plain.base)
-      t.is(id.last, plain.last)
+        t.is(id.length, plain.tuples.length)
+
+        id.tuples.forEach((actualTuple: IdentifierTuple, i: number) => {
+            const expectedTuple = plain.tuples[i]
+
+            t.is(actualTuple.random, expectedTuple.random)
+            t.is(actualTuple.replicaNumber, expectedTuple.replicaNumber)
+            t.is(actualTuple.clock, expectedTuple.clock)
+            t.is(actualTuple.offset, expectedTuple.offset)
+        })
     }
 })
 
-test("from-plain-factory-wrong-property", (t) => {
-    const plain = {
-        base: [-1, 1, 8],
-        wrongProperty: 0,
-    }
+test("from-plain-factory-missing-property", (t) => {
+    const plain = {}
     const id: Identifier | null = Identifier.fromPlain(plain)
 
     t.is(id, null)
@@ -46,8 +62,7 @@ test("from-plain-factory-wrong-property", (t) => {
 
 test("from-plain-factory-wrong-type", (t) => {
     const plain = {
-        base: ["wrongType", 1, 8],
-        last: 0,
+        tuples: [1, 2, 3, 4]
     }
     const id: Identifier | null = Identifier.fromPlain(plain)
 
@@ -55,10 +70,10 @@ test("from-plain-factory-wrong-type", (t) => {
 })
 
 test("compare-to-last", (t) => {
-    const id1 = new Identifier([], 4)
-    const id1Twin = new Identifier([], 4)
-    const id2 = new Identifier([], 1)
-    const id3 = new Identifier([], 9)
+    const id1 = new Identifier([new IdentifierTuple(0, 0, 0, 4)])
+    const id1Twin = new Identifier([new IdentifierTuple(0, 0, 0, 4)])
+    const id2 = new Identifier([new IdentifierTuple(0, 0, 0, 1)])
+    const id3 = new Identifier([new IdentifierTuple(0, 0, 0, 9)])
 
     t.is(id1.compareTo(id1Twin), Ordering.Equal)
     t.not(id1.compareTo(id2), Ordering.Less)
@@ -66,96 +81,114 @@ test("compare-to-last", (t) => {
 })
 
 test("compare-to-base", (t) => {
-    const last = 0
-    const id1 = new Identifier([1, 2], last)
-    const id1Twin = new Identifier([1, 2], last)
-    const id2 = new Identifier([1, 2, 3], last)
-    const id3 = new Identifier([1], last)
-    const id4 = new Identifier([1, 3], last)
-    const id5 = new Identifier([1, 1], last)
+    const tuple0: IdentifierTuple = new IdentifierTuple(0, 0, 0, 0)
+    const tuple1: IdentifierTuple = new IdentifierTuple(1, 0, 0, 0)
+    const tuple2: IdentifierTuple = new IdentifierTuple(2, 0, 0, 0)
+    const id01 = new Identifier([tuple0, tuple1])
+    const id01Twin = new Identifier([tuple0, tuple1])
+    const id012 = new Identifier([tuple0, tuple1, tuple2])
+    const id0 = new Identifier([tuple0])
+    const id02 = new Identifier([tuple0, tuple2])
+    const id00 = new Identifier([tuple0, tuple0])
 
-    t.is(id1.compareTo(id1Twin), Ordering.Equal)
-    t.not(id1.compareTo(id2), Ordering.Greater)
-    t.not(id1.compareTo(id3), Ordering.Less)
-    t.not(id1.compareTo(id4), Ordering.Greater)
-    t.not(id1.compareTo(id5), Ordering.Less)
+    t.is(id01.compareTo(id01Twin), Ordering.Equal)
+    t.is(id01.compareTo(id012), Ordering.Less)
+    t.is(id01.compareTo(id0), Ordering.Greater)
+    t.is(id01.compareTo(id02), Ordering.Less)
+    t.is(id01.compareTo(id00), Ordering.Greater)
 })
 
 test("hasPlaceAfter-same-base", (t) => {
-    const id1 = new Identifier([], 0)
-    const id2 = new Identifier([], 1)
+    const tuple0: IdentifierTuple = new IdentifierTuple(0, 0, 0, 0)
+    const tuple2: IdentifierTuple = new IdentifierTuple(0, 0, 0, 2)
+    const id0 = new Identifier([tuple0])
+    const id2 = new Identifier([tuple2])
 
-    t.true(id1.hasPlaceAfter(id2, 1))
-    t.false(id1.hasPlaceAfter(id2, 2))
-
-    t.false(id1.hasPlaceAfter(id1, 1))
-    t.false(id2.hasPlaceAfter(id1, 1))
+    t.true(id0.hasPlaceAfter(id2, 1))
+    t.false(id0.hasPlaceAfter(id2, 2))
 })
 
 test("hasPlaceAfter-max-last", (t) => {
-    const id1 = new Identifier([0, 0, 0], INT_32_MAX_VALUE - 1)
-    const id2 = new Identifier([1, 1, 0], 0)
+    const tuple1: IdentifierTuple = new IdentifierTuple(0, 0, 0, INT_32_MAX_VALUE - 1)
+    const tuple2: IdentifierTuple = new IdentifierTuple(1, 1, 0, 0)
+    const id1 = new Identifier([tuple1])
+    const id2 = new Identifier([tuple2])
 
     t.true(id1.hasPlaceAfter(id2, 1))
     t.false(id1.hasPlaceAfter(id2, 2))
 })
 
 test("hasPlaceBefore-same-base", (t) => {
-    const id1 = new Identifier([], 0)
-    const id2 = new Identifier([], 1)
-    const id3 = new Identifier([], 2)
+    const tuple0: IdentifierTuple = new IdentifierTuple(0, 0, 0, 0)
+    const tuple1: IdentifierTuple = new IdentifierTuple(0, 0, 0, 1)
+    const tuple2: IdentifierTuple = new IdentifierTuple(0, 0, 0, 2)
 
-    t.true(id3.hasPlaceBefore(id1, 1))
-    t.false(id3.hasPlaceBefore(id1, 2))
+    const id0 = new Identifier([tuple0])
+    const id1 = new Identifier([tuple1])
+    const id2 = new Identifier([tuple2])
 
-    t.false(id1.hasPlaceBefore(id1, 1))
-    t.false(id2.hasPlaceBefore(id1, 1))
+    t.true(id2.hasPlaceBefore(id0, 1))
+    t.false(id2.hasPlaceBefore(id0, 2))
+
+    t.false(id1.hasPlaceBefore(id0, 1))
 })
 
 test("hasPlaceBefore-min-last", (t) => {
-    const id1 = new Identifier([0, 0, 0], 0)
-    const id2 = new Identifier([1, 0, 0], INT_32_MIN_VALUE + 2)
+    const tuple1: IdentifierTuple = new IdentifierTuple(0, 0, 0, 0)
+    const tuple2: IdentifierTuple = new IdentifierTuple(1, 0, 0, INT_32_MIN_VALUE + 2)
+    const id1 = new Identifier([tuple1])
+    const id2 = new Identifier([tuple2])
 
     t.true(id2.hasPlaceBefore(id1, 1))
     t.false(id2.hasPlaceBefore(id1, 2))
 })
 
 test("maxOffsetBeforeNext-same-base", (t) => {
-  const id1 = new Identifier([0, 0, 0], 3)
-  const id2 = new Identifier([0, 0, 0], 5)
+    const tuple3: IdentifierTuple = new IdentifierTuple(0, 0, 0, 3)
+    const tuple5: IdentifierTuple = new IdentifierTuple(0, 0, 0, 5)
+    const id3 = new Identifier([tuple3])
+    const id5 = new Identifier([tuple5])
 
-  const expected = 4
-  const actual = id1.maxOffsetBeforeNext(id2, 10)
+    const expected = 4
+    const actual = id3.maxOffsetBeforeNext(id5, 10)
 
-  t.is(actual, expected)
+    t.is(actual, expected)
 })
 
 test("maxOffsetBeforeNext-base-is-prefix", (t) => {
-  const id1 = new Identifier([0, 0, 0], 3)
-  const id2 = new Identifier([0, 0, 0, 5, 0, 0, 1], 0)
+    const tuple03: IdentifierTuple = new IdentifierTuple(0, 0, 0, 3)
+    const tuple05: IdentifierTuple = new IdentifierTuple(0, 0, 0, 5)
+    const tuple10: IdentifierTuple = new IdentifierTuple(0, 0, 1, 0)
+    const id03 = new Identifier([tuple03])
+    const id0510 = new Identifier([tuple05, tuple10])
 
-  const expected = 5
-  const actual = id1.maxOffsetBeforeNext(id2, 10)
+    const expected = 5
+    const actual = id03.maxOffsetBeforeNext(id0510, 10)
 
-  t.is(actual, expected)
+    t.is(actual, expected)
 })
 
 test("minOffsetAfterPrev-same-base", (t) => {
-  const id1 = new Identifier([0, 0, 0], 3)
-  const id2 = new Identifier([0, 0, 0], 5)
+    const tuple3: IdentifierTuple = new IdentifierTuple(0, 0, 0, 3)
+    const tuple5: IdentifierTuple = new IdentifierTuple(0, 0, 0, 5)
+    const id3 = new Identifier([tuple3])
+    const id5 = new Identifier([tuple5])
 
-  const expected = 4
-  const actual = id2.minOffsetAfterPrev(id1, 0)
+    const expected = 4
+    const actual = id5.minOffsetAfterPrev(id3, 0)
 
-  t.is(actual, expected)
+    t.is(actual, expected)
 })
 
 test("minOffsetAfterPrev-base-is-prefix", (t) => {
-  const id1 = new Identifier([0, 0, 0, 3, 0, 0, 1], 0)
-  const id2 = new Identifier([0, 0, 0], 5)
+    const tuple03: IdentifierTuple = new IdentifierTuple(0, 0, 0, 3)
+    const tuple05: IdentifierTuple = new IdentifierTuple(0, 0, 0, 5)
+    const tuple10: IdentifierTuple = new IdentifierTuple(0, 0, 1, 0)
+    const id0310 = new Identifier([tuple03, tuple10])
+    const id05 = new Identifier([tuple05])
 
-  const expected = 4
-  const actual = id2.minOffsetAfterPrev(id1, 0)
+    const expected = 4
+    const actual = id05.minOffsetAfterPrev(id0310, 0)
 
-  t.is(actual, expected)
+    t.is(actual, expected)
 })
