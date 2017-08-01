@@ -16,9 +16,17 @@
  */
 
 import test from "ava"
+import {AssertContext} from "ava"
 import {Identifier, INT_32_MIN_VALUE, INT_32_MAX_VALUE} from "../src/identifier"
 import {IdentifierTuple} from "../src/identifiertuple"
 import {Ordering} from "../src/ordering"
+
+function equalsBaseMacro (t: AssertContext,
+    id1: Identifier, id2: Identifier, expected: boolean): void {
+
+    const actual = id1.equalsBase(id2)
+    t.is(actual, expected)
+}
 
 test("from-plain-factory", (t) => {
     const plainTuples = [{
@@ -68,6 +76,24 @@ test("from-plain-factory-wrong-type", (t) => {
 
     t.is(id, null)
 })
+
+const tuple00 = new IdentifierTuple(0, 0, 0, 0)
+const tuple01 = new IdentifierTuple(0, 0, 0, 1)
+const tuple11 = new IdentifierTuple(0, 0, 1, 1)
+
+const id00 = new Identifier([tuple00])
+const id00Twin = new Identifier([tuple00])
+const id01 = new Identifier([tuple01])
+const id11 = new Identifier([tuple11])
+const id0001 = new Identifier([tuple00, tuple01])
+const id0100 = new Identifier([tuple01, tuple00])
+test("equalsBase-twin", equalsBaseMacro, id00, id00Twin, true)
+test("equalsBase-same-base-same-length", equalsBaseMacro, id00, id01, true)
+test("equalsBase-different-base-same-length", equalsBaseMacro, id00, id11, false)
+test("equalsBase-is-prefix", equalsBaseMacro, id00, id0001, false)
+test("equalsBase-different-base-different-length", equalsBaseMacro,
+    id0001, id0100, false)
+
 
 test("compare-to-last", (t) => {
     const id1 = new Identifier([new IdentifierTuple(0, 0, 0, 4)])
