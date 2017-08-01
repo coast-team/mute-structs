@@ -18,5 +18,17 @@
     "strictNullChecks": true,
 
     "pretty": true
-  }
+  },
+  "files": [
+    "src/global.d.ts",
+    "src/identifier.ts",
+    "src/identifiertuple.ts",
+    "test/identifier.test.ts",
+    "test/identifiertuple.test.ts"
+  ],
+  "exclude": [
+    "node_modules/",
+    "src/",
+    "test/"
+  ]
 }
