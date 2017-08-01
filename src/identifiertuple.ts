@@ -54,6 +54,20 @@ export class IdentifierTuple {
     }
 
     /**
+     * Generate a new IdentifierTuple with the same base as the provided one but with a different offset
+     *
+     * @param {tuple} IdentifierTuple The tuple to partly copy
+     * @param {number} offset The offset of the new IdentifierTuple
+     * @return {IdentifierTuple} The generated IdentifierTuple
+     */
+    static generateWithSameBase (tuple: IdentifierTuple, offset: number): IdentifierTuple {
+        console.assert(Number.isInteger(offset), "offset must be an integer")
+        console.assert(offset > INT_32_MIN_VALUE && offset <= INT_32_MAX_VALUE, "offset ∈ ]INT_32_MIN_VALUE, INT_32_MAX_VALUE]")
+
+        return new IdentifierTuple(tuple.random, tuple.replicaNumber, tuple.clock, offset)
+    }
+
+    /**
      * Compare this tuple to another one to order them
      * Ordering.Less means that this is less than other
      * Ordering.Greater means that this is greater than other
@@ -95,16 +109,6 @@ export class IdentifierTuple {
         return this.random === other.random
             && this.replicaNumber === other.replicaNumber
             && this.clock === other.clock
-    }
-
-    /**
-     * Generate a new IdentifierTuple with the same base as this but with a different offset
-     *
-     * @param {number} offset The offset of the new IdentifierTuple
-     * @return {IdentifierTuple} The generated IdentifierTuple
-     */
-    generateWithSameBase (offset: number): IdentifierTuple {
-        return new IdentifierTuple(this.random, this.replicaNumber, this.clock, offset)
     }
 
     /**
