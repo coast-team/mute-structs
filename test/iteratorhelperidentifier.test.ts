@@ -35,7 +35,7 @@ function compareBaseMacro (t: AssertContext,
 }
 
 const base1 = [0, 0, 0]
-const splitBase1 = [0, 0, 0, 3, 0, 0, 0]
+const splitBase1 = [0, 0, 0, 4, 0, 0, 0]
 const base2 = [42, 0, 0]
 
 const base1From0To4: IdentifierInterval = new IdentifierInterval(base1, 0, 4)
@@ -47,17 +47,21 @@ const base1From7To11: IdentifierInterval = new IdentifierInterval(base1, 7, 11)
 const base2From0To5: IdentifierInterval = new IdentifierInterval(base2, 0, 5)
 const base2From6To10: IdentifierInterval = new IdentifierInterval(base2, 6, 10)
 
-const splitBase1At3From0To5: IdentifierInterval =
+const splitBase1At4From0To5: IdentifierInterval =
     new IdentifierInterval(splitBase1, 0, 5)
 
 test("b1-before-b2-different-base", compareBaseMacro, base1From0To5, base2From0To5,
     IdentifierIteratorResults.B1_BEFORE_B2)
 test("b1-before-b2-same-base", compareBaseMacro, base1From0To5, base1From7To11,
     IdentifierIteratorResults.B1_BEFORE_B2)
+test("b1-before-b2-prefix", compareBaseMacro, base1From0To4, splitBase1At4From0To5,
+    IdentifierIteratorResults.B1_BEFORE_B2)
 
 test("b1-after-b2-different-base", compareBaseMacro, base2From0To5, base1From0To5,
     IdentifierIteratorResults.B1_AFTER_B2)
 test("b1-after-b2-same-base", compareBaseMacro, base1From7To11, base1From0To5,
+    IdentifierIteratorResults.B1_AFTER_B2)
+test("b1-after-b2-suffix", compareBaseMacro, splitBase1At4From0To5, base1From0To4,
     IdentifierIteratorResults.B1_AFTER_B2)
 
 test("b1-concat-b2", compareBaseMacro, base1From0To5, base1From6To10,
@@ -65,9 +69,9 @@ test("b1-concat-b2", compareBaseMacro, base1From0To5, base1From6To10,
 test("b2-concat-b1", compareBaseMacro, base1From6To10, base1From0To5,
     IdentifierIteratorResults.B2_CONCAT_B1)
 
-test("b1-inside-b2", compareBaseMacro, splitBase1At3From0To5, base1From0To5,
+test("b1-inside-b2", compareBaseMacro, splitBase1At4From0To5, base1From0To5,
     IdentifierIteratorResults.B1_INSIDE_B2)
-test("b2-inside-b1", compareBaseMacro, base1From0To5, splitBase1At3From0To5,
+test("b2-inside-b1", compareBaseMacro, base1From0To5, splitBase1At4From0To5,
     IdentifierIteratorResults.B2_INSIDE_B1)
 
 test("b1-equals-b2", compareBaseMacro, base1From0To5, base1From0To5,
