@@ -171,6 +171,10 @@ export class Identifier {
         }
 
         const commonPrefix: IdentifierTuple[] = this.getLongestCommonPrefix(other)
+        if (commonPrefix.length === this.length) {
+            // The identifiers are equal
+            return true
+        }
         const lastIndex = this.length - 1
 
         return commonPrefix.length === lastIndex &&
