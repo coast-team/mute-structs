@@ -16,55 +16,109 @@
  */
 
 import test from "ava"
+import {AssertContext} from "ava"
+import {Identifier} from "../src/identifier.js"
 import {IdentifierInterval} from "../src/identifierinterval.js"
+import {IdentifierTuple} from "../src/identifiertuple.js"
+
+function generateIdInterval (begin: number, end: number): IdentifierInterval {
+    const idBegin: Identifier =
+        new Identifier([new IdentifierTuple(0, 0, 0, begin)])
+    return new IdentifierInterval(idBegin, 5)
+}
 
 test("from-plain-factory", (t) => {
-    const plain = {
-        base: [-1, 1, 8],
-        begin: -5,
-        end: 10,
-    }
-    const idi: IdentifierInterval | null = IdentifierInterval.fromPlain(plain)
+    const begin = 0
+    const end = 5
+    const tuples: IdentifierTuple[] =
+        [new IdentifierTuple(42, 1, 10, -5), new IdentifierTuple(53, 2, 0, begin)]
+    const idBegin: Identifier = new Identifier(tuples)
+    const plain = {idBegin, end}
+    const idInterval: IdentifierInterval | null = IdentifierInterval.fromPlain(plain)
 
-    if (idi === null) {
+    if (idInterval === null) {
       t.fail("The identifier interval should have been correctly instantiated")
     } else {
-      t.is(idi.base, plain.base)
-      t.is(idi.begin, plain.begin)
-      t.is(idi.end, plain.end)
+        t.true(idInterval.idBegin.equals(plain.idBegin))
+        t.is(idInterval.begin, begin)
+        t.is(idInterval.end, end)
+        t.is(idInterval.length, end - begin + 1)
     }
 })
 
-test("get-base-id", (t) => {
-    const base = [-1, 1, 8]
-    const lowerBound = -5
-    const upperBound = 10
-    const idi = new IdentifierInterval(base, lowerBound, upperBound)
-    const index = 1
-    const id = idi.getBaseId(index)
+test("getBaseId", (t) => {
+    const begin = 0
+    const end = 5
+    const idInterval: IdentifierInterval = generateIdInterval(begin, end)
 
-    t.is(id.last, index)
-    t.deepEqual(id.base, base)
+    const offset = 2
+    const expectedId: Identifier =
+        Identifier.generateWithSameBase(idInterval.idBegin, offset)
+    const actualId = idInterval.getBaseId(offset)
+
+    t.true(actualId.equals(expectedId))
 })
 
-test("get-begin-id", (t) => {
-    const base = [-1, 1, 8]
-    const lowerBound = -5
-    const upperBound = 10
-    const idi = new IdentifierInterval(base, lowerBound, upperBound)
-    const id = idi.getBeginId()
+test("union-prepend-only", (t: AssertContext) => {
+    const begin = 0
+    const end = 5
+    const idInterval = generateIdInterval(begin, end)
 
-    t.is(id.last, lowerBound)
-    t.deepEqual(id.base, base)
+    const aBegin = -5
+    const aEnd = 2
+    const unionInterval = idInterval.union(aBegin, aEnd)
+
+    const expectedBegin = aBegin
+    const expectedEnd = end
+
+    t.is(unionInterval.begin, expectedBegin)
+    t.is(unionInterval.end, expectedEnd)
 })
 
-test("get-begin-id", (t) => {
-    const base = [-1, 1, 8]
-    const lowerBound = -5
-    const upperBound = 10
-    const idi = new IdentifierInterval(base, lowerBound, upperBound)
-    const id = idi.getEndId()
+test("union-append-only", (t: AssertContext) => {
+    const begin = 0
+    const end = 5
+    const idInterval = generateIdInterval(begin, end)
 
-    t.is(id.last, upperBound)
-    t.deepEqual(id.base, base)
+    const aBegin = 2
+    const aEnd = 10
+    const unionInterval = idInterval.union(aBegin, aEnd)
+
+    const expectedBegin = begin
+    const expectedEnd = aEnd
+
+    t.is(unionInterval.begin, expectedBegin)
+    t.is(unionInterval.end, expectedEnd)
+})
+
+test("union-prepend-append", (t: AssertContext) => {
+    const begin = 0
+    const end = 5
+    const idInterval = generateIdInterval(begin, end)
+
+    const aBegin = -5
+    const aEnd = 10
+    const unionInterval = idInterval.union(aBegin, aEnd)
+
+    const expectedBegin = aBegin
+    const expectedEnd = aEnd
+
+    t.is(unionInterval.begin, expectedBegin)
+    t.is(unionInterval.end, expectedEnd)
+})
+
+test("union-no-changes", (t: AssertContext) => {
+    const begin = 0
+    const end = 5
+    const idInterval = generateIdInterval(begin, end)
+
+    const aBegin = 2
+    const aEnd = 2
+    const unionInterval = idInterval.union(aBegin, aEnd)
+
+    const expectedBegin = begin
+    const expectedEnd = end
+
+    t.is(unionInterval.begin, expectedBegin)
+    t.is(unionInterval.end, expectedEnd)
 })
