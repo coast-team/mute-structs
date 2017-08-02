@@ -152,8 +152,12 @@ export class Identifier {
         return commonBase
     }
 
-    equals (aOther: Identifier): boolean {
-        return this.equalsBase(aOther) && this.last === aOther.last
+    equals (other: Identifier): boolean {
+        return this.length === other.length &&
+            this.tuples.every((tuple: IdentifierTuple, index: number) => {
+                const otherTuple: IdentifierTuple = other.tuples[index]
+                return tuple.equals(otherTuple)
+            })
     }
 
     /**
