@@ -21,6 +21,13 @@ import {Identifier, INT_32_MIN_VALUE, INT_32_MAX_VALUE} from "../src/identifier"
 import {IdentifierTuple} from "../src/identifiertuple"
 import {Ordering} from "../src/ordering"
 
+function equalsMacro (t: AssertContext,
+    id1: Identifier, id2: Identifier, expected: boolean): void {
+
+    const actual = id1.equals(id2)
+    t.is(actual, expected)
+}
+
 function equalsBaseMacro (t: AssertContext,
     id1: Identifier, id2: Identifier, expected: boolean): void {
 
@@ -87,6 +94,11 @@ const id01 = new Identifier([tuple01])
 const id11 = new Identifier([tuple11])
 const id0001 = new Identifier([tuple00, tuple01])
 const id0100 = new Identifier([tuple01, tuple00])
+
+test("equals-twin", equalsMacro, id00, id00Twin, true)
+test("equals-same-length", equalsMacro, id00, id11, false)
+test("equals-different-length", equalsMacro, id00, id0001, false)
+
 test("equalsBase-twin", equalsBaseMacro, id00, id00Twin, true)
 test("equalsBase-same-base-same-length", equalsBaseMacro, id00, id01, true)
 test("equalsBase-different-base-same-length", equalsBaseMacro, id00, id11, false)
