@@ -21,85 +21,99 @@ import {SafeAny} from "safe-any"
 
 import {Identifier} from './identifier'
 
-
+/**
+ * Define an interval between two identifiers sharing the same base
+ */
 export class IdentifierInterval {
 
 // Creation
-    constructor (base: number[], begin: number, end: number) {
-        console.assert(base instanceof Array, "base = ", base)
-        console.assert(typeof begin === "number" && Number.isInteger(begin),
-            "begin = ", begin)
-        console.assert(typeof end === "number" && Number.isInteger(end),
-            "end = ", end)
-        console.assert(begin <= end, "begin <= end: " + begin + " <= ", end)
+    constructor (idBegin: Identifier, end: number) {
+        console.assert(Number.isInteger(end), "end must be an integer")
+        console.assert(idBegin.lastOffset <= end, "idBegin must be less than or equal to idEnd")
 
-        this.base = base
-        this.begin = begin
+        this.idBegin = idBegin
         this.end = end
     }
 
     static fromPlain (o: SafeAny<IdentifierInterval>): IdentifierInterval | null {
         if (typeof o === "object" && o !== null) {
-            const base: SafeAny<number[]> = o.base
-            const begin: SafeAny<number> = o.begin
-            const end: SafeAny<number> = o.end
-            if (base instanceof Array && base.every((n: SafeAny<number>) =>
-                typeof n === "number" && Number.isInteger(n)) &&
-                typeof begin === "number" && typeof end === "number" &&
-                Number.isInteger(begin) && Number.isInteger(end) &&
-                begin <= end) {
+            const idBegin: Identifier | null = Identifier.fromPlain(o.idBegin)
+            if (idBegin !== null && typeof o.end === "number" &&
+                Number.isInteger(o.end) && idBegin.lastOffset <= o.end) {
 
-                return new IdentifierInterval(base, begin, end)
+                return new IdentifierInterval(idBegin, o.end)
             }
         }
         return null
     }
 
 // Access
-    readonly base: number[]
-
-    readonly begin: number
-
+    readonly idBegin: Identifier
     readonly end: number
 
+    /**
+     * Shortcut to retrieve the offset of the last tuple of idBegin
+     * This offset also corresponds to the beginning of the interval
+     *
+     * @return {number} The offset
+     */
+    get begin (): number {
+        return this.idBegin.lastOffset
+    }
+
+    /**
+     * Shortcut to compute the length of the interval
+     *
+     * @return {number} The length
+     */
+    get length (): number {
+        return this.end - this.begin + 1
+    }
+
     equals (aOther: IdentifierInterval): boolean {
-        return this.base.length === aOther.base.length &&
-            this.base.every((value: number, index: number): boolean =>
-                value === aOther.base[index]) &&
+        return this.idBegin.equals(aOther.idBegin) &&
             this.begin === aOther.begin && this.end === aOther.end
     }
 
+    /**
+     * Compute the union between this interval and [aBegin, aEnd]
+     *
+     * @param {number} aBegin
+     * @param {number} aEnd
+     * @return {IdentifierInterval} this U [aBegin, aEnd]
+     */
     union (aBegin: number, aEnd: number): IdentifierInterval {
+        console.assert(Number.isInteger(aBegin), "aBegin must be an integer")
+        console.assert(Number.isInteger(aEnd), "aEnd must be an integer")
+
         const minBegin = Math.min(this.begin, aBegin)
         const maxEnd = Math.max(this.end, aEnd)
 
-        return new IdentifierInterval(this.base, minBegin, maxEnd)
+        const newIdBegin: Identifier = Identifier.generateWithSameBase(this.idBegin, minBegin)
+
+        return new IdentifierInterval(newIdBegin, maxEnd)
     }
 
-    getBaseId (u: number): Identifier {
-        console.assert(typeof u === "number" && Number.isInteger(u),
-            "u = ", u)
+    /**
+     * Retrieve a identifier from the interval from its offset
+     *
+     * @param {number} offset The offset of the identifier
+     * @return {Identifier} The identifier
+     */
+    getBaseId (offset: number): Identifier {
+        console.assert(Number.isInteger(offset), "offset must be an integer")
+        console.assert(this.begin <= offset && offset <= this.end, "offset must be included in the interval")
 
-        return new Identifier(this.base, u)
-    }
-
-    getBeginId (): Identifier {
-        return this.getBaseId(this.begin)
-    }
-
-    getEndId (): Identifier {
-        return this.getBaseId(this.end)
+        return Identifier.generateWithSameBase(this.idBegin, offset)
     }
 
     digest (): number {
         // '| 0' converts to 32bits integer
-        const baseDigest = this.base.reduce((prev, v) => (prev * 17 + v) | 0, 0)
-        return ((this.begin * 17 + this.end) * 17 + baseDigest) | 0
+        return (this.idBegin.digest() * 17 + this.end) | 0
     }
 
     toString (): string {
-        return 'Id[' + this.base.join(",") + ', ' +
-                this.begin + ' .. ' + this.end + ']'
+        return "IdInterval[" + this.idBegin.tuples.join(",") + " .. " + this.end + "]"
     }
 
 }

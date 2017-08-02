@@ -22,6 +22,7 @@
   "files": [
     "src/global.d.ts",
     "src/identifier.ts",
+    "src/identifierinterval.ts",
     "src/identifiertuple.ts",
     "test/identifier.test.ts",
     "test/identifiertuple.test.ts"
