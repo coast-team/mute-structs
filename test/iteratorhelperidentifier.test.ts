@@ -17,7 +17,9 @@
 
 import test from "ava"
 import {AssertContext} from "ava"
+import {Identifier} from "../src/identifier"
 import {IdentifierInterval} from "../src/identifierinterval"
+import {IdentifierTuple} from "../src/identifiertuple"
 import {
     compareBase,
     IdentifierIteratorResults
@@ -32,52 +34,60 @@ function compareBaseMacro (t: AssertContext,
     t.is(actual, expected)
 }
 
-const base1 = [0, 0, 0]
-const splitBase1 = [0, 0, 0, 4, 0, 0, 0]
-const base2 = [42, 0, 0]
+const tuple00: IdentifierTuple = new IdentifierTuple(0, 0, 0, 0)
+const tuple04: IdentifierTuple = new IdentifierTuple(0, 0, 0, 4)
+const tuple90: IdentifierTuple = new IdentifierTuple(9, 0, 0, 0)
 
-const base1From0To4: IdentifierInterval = new IdentifierInterval(base1, 0, 4)
-const base1From0To5: IdentifierInterval = new IdentifierInterval(base1, 0, 5)
-const base1From3To7: IdentifierInterval = new IdentifierInterval(base1, 3, 7)
-const base1From6To10: IdentifierInterval = new IdentifierInterval(base1, 6, 10)
-const base1From7To11: IdentifierInterval = new IdentifierInterval(base1, 7, 11)
+const id00 = new Identifier([tuple00])
+const id03 = Identifier.generateWithSameBase(id00, 3)
+const id0400 = new Identifier([tuple04, tuple00])
+const id06 = Identifier.generateWithSameBase(id00, 6)
+const id07 = Identifier.generateWithSameBase(id00, 7)
+const id90 = new Identifier([tuple90])
+const id96 = Identifier.generateWithSameBase(id90, 6)
 
-const base2From0To5: IdentifierInterval = new IdentifierInterval(base2, 0, 5)
-const base2From6To10: IdentifierInterval = new IdentifierInterval(base2, 6, 10)
+const id00To4: IdentifierInterval = new IdentifierInterval(id00, 4)
+const id00To5: IdentifierInterval = new IdentifierInterval(id00, 5)
+const id03To7: IdentifierInterval = new IdentifierInterval(id03, 7)
+const id06To10: IdentifierInterval = new IdentifierInterval(id06, 10)
+const id07To11: IdentifierInterval = new IdentifierInterval(id07, 11)
 
-const splitBase1At4From0To5: IdentifierInterval =
-    new IdentifierInterval(splitBase1, 0, 5)
+const id90To5: IdentifierInterval = new IdentifierInterval(id90, 5)
+const id96To10: IdentifierInterval = new IdentifierInterval(id96, 10)
 
-test("b1-before-b2-different-base", compareBaseMacro, base1From0To5, base2From0To5,
+const id0400To5: IdentifierInterval =
+    new IdentifierInterval(id0400, 5)
+
+test("b1-before-b2-different-base", compareBaseMacro, id00To5, id90To5,
     IdentifierIteratorResults.B1_BEFORE_B2)
-test("b1-before-b2-same-base", compareBaseMacro, base1From0To5, base1From7To11,
+test("b1-before-b2-same-base", compareBaseMacro, id00To5, id07To11,
     IdentifierIteratorResults.B1_BEFORE_B2)
-test("b1-before-b2-prefix", compareBaseMacro, base1From0To4, splitBase1At4From0To5,
+test("b1-before-b2-prefix", compareBaseMacro, id00To4, id0400To5,
     IdentifierIteratorResults.B1_BEFORE_B2)
 
-test("b1-after-b2-different-base", compareBaseMacro, base2From0To5, base1From0To5,
+test("b1-after-b2-different-base", compareBaseMacro, id90To5, id00To5,
     IdentifierIteratorResults.B1_AFTER_B2)
-test("b1-after-b2-same-base", compareBaseMacro, base1From7To11, base1From0To5,
+test("b1-after-b2-same-base", compareBaseMacro, id07To11, id00To5,
     IdentifierIteratorResults.B1_AFTER_B2)
-test("b1-after-b2-suffix", compareBaseMacro, splitBase1At4From0To5, base1From0To4,
+test("b1-after-b2-suffix", compareBaseMacro, id0400To5, id00To4,
     IdentifierIteratorResults.B1_AFTER_B2)
 
-test("b1-concat-b2", compareBaseMacro, base1From0To5, base1From6To10,
+test("b1-concat-b2", compareBaseMacro, id00To5, id06To10,
     IdentifierIteratorResults.B1_CONCAT_B2)
-test("b2-concat-b1", compareBaseMacro, base1From6To10, base1From0To5,
+test("b2-concat-b1", compareBaseMacro, id06To10, id00To5,
     IdentifierIteratorResults.B2_CONCAT_B1)
 
-test("b1-inside-b2", compareBaseMacro, splitBase1At4From0To5, base1From0To5,
+test("b1-inside-b2", compareBaseMacro, id0400To5, id00To5,
     IdentifierIteratorResults.B1_INSIDE_B2)
-test("b2-inside-b1", compareBaseMacro, base1From0To5, splitBase1At4From0To5,
+test("b2-inside-b1", compareBaseMacro, id00To5, id0400To5,
     IdentifierIteratorResults.B2_INSIDE_B1)
 
-test("b1-equals-b2", compareBaseMacro, base1From0To5, base1From0To5,
+test("b1-equals-b2", compareBaseMacro, id00To5, id00To5,
     IdentifierIteratorResults.B1_EQUALS_B2)
 
-test("b1-overlap-b2", compareBaseMacro, base1From0To5, base1From3To7,
+test("b1-overlap-b2", compareBaseMacro, id00To5, id03To7,
     IdentifierIteratorResults.B1_EQUALS_B2)
-test("b1-included-in-b2", compareBaseMacro, base1From0To4, base1From0To5,
+test("b1-included-in-b2", compareBaseMacro, id00To4, id00To5,
     IdentifierIteratorResults.B1_EQUALS_B2)
-test("b2-included-in-b1", compareBaseMacro, base1From0To5, base1From0To4,
+test("b2-included-in-b1", compareBaseMacro, id00To5, id00To4,
     IdentifierIteratorResults.B1_EQUALS_B2)
