@@ -19,7 +19,6 @@
 
 import {IdentifierInterval} from './identifierinterval'
 
-
 export const enum IdentifierIteratorResults {
     B1_AFTER_B2,
     B1_BEFORE_B2,
@@ -30,100 +29,77 @@ export const enum IdentifierIteratorResults {
     B1_EQUALS_B2
 }
 
-export class IteratorHelperIdentifier {
+export function compareBase (idInterval1: IdentifierInterval,
+    idInterval2: IdentifierInterval): IdentifierIteratorResults {
 
-    constructor (idInterval1: IdentifierInterval,
-        idInterval2: IdentifierInterval) {
+    const b1 = idInterval1.base
+    const begin1 = idInterval1.begin
+    const end1 = idInterval1.end
 
-        this.idInterval1 = idInterval1
-        this.idInterval2 = idInterval2
-        this.nextOffset = -1
+    const b2 = idInterval2.base
+    const begin2 = idInterval2.begin
+    const end2 = idInterval2.end
+
+    const minLength = Math.min(b1.length, b2.length)
+
+    let i = 0
+    while (i < minLength && b1[i] === b2[i]) {
+        i++
     }
 
-    readonly idInterval1: IdentifierInterval
+    if (i === minLength) {
+        if (b1.length > minLength) { // b2 is shorter than b1
+            const offset = b1[i]
 
-    readonly idInterval2: IdentifierInterval
-
-    /**
-     * The offset of the identifier interval where to split if
-     * {@link IteratorHelperIdentifier.compareBase()}
-     * returns
-     * {@link IdentifierIteratorResults.B1_INSIDE_B2}
-     * or
-     * {@link IdentifierIteratorResults.B2_INSIDE_B1}
-     */
-    nextOffset: number
-
-    compareBase (): IdentifierIteratorResults {
-        const b1 = this.idInterval1.base
-        const begin1 = this.idInterval1.begin
-        const end1 = this.idInterval1.end
-
-        const b2 = this.idInterval2.base
-        const begin2 = this.idInterval2.begin
-        const end2 = this.idInterval2.end
-
-        const minLength = Math.min(b1.length, b2.length)
-
-        let i = 0
-        while (i < minLength && b1[i] === b2[i]) {
-            i++
-        }
-
-        if (i === minLength) {
-            if (b1.length > minLength) { // b2 is shorter than b1
-                this.nextOffset = b1[i]
-
-                if (this.nextOffset < begin2) {
-                    return IdentifierIteratorResults.B1_BEFORE_B2
-                } else if (this.nextOffset >= end2) {
-                    return IdentifierIteratorResults.B1_AFTER_B2
-                } else {
-                    return IdentifierIteratorResults.B1_INSIDE_B2
-                }
-            } else if (b2.length > minLength) { // b1 is shorter than b2
-                this.nextOffset = b2[i]
-
-                if (this.nextOffset < begin1) {
-                    return IdentifierIteratorResults.B1_AFTER_B2
-                } else if (this.nextOffset >= end1) {
-                    return IdentifierIteratorResults.B1_BEFORE_B2
-                } else {
-                    return IdentifierIteratorResults.B2_INSIDE_B1
-                }
-            } else { // both bases are the same
-                if (begin1 === begin2 && end1 === end2) {
-                    return IdentifierIteratorResults.B1_EQUALS_B2
-                }
-                else if ((end1 + 1) === begin2) {
-                    return IdentifierIteratorResults.B1_CONCAT_B2
-                } else if (begin1 === (end2 + 1)) {
-                    return IdentifierIteratorResults.B2_CONCAT_B1
-                } else if (end1 < begin2) {
-                    return IdentifierIteratorResults.B1_BEFORE_B2
-                } else if (end2 < begin1 ) {
-                    return IdentifierIteratorResults.B1_AFTER_B2
-                } else {
-                    /*
-                        (B2 ⊂ B1) || (B1 ⊂ B2)  || (B1 ∩ B2 !== {})
-                        It happens only in the following cases:
-                            - An already applied operation is delivered again,
-                            but the interval has since then been updated
-                            (append, prepend, deletion at the bounds)
-                            - It is a malicious operation which try to insert
-                            again some identifiers
-                        For now, do not do anything in both cases.
-                    */
-                    console.warn('Trying to duplicate existing identifiers: ',
-                    this.idInterval1, this.idInterval2)
-                    return IdentifierIteratorResults.B1_EQUALS_B2
-                }
+            if (offset < begin2) {
+                return IdentifierIteratorResults.B1_BEFORE_B2
+            } else if (offset >= end2) {
+                return IdentifierIteratorResults.B1_AFTER_B2
+            } else {
+                return IdentifierIteratorResults.B1_INSIDE_B2
             }
-        } else if (b1[i] > b2[i]) {
-            return IdentifierIteratorResults.B1_AFTER_B2
-        } else {
-            return IdentifierIteratorResults.B1_BEFORE_B2
-        }
-    }
+        } else if (b2.length > minLength) { // b1 is shorter than b2
+            const offset = b2[i]
 
+            if (offset < begin1) {
+                return IdentifierIteratorResults.B1_AFTER_B2
+            } else if (offset >= end1) {
+                return IdentifierIteratorResults.B1_BEFORE_B2
+            } else {
+                return IdentifierIteratorResults.B2_INSIDE_B1
+            }
+        } else { // both bases are the same
+            if (begin1 === begin2 && end1 === end2) {
+                return IdentifierIteratorResults.B1_EQUALS_B2
+            }
+            else if ((end1 + 1) === begin2) {
+                return IdentifierIteratorResults.B1_CONCAT_B2
+            } else if (begin1 === (end2 + 1)) {
+                return IdentifierIteratorResults.B2_CONCAT_B1
+            } else if (end1 < begin2) {
+                return IdentifierIteratorResults.B1_BEFORE_B2
+            } else if (end2 < begin1 ) {
+                return IdentifierIteratorResults.B1_AFTER_B2
+            } else {
+                /*
+                    (B2 ⊂ B1) || (B1 ⊂ B2)  || (B1 ∩ B2 !== {})
+                    It happens only in the following cases:
+                        - An already applied operation is delivered again,
+                        but the interval has since then been updated
+                        (append, prepend, deletion at the bounds)
+                        - It is a malicious operation which try to insert
+                        again some identifiers
+                    For now, do not do anything in both cases.
+                */
+                console.warn('Trying to duplicate existing identifiers: ',
+                idInterval1, idInterval2)
+                return IdentifierIteratorResults.B1_EQUALS_B2
+            }
+        }
+    } else if (b1[i] > b2[i]) {
+        return IdentifierIteratorResults.B1_AFTER_B2
+    } else {
+        return IdentifierIteratorResults.B1_BEFORE_B2
+    }
 }
+

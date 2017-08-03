@@ -19,7 +19,7 @@ import test from "ava"
 import {AssertContext} from "ava"
 import {IdentifierInterval} from "../src/identifierinterval"
 import {
-    IteratorHelperIdentifier,
+    compareBase,
     IdentifierIteratorResults
 } from "../src/iteratorhelperidentifier"
 
@@ -27,10 +27,8 @@ function compareBaseMacro (t: AssertContext,
     idInterval1: IdentifierInterval, idInterval2: IdentifierInterval,
     expected: IdentifierIteratorResults): void {
 
-    const ihi: IteratorHelperIdentifier =
-        new IteratorHelperIdentifier(idInterval1, idInterval2)
-
-    const actual: IdentifierIteratorResults = ihi.compareBase()
+    const actual: IdentifierIteratorResults =
+        compareBase(idInterval1, idInterval2)
     t.is(actual, expected)
 }
 
