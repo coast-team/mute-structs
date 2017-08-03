@@ -18,47 +18,59 @@
  */
 
 import {Identifier, INT_32_MIN_VALUE, INT_32_MAX_VALUE} from './identifier'
-import {InfiniteString} from './infinitestring'
+import {IdentifierTuple} from './identifiertuple'
 
-
-export function isMine (replica: number): (b: number[]) => boolean {
-    return (base: number[]) => base[base.length - 2] === replica
+export function isMine (replica: number): (id: Identifier) => boolean {
+    return (id: Identifier) => id.tuples[id.length - 1].replicaNumber === replica
 }
 
 export function createBetweenPosition (id1: Identifier | null,
-        id2: Identifier | null, replicaNumber: number, clock: number): number[] {
+    id2: Identifier | null, replicaNumber: number, clock: number): Identifier {
 
-    console.assert(id1 === null || id1 instanceof Identifier, "id1 = " + id1)
-    console.assert(id2 === null || id2 instanceof Identifier, "id2 = ", id2)
-    console.assert(typeof replicaNumber === "number", "replicaNumber = ", replicaNumber)
-    console.assert(typeof clock === "number", "clock = ", clock)
+    console.assert(Number.isInteger(replicaNumber), "replicaNumber must be an integer")
+    console.assert(Number.isInteger(clock) && clock >= 0, "clock must be a positive integer")
 
-    const s1 = new InfiniteString(id1 !== null ? id1.base.concat(id1.last) : [], INT_32_MIN_VALUE)
-    const s2 = new InfiniteString(id2 !== null ? id2.base.concat(id2.last) : [], INT_32_MAX_VALUE)
-    let sb: number[] = []
+    const minTuple: IdentifierTuple = new IdentifierTuple(INT_32_MIN_VALUE, 0, 0, 0)
+    const maxTuple: IdentifierTuple = new IdentifierTuple(INT_32_MAX_VALUE, 0, 0, 0)
+
+    const tuples1: IdentifierTuple[] = id1 !== null ? id1.tuples : []
+    const seq1: IterableIterator<IdentifierTuple> = infiniteSequence(tuples1, minTuple)
+    const tuples2: IdentifierTuple[] = id2 !== null ? id2.tuples : []
+    const seq2: IterableIterator<IdentifierTuple> = infiniteSequence(tuples2, maxTuple)
+
+    const tuples: IdentifierTuple[] = []
 
     do {
-        const b1 = s1.next()
-        const b2 = s2.next()
-        if (b2 - b1 > 2) {
-            const f = (Math.random() * (b2 - b1 - 2)) + b1 + 1 // Generate a random number ∈ ]b1, b2[
-            const i = f | 0 // Truncate the float in order to get a 32bits int
-            sb.push(i)
+        const tuple1: IdentifierTuple = seq1.next().value
+        const tuple2: IdentifierTuple = seq2.next().value
+        if (tuple2.random - tuple1.random > 2) {
+            // Can insert a new tuple between tuple1 and tuple2
+            const newRandom = (Math.random() * (tuple2.random - tuple1.random - 2)) + tuple1.random + 1 // Generate a random number ∈ ]b1, b2[
+            const i = newRandom | 0 // Truncate the float in order to get a 32bits int
+            tuples.push(new IdentifierTuple(i, replicaNumber, clock, 0))
             break
         } else {
             // Copy the whole tuple <random, replicaNumber, clock, offset>
-            sb.push(b1)
-            for (let i = 0; i < 3; i++) {
-              sb.push(s1.next())
-              s2.next()
-            }
+            tuples.push(tuple1)
         }
     } while (true)
 
-    sb.push(replicaNumber)
-    sb.push(clock)
+    const id: Identifier = new Identifier(tuples)
+    console.assert(isMine(replicaNumber)(id), "the generated identifier must belong to me")
+    return id
+}
 
-    console.assert(isMine(replicaNumber)(sb),
-        "replica = " + replicaNumber + " base = ", sb)
-    return sb
+/**
+ * Generate an infinite sequence of tuples
+ *
+ * @param tuples
+ * @param defaultValue
+ */
+function *infiniteSequence (tuples: IdentifierTuple[], defaultValue: IdentifierTuple): IterableIterator<IdentifierTuple> {
+    for (const tuple of tuples) {
+        yield tuple
+    }
+    while (true) {
+        yield defaultValue
+    }
 }

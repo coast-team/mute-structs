@@ -4,7 +4,7 @@
     "declaration": true,
     "lib": ["es6"],
     "module": "commonjs",
-    "noEmitHelpers": true,
+    "noEmitHelpers": false,
     "sourceMap": true,
     "target": "ES5",
 
@@ -24,6 +24,7 @@
     "src/identifier.ts",
     "src/identifierinterval.ts",
     "src/identifiertuple.ts",
+    "src/idfactory.ts",
     "test/identifier.test.ts",
     "test/identifierinterval.test.ts",
     "test/identifiertuple.test.ts"
