@@ -305,18 +305,18 @@ export class Identifier {
         console.assert(Number.isInteger(max), "max must be an integer")
         console.assert(this.compareTo(next) === Ordering.Less, "this must be less than next")
 
-        const commonBase: IdentifierTuple[] = this.getLongestCommonBase(next)
-        if (commonBase.length !== this.length) {
-            // Bases differ
+        if (this.equalsBase(next)) {
+            // Happen if we receive append/prepend operations in causal disorder
+            console.assert(max < next.lastOffset, "max must be less than next.lastOffset")
             return max
-        } else {
-            // The base of this identifier is a prefix of the one of next
-            const nextOffset = next.tuples[this.length - 1].offset
-            if (this.length < next.length) {
-                return Math.min(nextOffset, max)
-            }
-            return Math.min(nextOffset - 1, max)
         }
+        if (this.isBasePrefix(next)) {
+            // Happen if we receive split operations in causal disorder
+            const offset = next.tuples[this.length - 1].offset
+            return Math.min(offset, max)
+        }
+        // Bases differ
+        return max
     }
 
     /**
