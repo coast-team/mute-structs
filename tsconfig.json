@@ -26,6 +26,7 @@
     "src/identifiertuple.ts",
     "src/idfactory.ts",
     "src/iteratorhelperidentifier.ts",
+    "src/ropesnodes.ts",
     "test/identifier.test.ts",
     "test/identifierinterval.test.ts",
     "test/identifiertuple.test.ts",

@@ -274,8 +274,7 @@ export class RopesNodes {
     }
 
     toString (): string {
-        const current = (new IdentifierInterval(this.block.idInterval.base,
-            this.actualBegin, this.actualEnd)).toString()
+        const current = this.getIdentifierInterval().toString()
         const leftToString = (this.left !== null) ? this.left.toString() : "\t#"
         const rightToString = (this.right !== null) ? this.right.toString() : "\t#"
         return rightToString.replace(/(\t+)/g, "\t$1") + "\n" +
@@ -287,16 +286,14 @@ export class RopesNodes {
      * @return linear representation
      */
     toList (): IdentifierInterval[] {
-        const idInterval = new IdentifierInterval(this.block.idInterval.base,
-            this.actualBegin, this.actualEnd)
+        const idInterval = this.getIdentifierInterval()
         const leftList =  (this.left !== null) ? this.left.toList() : []
         const rightList = (this.right !== null) ? this.right.toList() : []
         return leftList.concat(idInterval, rightList)
     }
 
     getIdentifierInterval (): IdentifierInterval {
-        return new IdentifierInterval(this.block.idInterval.base,
-            this.actualBegin, this.actualEnd)
+        return new IdentifierInterval(this.getIdBegin(), this.actualEnd)
     }
 
     getBlocks (): LogootSBlock[] {
