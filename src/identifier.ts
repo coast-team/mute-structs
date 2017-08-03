@@ -211,22 +211,17 @@ export class Identifier {
      * @return {Ordering} The order of the two identifier
      */
     compareTo (other: Identifier): Ordering {
-        const minLength = Math.min(this.length, other.length)
-        const commonPrefix: IdentifierTuple[] = this.getLongestCommonPrefix(other)
-
-        if (commonPrefix.length === minLength) {
-            if (this.length < other.length) {
-                return Ordering.Less // this ⊂ other
-            }
-            if (other.length < this.length) {
-                return Ordering.Greater // other ⊂ this
-            }
-            return Ordering.Equal // this == other
+        if (this.equals(other)) {
+            return Ordering.Equal
         }
-        const tuple: IdentifierTuple = this.tuples[commonPrefix.length]
-        const otherTuple: IdentifierTuple = other.tuples[commonPrefix.length]
-
-        return tuple.compareTo(otherTuple)
+        if (this.isPrefix(other)) {
+            return Ordering.Less
+        }
+        if (other.isPrefix(this)) {
+            return Ordering.Greater
+        }
+        const index = this.getLengthCommonPrefix(other)
+        return this.tuples[index].compareTo(other.tuples[index])
     }
 
     /**
