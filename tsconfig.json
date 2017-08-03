@@ -27,7 +27,8 @@
     "src/idfactory.ts",
     "test/identifier.test.ts",
     "test/identifierinterval.test.ts",
-    "test/identifiertuple.test.ts"
+    "test/identifiertuple.test.ts",
+    "test/idfactory.test.ts"
   ],
   "exclude": [
     "node_modules/",

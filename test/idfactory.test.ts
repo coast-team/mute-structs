@@ -16,31 +16,36 @@
  */
 
 import test from "ava"
+import {AssertContext} from "ava"
 import {Identifier} from "../src/identifier.js"
+import {IdentifierTuple} from "../src/identifiertuple.js"
+import {Ordering} from "../src/ordering.js"
+
 import {createBetweenPosition} from "../src/idfactory.js"
 
-test("two-contiguous-bases", (t) => {
-    const replicaNumber = 1
-    const clock = 5
-    const id1 = new Identifier([], 1)
-    const id2 = new Identifier([], 4)
-    const newBase = createBetweenPosition(id1, id2,
-        replicaNumber, clock)
-    const newId = new Identifier(newBase, 0)
+test("two-noncontiguous-bases", (t: AssertContext) => {
+    const replicaNumber = 0
+    const clock = 1
+    const id1: Identifier = new Identifier([new IdentifierTuple(0, replicaNumber, clock - 1, 0)])
+    const id2: Identifier = new Identifier([new IdentifierTuple(42, 0, 0, 0)])
 
-    t.is(id1.compareTo(newId), -1, "id1 < newId")
-    t.is(newId.compareTo(id2), -1, "newId < id2")
+    const newId: Identifier = createBetweenPosition(id1, id2, replicaNumber, clock)
+
+    t.is(id1.compareTo(newId), Ordering.Less)
+    t.is(newId.compareTo(id2), Ordering.Less)
 })
 
-test("prefix-preservation", (t) => {
-    const replicaNumber = 1
-    const clock = 5
-    const prefix = [-42, 1, 8]
-    const id1 = new Identifier(prefix, 1)
-    const id2 = new Identifier(prefix, 4)
-    const newBase = createBetweenPosition(id1, id2,
-        replicaNumber, clock)
+test("two-contiguous-bases", (t: AssertContext) => {
+    const replicaNumber = 0
+    const clock = 1
+    const tuple: IdentifierTuple = new IdentifierTuple(0, replicaNumber, clock - 1, 0)
+    const id1: Identifier = new Identifier([tuple])
+    const id2: Identifier = new Identifier([new IdentifierTuple(1, 0, 0, 0)])
 
-    t.true(prefix.length <= newBase.length)
-    t.deepEqual(prefix, newBase.slice(0, prefix.length))
+    const newId: Identifier = createBetweenPosition(id1, id2, replicaNumber, clock)
+
+    t.is(id1.compareTo(newId), Ordering.Less)
+    t.is(newId.compareTo(id2), Ordering.Less)
+    t.is(newId.length, id1.length + 1)
+    t.true(id1.isPrefix(newId))
 })
