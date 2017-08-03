@@ -152,12 +152,34 @@ export class Identifier {
         return commonBase
     }
 
-    equals (other: Identifier): boolean {
-        return this.length === other.length &&
+    isPrefix (other: Identifier): boolean {
+        return this.isBasePrefix(other) &&
+            this.lastOffset === other.tuples[this.length - 1].offset
+    }
+
+    isBasePrefix (other: Identifier): boolean {
+        return this.length <= other.length &&
             this.tuples.every((tuple: IdentifierTuple, index: number) => {
                 const otherTuple: IdentifierTuple = other.tuples[index]
+                if (index === this.tuples.length - 1) {
+                    return tuple.equalsBase(otherTuple)
+                }
                 return tuple.equals(otherTuple)
             })
+    }
+
+    getLengthCommonPrefix (other: Identifier): number {
+        const minLength = Math.min(this.tuples.length, other.tuples.length)
+        let i = 0
+        while (i < minLength && this.tuples[i].equals(other.tuples[i])) {
+            i++
+        }
+        return i
+    }
+
+    equals (other: Identifier): boolean {
+        return this.equalsBase(other) &&
+            this.lastOffset === other.lastOffset
     }
 
     /**
