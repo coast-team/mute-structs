@@ -17,7 +17,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "clean": "rm -rf lib",
+    "clean": "rm -rf dist/",
     "check": "tsc --noEmit",
     "lint": "tslint --project tsconfig.json",
     "test:unit": "npm run build && ava",
