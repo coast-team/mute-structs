@@ -142,7 +142,6 @@ export class LogootSRopes {
         let i = startOffset
         while (con) {
             path.push(from)
-            let split: number
 
             // B1 is the block we are adding
             // B2 is the block to which we are comparing
@@ -175,12 +174,11 @@ export class LogootSRopes {
                     // split b2 the object node
                     const indexOffset: number = from.getIdBegin().base.length
                     const offsetToSplit = idi.base[indexOffset]
-                    split = Math.min(from.actualEnd, offsetToSplit)
                     const rp = RopesNodes.leaf(this.getBlock(idi),
                         idi.begin, str.length)
-                    path.push(from.split(split - from.actualBegin + 1, rp))
+                    path.push(from.split(offsetToSplit - from.actualBegin + 1, rp))
                     i = i + from.leftSubtreeSize()
-                    result.push(new TextInsert(i + split - from.actualBegin + 1, str))
+                    result.push(new TextInsert(i + offsetToSplit - from.actualBegin + 1, str))
                     con = false
                     break
                 }
@@ -219,7 +217,7 @@ export class LogootSRopes {
                 case IdentifierIteratorResults.B1_CONCAT_B2: {
                     // node to insert concat the node
                     if (from.left !== null) {
-                        split = from.getIdBegin().minOffsetAfterPrev(
+                        const split = from.getIdBegin().minOffsetAfterPrev(
                                 from.left.getIdEnd(), idi.begin)
                         const l = str.substr(split - idi.begin, str.length)
                         from.appendBegin(l.length)
@@ -247,7 +245,7 @@ export class LogootSRopes {
                 case IdentifierIteratorResults.B2_CONCAT_B1: {
                     // concat at end
                     if (from.right !== null) {
-                        split = from.getIdEnd().maxOffsetBeforeNext(
+                        const split = from.getIdEnd().maxOffsetBeforeNext(
                                 from.right.getIdBegin(), idi.end)
                         const l = str.substr(0, split + 1 - idi.begin)
                         i = i + from.leftSubtreeSize() + from.length
