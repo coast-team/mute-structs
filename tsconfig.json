@@ -31,7 +31,8 @@
     "test/identifierinterval.test.ts",
     "test/identifiertuple.test.ts",
     "test/idfactory.test.ts",
-    "test/iteratorhelperidentifier.test.ts"
+    "test/iteratorhelperidentifier.test.ts",
+    "test/ropesnodes.test.ts"
   ],
   "exclude": [
     "node_modules/",

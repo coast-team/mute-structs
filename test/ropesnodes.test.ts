@@ -16,14 +16,25 @@
  */
 
 import test from "ava"
+import {Identifier} from "../src/identifier.js"
 import {IdentifierInterval} from "../src/identifierinterval.js"
+import {IdentifierTuple} from "../src/identifiertuple.js"
 import {LogootSBlock} from "../src/logootsblock.js"
 import {RopesNodes} from "../src/ropesnodes.js"
 
 test("matching-linear-representation", (t) => {
-    const idi1 = new IdentifierInterval([200, 3], 0, 5)
-    const idi2 = new IdentifierInterval([300, 3], 0, 5)
-    const idi3 = new IdentifierInterval([300, 4, 2], 0, 5)
+    const tuple03 = new IdentifierTuple(0, 0, 0, 3)
+    const tuple50 = new IdentifierTuple(5, 0, 0, 0)
+    const tuple80 = new IdentifierTuple(8, 0, 0, 0)
+
+    const id03 = new Identifier([tuple03])
+    const id50 = new Identifier([tuple50])
+    const id5080 = new Identifier([tuple50, tuple80])
+
+    const idi1 = new IdentifierInterval(id03, 5)
+    const idi2 = new IdentifierInterval(id50, 5)
+    const idi3 = new IdentifierInterval(id5080, 5)
+
     const block1 = new LogootSBlock(idi1, 5)
     const block2 = new LogootSBlock(idi2, 5)
     const block3 = new LogootSBlock(idi3, 5)
