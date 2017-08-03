@@ -226,71 +226,34 @@ export class Identifier {
 
     /**
      * Check if we can generate new identifiers using
-     * the same base as this without overflowing on next
+     * the same base as this without overflowing
      *
-     * @param {Identifier} next The next identifier
      * @param {number} length The number of characters we want to add
      * @return {boolean}
      */
-    hasPlaceAfter (next: Identifier, length: number): boolean {
+    hasPlaceAfter (length: number): boolean {
+        // Precondition: the node which contains this identifier must be appendableAfter()
         console.assert(Number.isInteger(length), "length must be an integer")
         console.assert(length > 0, "length must be superior to 0 ")
-        console.assert(this.compareTo(next) === Ordering.Less, "this must be less than next")
 
-        if (this.lastOffset > INT_32_MAX_VALUE - length) {
-            // Prevent an overflow when computing offset + length
-            return false
-        } else if (this.length > next.length) {
-            return true
-        } else {
-            const commonBase: IdentifierTuple[] = this.getLongestCommonBase(next)
-
-            if (commonBase.length !== this.length) {
-                // Bases differ
-                return true
-            } else {
-                // The base of this identifier is a prefix of the one of next
-                const max = this.lastOffset + length
-                const nextOffset = next.tuples[this.length - 1].offset
-                if (this.length < next.length) {
-                    return nextOffset >= max
-                }
-                return  nextOffset > max
-            }
-        }
+        // Prevent an overflow when computing lastOffset + length
+        return this.lastOffset <= INT_32_MAX_VALUE - length
     }
 
     /**
      * Check if we can generate new identifiers using
-     * the same base as this without underflowing on prev
+     * the same base as this without underflowing
      *
-     * @param {Identifier} prev The previous identifier
      * @param {number} length The number of characters we want to add
      * @return {boolean}
      */
-    hasPlaceBefore (prev: Identifier, length: number): boolean {
+    hasPlaceBefore (length: number): boolean {
+        // Precondition: the node which contains this identifier must be appendableBefore()
         console.assert(Number.isInteger(length), "length must be an integer")
         console.assert(length > 0, "length must be superior to 0 ")
-        console.assert(this.compareTo(prev) === Ordering.Greater, "this must be greater than prev")
 
-        if (this.lastOffset <= INT_32_MIN_VALUE + length) {
-            // Prevent an underflow when computing offset - length
-            return false
-        }
-        else if (this.length > prev.length) {
-            return true
-        } else {
-            const commonBase: IdentifierTuple[] = this.getLongestCommonBase(prev)
-
-            if (commonBase.length !== this.length) {
-                // Bases differ
-                return true
-            } else {
-                // The base of this identifier is a prefix of the one of prev
-                const min = this.lastOffset - length
-                return prev.tuples[this.length - 1].offset < min
-            }
-        }
+        // Prevent an underflow when computing lastOffset - length
+        return this.lastOffset > INT_32_MIN_VALUE + length
     }
 
     /**
