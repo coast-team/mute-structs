@@ -20,6 +20,7 @@
 import {SafeAny} from "safe-any"
 
 import {Identifier} from './identifier'
+import {Ordering} from './ordering'
 
 /**
  * Define an interval between two identifiers sharing the same base
@@ -62,6 +63,15 @@ export class IdentifierInterval {
     }
 
     /**
+     * Shortcut to retrieve the last identifier of the interval
+     *
+     * @return {Identifier} The last identifier of the interval
+     */
+    get idEnd (): Identifier {
+        return this.getBaseId(this.end)
+    }
+
+    /**
      * Shortcut to compute the length of the interval
      *
      * @return {number} The length
@@ -92,6 +102,17 @@ export class IdentifierInterval {
         const newIdBegin: Identifier = Identifier.generateWithSameBase(this.idBegin, minBegin)
 
         return new IdentifierInterval(newIdBegin, maxEnd)
+    }
+
+    /**
+     * Check if the provided identifier belongs to this interval
+     *
+     * @param {Identifier} id
+     * @return {boolean} Does the identifier belongs to this interval
+     */
+    containsId (id: Identifier): boolean {
+        return this.idBegin.compareTo(id) === Ordering.Less &&
+            this.idEnd.compareTo(id) === Ordering.Greater
     }
 
     /**
