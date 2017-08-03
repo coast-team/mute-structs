@@ -191,20 +191,14 @@ export class Identifier {
      * @return {boolean} Are the bases equals
      */
     equalsBase (other: Identifier): boolean {
-        // Cannot have the same base if sizes are different
-        if (this.length !== other.length) {
-            return false
-        }
-
-        const commonPrefix: IdentifierTuple[] = this.getLongestCommonPrefix(other)
-        if (commonPrefix.length === this.length) {
-            // The identifiers are equal
-            return true
-        }
-        const lastIndex = this.length - 1
-
-        return commonPrefix.length === lastIndex &&
-            this.tuples[lastIndex].equalsBase(other.tuples[lastIndex])
+        return this.length === other.length &&
+            this.tuples.every((tuple: IdentifierTuple, index: number) => {
+                const otherTuple: IdentifierTuple = other.tuples[index]
+                if (index < this.length - 1) {
+                    return tuple.equals(otherTuple)
+                }
+                return tuple.equalsBase(otherTuple)
+            })
     }
 
     /**
