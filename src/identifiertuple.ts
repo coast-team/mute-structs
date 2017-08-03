@@ -41,8 +41,8 @@ export class IdentifierTuple {
         this.offset = offset
     }
 
-    static fromPlain (o: {random?: any, replicaNumber?: any, clock?: any, offset?: any}): IdentifierTuple | null {
-        if (typeof o === "object" &&
+    static fromPlain (o: SafeAny<IdentifierTuple>): IdentifierTuple | null {
+        if (typeof o === "object" && o !== null &&
             typeof o.random === "number" && Number.isInteger(o.random) &&
             typeof o.replicaNumber === "number" && Number.isInteger(o.replicaNumber) &&
             typeof o.clock === "number" && Number.isInteger(o.clock) &&
