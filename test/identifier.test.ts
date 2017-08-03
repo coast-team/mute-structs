@@ -136,49 +136,20 @@ test("compare-to-base", (t) => {
     t.is(id01.compareTo(id00), Ordering.Greater)
 })
 
-test("hasPlaceAfter-same-base", (t) => {
-    const tuple0: IdentifierTuple = new IdentifierTuple(0, 0, 0, 0)
-    const tuple2: IdentifierTuple = new IdentifierTuple(0, 0, 0, 2)
-    const id0 = new Identifier([tuple0])
-    const id2 = new Identifier([tuple2])
-
-    t.true(id0.hasPlaceAfter(id2, 1))
-    t.false(id0.hasPlaceAfter(id2, 2))
-})
-
 test("hasPlaceAfter-max-last", (t) => {
-    const tuple1: IdentifierTuple = new IdentifierTuple(0, 0, 0, INT_32_MAX_VALUE - 1)
-    const tuple2: IdentifierTuple = new IdentifierTuple(1, 1, 0, 0)
-    const id1 = new Identifier([tuple1])
-    const id2 = new Identifier([tuple2])
+    const tuple: IdentifierTuple = new IdentifierTuple(0, 0, 0, INT_32_MAX_VALUE - 1)
+    const id = new Identifier([tuple])
 
-    t.true(id1.hasPlaceAfter(id2, 1))
-    t.false(id1.hasPlaceAfter(id2, 2))
-})
-
-test("hasPlaceBefore-same-base", (t) => {
-    const tuple0: IdentifierTuple = new IdentifierTuple(0, 0, 0, 0)
-    const tuple1: IdentifierTuple = new IdentifierTuple(0, 0, 0, 1)
-    const tuple2: IdentifierTuple = new IdentifierTuple(0, 0, 0, 2)
-
-    const id0 = new Identifier([tuple0])
-    const id1 = new Identifier([tuple1])
-    const id2 = new Identifier([tuple2])
-
-    t.true(id2.hasPlaceBefore(id0, 1))
-    t.false(id2.hasPlaceBefore(id0, 2))
-
-    t.false(id1.hasPlaceBefore(id0, 1))
+    t.true(id.hasPlaceAfter(1))
+    t.false(id.hasPlaceAfter(2))
 })
 
 test("hasPlaceBefore-min-last", (t) => {
-    const tuple1: IdentifierTuple = new IdentifierTuple(0, 0, 0, 0)
-    const tuple2: IdentifierTuple = new IdentifierTuple(1, 0, 0, INT_32_MIN_VALUE + 2)
-    const id1 = new Identifier([tuple1])
-    const id2 = new Identifier([tuple2])
+    const tuple: IdentifierTuple = new IdentifierTuple(1, 0, 0, INT_32_MIN_VALUE + 2)
+    const id = new Identifier([tuple])
 
-    t.true(id2.hasPlaceBefore(id1, 1))
-    t.false(id2.hasPlaceBefore(id1, 2))
+    t.true(id.hasPlaceBefore(1))
+    t.false(id.hasPlaceBefore(2))
 })
 
 test("maxOffsetBeforeNext-same-base", (t) => {
@@ -188,7 +159,7 @@ test("maxOffsetBeforeNext-same-base", (t) => {
     const id5 = new Identifier([tuple5])
 
     const expected = 4
-    const actual = id3.maxOffsetBeforeNext(id5, 10)
+    const actual = id3.maxOffsetBeforeNext(id5, 4)
 
     t.is(actual, expected)
 })
@@ -213,7 +184,7 @@ test("minOffsetAfterPrev-same-base", (t) => {
     const id5 = new Identifier([tuple5])
 
     const expected = 4
-    const actual = id5.minOffsetAfterPrev(id3, 0)
+    const actual = id5.minOffsetAfterPrev(id3, 4)
 
     t.is(actual, expected)
 })
