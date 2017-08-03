@@ -152,11 +152,23 @@ export class Identifier {
         return commonBase
     }
 
+    /**
+     * Check if this identifier is a prefix of another one
+     *
+     * @param {Identifier} other The other identifier
+     * @return {boolean} Is this identifier a prefix of other
+     */
     isPrefix (other: Identifier): boolean {
         return this.isBasePrefix(other) &&
             this.lastOffset === other.tuples[this.length - 1].offset
     }
 
+    /**
+     * Check if the base of this identifier is a prefix of the other one
+     *
+     * @param {Identifier} other The other identifier
+     * @return {boolean} Is this base a prefix of the other one
+     */
     isBasePrefix (other: Identifier): boolean {
         return this.length <= other.length &&
             this.tuples.every((tuple: IdentifierTuple, index: number) => {
@@ -168,6 +180,13 @@ export class Identifier {
             })
     }
 
+    /**
+     * Compute the common prefix between this identifier and the other one
+     * and return its length
+     *
+     * @param other The other identifier
+     * @return {number} The length of the common prefix
+     */
     getLengthCommonPrefix (other: Identifier): number {
         const minLength = Math.min(this.tuples.length, other.tuples.length)
         let i = 0
