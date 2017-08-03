@@ -332,14 +332,19 @@ export class Identifier {
         console.assert(typeof min === "number" && Number.isInteger(min),
             "min = ", min)
 
-        const commonBase: IdentifierTuple[] = this.getLongestCommonBase(prev)
-        if (commonBase.length !== this.length) {
-            // Bases differ
+        if (this.equalsBase(prev)) {
+            // Happen if we receive append/prepend operations in causal disorder
+            console.assert(min > prev.lastOffset,
+                "min must be greater than prev.lastOffset")
             return min
-        } else {
-            // The base of this identifier is a prefix of the one of next
-            return Math.max(prev.tuples[this.length - 1].offset + 1, min)
         }
+        if (this.isBasePrefix(prev)) {
+            // Happen if we receive split operations in causal disorder
+            const offset = prev.tuples[this.length - 1].offset
+            return Math.max(offset + 1, min)
+        }
+        // Bases differ
+        return min
     }
 
     digest (): number {
