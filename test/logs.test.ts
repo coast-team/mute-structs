@@ -15,9 +15,11 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import * as fs from "fs"
 import test from "ava"
 import {AssertContext} from "ava"
+import * as fs from "fs"
+import {SafeAny} from "safe-any"
+
 import {LogootSAdd} from "../src/logootsadd.js"
 import {LogootSDel} from "../src/logootsdel.js"
 import {LogootSRopes} from "../src/logootsropes.js"

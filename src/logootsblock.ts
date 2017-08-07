@@ -17,6 +17,8 @@
  *  along with Mute-structs.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {SafeAny} from "safe-any"
+
 import {IdentifierInterval} from './identifierinterval'
 
 
