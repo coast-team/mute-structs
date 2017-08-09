@@ -62,6 +62,13 @@ export class IdentifierInterval {
 
     readonly end: number
 
+    equals (aOther: IdentifierInterval): boolean {
+        return this.base.length === aOther.base.length &&
+            this.base.every((value: number, index: number): boolean =>
+                value === aOther.base[index]) &&
+            this.begin === aOther.begin && this.end === aOther.end
+    }
+
     union (aBegin: number, aEnd: number): IdentifierInterval {
         const minBegin = Math.min(this.begin, aBegin)
         const maxEnd = Math.max(this.end, aEnd)
