@@ -67,6 +67,14 @@ export class LogootSDel {
 
     readonly lid: IdentifierInterval[]
 
+    equals (aOther: LogootSDel): boolean {
+        return this.lid.length === aOther.lid.length &&
+            this.lid.every((idInterval: IdentifierInterval, index: number): boolean => {
+                const otherIdInterval: IdentifierInterval = aOther.lid[index]
+                return idInterval.equals(otherIdInterval)
+            })
+    }
+
     /**
     * Apply the current delete operation to a LogootSplit document.
     * @param {LogootSRopes} doc - the LogootSplit document on which the deletions wil be performed.
