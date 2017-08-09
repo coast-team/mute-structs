@@ -59,6 +59,11 @@ export class LogootSAdd {
 
     readonly content: string
 
+    equals (aOther: LogootSAdd): boolean {
+        return this.id.equals(aOther.id) &&
+            this.content === aOther.content
+    }
+
     /**
     * Apply the current insert operation to a LogootSplit document.
     * @param {LogootSRopes} doc - the LogootSplit document on which the operation wil be applied.
