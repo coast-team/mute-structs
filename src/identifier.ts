@@ -102,6 +102,10 @@ export class Identifier {
         }
     }
 
+    equals (aOther: Identifier): boolean {
+        return this.equalsBase(aOther) && this.last === aOther.last
+    }
+
     /**
      * Check if the identifier's {@link Identifier#base} is equals to another identifier's one
      *
