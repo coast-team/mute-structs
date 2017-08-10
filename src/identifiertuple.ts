@@ -17,6 +17,8 @@
  *  along with Mute-structs.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {SafeAny} from 'safe-any'
+
 import {INT_32_MIN_VALUE, INT_32_MAX_VALUE} from './identifier'
 import {Ordering} from './ordering'
 
