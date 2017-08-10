@@ -20,7 +20,6 @@
     "pretty": true
   },
   "files": [
-    "src/global.d.ts",
     "src/identifier.ts",
     "src/identifierinterval.ts",
     "src/identifiertuple.ts",
