@@ -29,5 +29,6 @@ export {LogootSDel} from './logootsdel'
 export {LogootSOperation} from './logootsoperation'
 export {TextDelete} from './textdelete'
 export {TextInsert} from './textinsert'
+export {TextOperation} from './textoperation'
 
 export {insert, del, occurrences} from './textutils'
