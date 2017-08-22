@@ -22,6 +22,7 @@ import {SafeAny} from "safe-any"
 
 import {LogootSAdd} from "../src/logootsadd.js"
 import {LogootSDel} from "../src/logootsdel.js"
+import {LogootSOperation} from "../src/logootsoperation.js"
 import {LogootSRopes} from "../src/logootsropes.js"
 
 /**
@@ -42,7 +43,7 @@ function everyEqualsTo<T>(inputs: T[], expected: T): boolean {
  * @param {boolean} expected - Should the logs converge or not
  */
 function everyLogsConvergeMacro(t: AssertContext, logFiles: string[], expected: boolean): void {
-  const logs: (LogootSAdd | LogootSDel)[][] = []
+  const logs: LogootSOperation[][] = []
 
   // Retrieve operation logs from files
   logFiles.forEach((file) => {
@@ -51,18 +52,18 @@ function everyLogsConvergeMacro(t: AssertContext, logFiles: string[], expected: 
 
     // Has to set explicitly the type of richLogootSOps
     // so that TypeScript does its job and infers the return type of richLogootSOps.map(...)
-    const richLogootSOps: SafeAny<{richLogootSOps: SafeAny<LogootSAdd | LogootSDel>[]}> = log.richLogootSOps
+    const richLogootSOps: SafeAny<{richLogootSOps: SafeAny<LogootSOperation>[]}> = log.richLogootSOps
 
 
     if (richLogootSOps instanceof Array && richLogootSOps.length > 0) {
       let isOk = true
       let i = 0
 
-      const logootSOps: (LogootSAdd | LogootSDel)[] = []
+      const logootSOps: LogootSOperation[] = []
 
       while (isOk && i < richLogootSOps.length) {
-        const plainLogootSOp: SafeAny<LogootSAdd | LogootSDel> = richLogootSOps[i].logootSOp
-        let logootSOp: LogootSAdd | LogootSDel | null = LogootSDel.fromPlain(plainLogootSOp)
+        const plainLogootSOp: SafeAny<LogootSOperation> = richLogootSOps[i].logootSOp
+        let logootSOp: LogootSOperation | null = LogootSDel.fromPlain(plainLogootSOp)
         if (logootSOp === null) {
           logootSOp = LogootSAdd.fromPlain(plainLogootSOp)
         }
