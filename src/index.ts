@@ -26,6 +26,7 @@ export {RopesNodes} from './ropesnodes'
 
 export {LogootSAdd} from './logootsadd'
 export {LogootSDel} from './logootsdel'
+export {LogootSOperation} from './logootsoperation'
 export {TextDelete} from './textdelete'
 export {TextInsert} from './textinsert'
 
