@@ -36,12 +36,11 @@ export class Identifier {
 // Creation
     constructor (base: number[], u: number) {
         console.assert(base instanceof Array, "base = ", base)
-        console.assert(base.every((a: any) =>
-            typeof a === "number" && Number.isInteger(a)),
+        console.assert(base.every((a: number) => Number.isInteger(a)),
             "Every item is an integer. base = ", base)
         console.assert(base.every((a: number) => a >= INT_32_MIN_VALUE && a <= INT_32_MAX_VALUE),
             "Every item ∈ [INT_32_MIN_VALUE, INT_32_MAX_VALUE]")
-        console.assert(typeof u === "number" && Number.isInteger(u), "u = ", u)
+        console.assert(Number.isInteger(u), "u = ", u)
         console.assert(u > INT_32_MIN_VALUE && u <= INT_32_MAX_VALUE,
             "u ∈ ]INT_32_MIN_VALUE, INT_32_MAX_VALUE]")
 
