@@ -46,6 +46,11 @@ export class TextDelete {
 
     readonly length: number
 
+    equals (other: TextDelete): boolean {
+        return this.offset === other.offset &&
+            this.length === other.length
+    }
+
     /**
     * Apply the current delete operation to a LogootSplit document.
     * @param {LogootSDocument} doc - the LogootSplit document on which the deletion wil be performed.
