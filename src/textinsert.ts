@@ -43,6 +43,11 @@ export class TextInsert {
 
     readonly content: string
 
+    equals (other: TextInsert): boolean {
+        return this.offset === other.offset &&
+            this.content === other.content
+    }
+
     /**
     * Apply the current insert operation to a LogootSplit document.
     * @param {LogootSDocument} doc - the LogootSplit document on which the insertion wil be performed.
