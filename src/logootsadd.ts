@@ -51,6 +51,16 @@ export class LogootSAdd {
                     return new LogootSAdd(id, content)
                 }
             }
+
+            // For backward compatibility
+            // Allow to replay and update previous log of operations
+            const l: SafeAny<string> = o["l"]
+            if (typeof l === "string" && l.length > 0) {
+                const id: Identifier | null = Identifier.fromPlain(plainId)
+                if (id !== null) {
+                    return new LogootSAdd(id, l)
+                }
+            }
         }
         return null
     }
