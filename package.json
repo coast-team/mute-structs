@@ -23,7 +23,7 @@
     "check": "tsc --noEmit",
     "lint": "tslint --project tsconfig.json",
     "test:unit": "npm run build && ava",
-    "test": "npm run lint && npm run test:unit"
+    "test": "npm run lint && npm run test:unit --"
   },
   "ava": {
     "files": [
