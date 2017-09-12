@@ -83,7 +83,7 @@ export class LogootSRopes {
 
             if (typeof str === "string") {
                 const root: RopesNodes | null = RopesNodes.fromPlain(plainRoot)
-                if (str.length === 0 && root !== null) {
+                if (str.length !== 0 && root !== null) {
                     // FIXME: Need more checking (str's length compared to tree length?)
                     return new LogootSRopes(replica, clock, root, str)
                 }
