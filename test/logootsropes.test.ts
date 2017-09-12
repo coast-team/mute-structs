@@ -383,3 +383,37 @@ test("idempotent-deletion", (t) => {
 
     t.is(docA.digest(), docB.digest(), "docA.digest() = docB.digest()")
 })
+
+// NOTE: Failing since the trees are not balanced the same way
+test.failing("convergent-trees", (t) => {
+    const replicaNumberA = 1
+    const docA = new LogootSRopes(replicaNumberA)
+    const replicaNumberB = 2
+    const docB = new LogootSRopes(replicaNumberB)
+
+    const insertOp1 = docA.insertLocal(0, "a\n")
+    insertOp1.execute(docB)
+
+    const insertOp2 = docB.insertLocal(2, "c")
+    insertOp2.execute(docA)
+
+    // Simulate concurrency
+    const insertOp3 = docA.insertLocal(3, "d")
+    const insertOp4 = docB.insertLocal(1, "b")
+
+    insertOp3.execute(docB)
+    insertOp4.execute(docA)
+
+    const expectedString = "ab\ncd"
+
+    t.is(docA.str, docB.str)
+    t.is(docA.str, expectedString)
+    t.is(docA.digest(), docB.digest())
+    if (docA.root !== null && docB.root !== null) {
+        const str1 = docA.root.toString()
+        const str2 = docB.root.toString()
+        t.true(str1 === str2)
+    } else {
+        t.fail("The models must not be null")
+    }
+})
