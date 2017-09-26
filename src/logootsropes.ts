@@ -297,13 +297,13 @@ export class LogootSRopes {
         console.assert(typeof str === "string", "str = " + str)
         console.assert(id instanceof Identifier, "id = ", id)
 
-        const idi = new IdentifierInterval(id.base, id.last,
-                id.last + str.length - 1)
+        const idi = new IdentifierInterval(id,
+                id.lastOffset + str.length - 1)
 
         if (this.root === null) {
             const bl = new LogootSBlock(idi, 0)
             this.mapBaseToBlock[bl.idInterval.base.join(",")] = bl
-            this.root = RopesNodes.leaf(bl, id.last, str.length)
+            this.root = RopesNodes.leaf(bl, id.lastOffset, str.length)
             const textInsert: TextInsert = new TextInsert(0, str)
             this.applyTextInsert(textInsert)
             return [textInsert]
