@@ -118,7 +118,7 @@ export class IdentifierTuple {
      *
      * @return {number[]} The tuple as an array
      */
-    private asArray (): number[] {
+    asArray (): number[] {
         return [this.random, this.replicaNumber, this.clock, this.offset]
     }
 
