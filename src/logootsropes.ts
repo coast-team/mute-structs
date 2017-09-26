@@ -102,17 +102,15 @@ export class LogootSRopes {
 
     str: string
 
-    getBlock (id: IdentifierInterval): LogootSBlock {
-        console.assert(id instanceof IdentifierInterval, "id = ", id)
-
+    getBlock (idInterval: IdentifierInterval): LogootSBlock {
         const mapBaseToBlock = this.mapBaseToBlock
-        const key = id.base.join(",")
+        const key = idInterval.base.join(",")
         let result
 
         if (mapBaseToBlock.hasOwnProperty(key)) {
             result = mapBaseToBlock[key]
         } else {
-            result = new LogootSBlock(id, 0)
+            result = new LogootSBlock(idInterval, 0)
             this.mapBaseToBlock[key] = result
         }
 
