@@ -552,11 +552,14 @@ export class LogootSRopes {
         do {
             const start = this.searchNode(begin)
             if (start !== null) {
-                const be = start.node.actualBegin + start.i
-                const en = Math.min(be + length - 1, start.node.actualEnd)
-                li.push(new IdentifierInterval(start.node.block.idInterval.base, be, en))
-                const r = start.node.deleteOffsets(be, en)
-                length -= en - be + 1
+                const newBegin = start.node.actualBegin + start.i
+                const newEnd = Math.min(newBegin + length - 1, start.node.actualEnd)
+                const prevIdBegin = start.node.getIdBegin()
+                const newIdBegin =
+                    Identifier.generateWithSameBase(prevIdBegin, newBegin)
+                li.push(new IdentifierInterval(newIdBegin, newEnd))
+                const r = start.node.deleteOffsets(newBegin, newEnd)
+                length -= newEnd - newBegin + 1
 
                 if (start.node.length === 0) {
                     this.delNode(start.path)
@@ -564,7 +567,7 @@ export class LogootSRopes {
                     start.path.push(r)
                     this.balance(start.path)
                 } else {
-                    this.ascendentUpdate(start.path, be - en - 1)
+                    this.ascendentUpdate(start.path, newBegin - newEnd - 1)
                 }
             } else {
                 length = 0
