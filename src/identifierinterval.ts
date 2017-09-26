@@ -80,6 +80,10 @@ export class IdentifierInterval {
         return this.end - this.begin + 1
     }
 
+    get base (): number[] {
+        return this.idBegin.base
+    }
+
     equals (aOther: IdentifierInterval): boolean {
         return this.idBegin.equals(aOther.idBegin) &&
             this.begin === aOther.begin && this.end === aOther.end
