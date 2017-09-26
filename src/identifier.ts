@@ -107,6 +107,16 @@ export class Identifier {
         return this.tuples[this.length - 1].offset
     }
 
+    get base (): number[] {
+        return this.tuples
+            .reduce((acc: number[], tuple: IdentifierTuple, index: number) => {
+                return acc.concat(tuple.asArray())
+            }, [])
+            .filter((value: number, index: number, array: number[]): boolean => {
+                return index !== array.length - 1
+            })
+    }
+
     /**
      * Retrieve the longest common prefix shared by this identifier with another one
      *
