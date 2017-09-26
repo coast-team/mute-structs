@@ -380,8 +380,7 @@ export class LogootSRopes {
                     const prev = this.searchNode(pos - 1) as ResponseIntNode
                         // TODO: why non-null?
                     if (inPos.node.isAppendableBefore() &&
-                            inPos.node.getIdBegin().hasPlaceBefore(
-                                prev.node.getIdEnd(), l.length)) {
+                            inPos.node.getIdBegin().hasPlaceBefore(l.length)) {
                         // append before
 
                         const id5 = inPos.node.appendBegin(l.length)
@@ -389,8 +388,7 @@ export class LogootSRopes {
 
                         return new LogootSAdd(id5, l)
                     } else if (prev.node.isAppendableAfter() &&
-                            prev.node.getIdEnd().hasPlaceAfter(
-                                inPos.node.getIdBegin(), l.length)) {
+                            prev.node.getIdEnd().hasPlaceAfter(l.length)) {
                             // append after
 
                         const id4 = prev.node.appendEnd(l.length)
