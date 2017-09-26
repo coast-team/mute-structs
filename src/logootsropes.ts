@@ -487,31 +487,31 @@ export class LogootSRopes {
         }
     }
 
-    delBlock (id: IdentifierInterval): TextDelete[] {
-        console.assert(id instanceof IdentifierInterval, "id = ", id)
-
+    delBlock (idInterval: IdentifierInterval): TextDelete[] {
         let l: TextDelete[] = []
         let i
         while (true) {
             const path: RopesNodes[] = []
-            i = this.searchPos(id.getBeginId(), path)
+            i = this.searchPos(idInterval.idBegin, path)
             if (i === -1) {
                 // Could not find the first identifier from the interval
-                if (id.begin < id.end) {
+                if (idInterval.begin < idInterval.end) {
                     // Shifting the interval and resuming the search
-                    id = new IdentifierInterval(id.base, id.begin + 1,
-                            id.end)
+                    const newIdBegin =
+                        Identifier.generateWithSameBase(idInterval.idBegin, idInterval.begin + 1)
+                    idInterval =
+                        new IdentifierInterval(newIdBegin, idInterval.end)
                 } else {
                     break
                 }
             } else {
                 // Was able to find the position of the identifier
                 const node = path[path.length - 1] as RopesNodes // Retrieving the node containing the identifier
-                const end = Math.min(id.end, node.actualEnd)
-                const pos = i + id.begin - node.actualBegin
-                const length = end - id.begin + 1
+                const end = Math.min(idInterval.end, node.actualEnd)
+                const pos = i + idInterval.begin - node.actualBegin
+                const length = end - idInterval.begin + 1
                 l.push(new TextDelete(pos, length))
-                const t = node.deleteOffsets(id.begin, end)
+                const t = node.deleteOffsets(idInterval.begin, end)
 
                 if (node.length === 0) { // del node
                     this.delNode(path)
@@ -520,14 +520,16 @@ export class LogootSRopes {
                     this.balance(path)
                 } else {
                     // TODO: Check second argument
-                    this.ascendentUpdate(path, id.begin - end - 1)
+                    this.ascendentUpdate(path, idInterval.begin - end - 1)
                 }
 
-                if (end === id.end) {
+                if (end === idInterval.end) {
                     break
                 } else {
                     // TODO: Check if still valid
-                    id = new IdentifierInterval(id.base, end, id.end)
+                    const newIdBegin =
+                        Identifier.generateWithSameBase(idInterval.idBegin, end)
+                    idInterval = new IdentifierInterval(newIdBegin, idInterval.end)
                 }
             }
         }
