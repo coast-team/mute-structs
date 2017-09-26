@@ -320,8 +320,8 @@ export class LogootSRopes {
         console.assert(typeof length === "number", "length = " + length)
         console.assert(length > 0, "" + length, " > 0")
 
-        const base = IDFactory.createBetweenPosition(id1, id2, this.replicaNumber, this.clock++)
-        const idi = new IdentifierInterval(base, 0, length - 1)
+        const id = IDFactory.createBetweenPosition(id1, id2, this.replicaNumber, this.clock++)
+        const idi = new IdentifierInterval(id, length - 1)
         const newBlock = LogootSBlock.mine(idi, 0)
         this.mapBaseToBlock[idi.base.join(",")] = newBlock
         return RopesNodes.leaf(newBlock, 0, length)
