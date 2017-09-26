@@ -25,12 +25,14 @@
     "src/identifiertuple.ts",
     "src/idfactory.ts",
     "src/iteratorhelperidentifier.ts",
+    "src/logootsropes",
     "src/ropesnodes.ts",
     "test/identifier.test.ts",
     "test/identifierinterval.test.ts",
     "test/identifiertuple.test.ts",
     "test/idfactory.test.ts",
     "test/iteratorhelperidentifier.test.ts",
+    "test/logootsropes.test.ts",
     "test/ropesnodes.test.ts"
   ],
   "exclude": [
