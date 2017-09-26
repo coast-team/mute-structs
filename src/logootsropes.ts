@@ -172,8 +172,8 @@ export class LogootSRopes {
                 }
                 case IdentifierIteratorResults.B1_INSIDE_B2: {
                     // split b2 the object node
-                    const indexOffset: number = from.getIdBegin().base.length
-                    const offsetToSplit = idi.base[indexOffset]
+                    const indexOffset: number = from.getIdBegin().length - 1
+                    const offsetToSplit = idi.idBegin.tuples[indexOffset].offset
                     const rp = RopesNodes.leaf(this.getBlock(idi),
                         idi.begin, str.length)
                     path.push(from.split(offsetToSplit - from.actualBegin + 1, rp))
@@ -184,11 +184,11 @@ export class LogootSRopes {
                 }
                 case IdentifierIteratorResults.B2_INSIDE_B1: {
                     // split b1 the node to insert
-                    const indexOffset: number = idi.base.length
-                    const offsetToSplit = from.getIdBegin().base[indexOffset]
+                    const indexOffset: number = idi.idBegin.length - 1
+                    const offsetToSplit: number =
+                        from.getIdBegin().tuples[indexOffset].offset
                     let ls = str.substr(0, offsetToSplit + 1 - idi.begin)
-                    let idi1 = new IdentifierInterval(idi.base,
-                            idi.begin, offsetToSplit)
+                    let idi1 = new IdentifierInterval(idi.idBegin, offsetToSplit)
                     if (from.left === null) {
                         from.left = RopesNodes.leaf(this.getBlock(idi1),
                             idi1.begin, ls.length)
@@ -201,7 +201,9 @@ export class LogootSRopes {
                     // i=i+ls.size()
 
                     ls = str.substr(offsetToSplit + 1 - idi.begin, str.length)
-                    idi1 = new IdentifierInterval(idi.base, offsetToSplit + 1, idi.end)
+                    const newIdBegin =
+                        Identifier.generateWithSameBase(idi.idBegin, offsetToSplit + 1)
+                    idi1 = new IdentifierInterval(newIdBegin, idi.end)
                     i = i + from.leftSubtreeSize() + from.length
                     if (from.right === null) {
                         from.right = RopesNodes.leaf(this.getBlock(idi1),
@@ -228,7 +230,7 @@ export class LogootSRopes {
                         // check if previous is smaller or not
                         if ((split - 1) >= idi.begin) {
                             str = str.substr(0, split - idi.begin)
-                            idi = new IdentifierInterval(idi.base, idi.begin, split - 1)
+                            idi = new IdentifierInterval(idi.idBegin, split - 1)
                             from = from.left
                         } else {
                             con = false
@@ -256,7 +258,9 @@ export class LogootSRopes {
 
                         if (idi.end >= (split + 1)) {
                             str = str.substr(split + 1 - idi.begin, str.length)
-                            idi = new IdentifierInterval(idi.base, split + 1, idi.end)
+                            const newIdBegin =
+                                Identifier.generateWithSameBase(idi.idBegin, split + 1)
+                            idi = new IdentifierInterval(newIdBegin, idi.end)
                             from = from.right
                             i = i + l.length
                         } else {
