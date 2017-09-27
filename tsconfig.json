@@ -19,25 +19,8 @@
 
     "pretty": true
   },
-  "files": [
-    "src/identifier.ts",
-    "src/identifierinterval.ts",
-    "src/identifiertuple.ts",
-    "src/idfactory.ts",
-    "src/iteratorhelperidentifier.ts",
-    "src/logootsropes",
-    "src/ropesnodes.ts",
-    "test/identifier.test.ts",
-    "test/identifierinterval.test.ts",
-    "test/identifiertuple.test.ts",
-    "test/idfactory.test.ts",
-    "test/iteratorhelperidentifier.test.ts",
-    "test/logootsropes.test.ts",
-    "test/ropesnodes.test.ts"
-  ],
   "exclude": [
-    "node_modules/",
-    "src/",
-    "test/"
+    "test/logs.test.ts",
+    "test/tree.test.ts"
   ]
 }
