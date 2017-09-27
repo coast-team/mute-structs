@@ -17,6 +17,7 @@
  *  along with Mute-structs.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+export {IdentifierTuple} from './identifiertuple'
 export {Identifier} from './identifier'
 export {IdentifierInterval} from './identifierinterval'
 
