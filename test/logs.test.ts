@@ -109,17 +109,46 @@ function everyLogsConvergeMacro(t: AssertContext, logFiles: string[], expected: 
   t.is(everyEqualsTo(actualStrings, expectedString), expected)
 }
 
-const ct3LogsPath = "logs/logs-ct3"
-const ct3LogsSet1 = [`${ct3LogsPath}/log-claudia-ct3.json`, `${ct3LogsPath}/log-long-ct3.json`]
-const ct3LogsSet2 = [`${ct3LogsPath}/log-le-ct3.json`, `${ct3LogsPath}/log-philippe-ct3.json`]
-const ct3LogsSet3 = [`${ct3LogsPath}/log-claudia-ct3.json`, `${ct3LogsPath}/log-philippe-ct3.json`]
+function testConvergentLogs (testName: string,
+  logsPath: string, logName: string, users: string[]): void {
 
-test("convergent-logs-ct3-set-1", everyLogsConvergeMacro, ct3LogsSet1, true)
-test("convergent-logs-ct3-set-2", everyLogsConvergeMacro, ct3LogsSet2, true)
-test("divergent-logs-ct3-set-1", everyLogsConvergeMacro, ct3LogsSet3, false)
+  const logsSet = users.map((user) => `${logsPath}/${logName}-${user}.json`)
+  test(testName, everyLogsConvergeMacro, logsSet, true)
+}
 
-const ct17LogsPath = "logs/logs-ct17"
-const ct17LogFile = "log-ct17-genius-shallow-program"
-const ct17Users = ["claudia", "gerald", "laurent", "philippe", "vinh"]
-const ct17LogsSet1 = ct17Users.map((user) => `${ct17LogsPath}/${ct17LogFile}-${user}.json`)
-test("convergent-logs-ct17-set-1", everyLogsConvergeMacro, ct17LogsSet1, true)
+function testDivergentLogs (testName: string,
+  logsPath: string, logName: string, users: string[]): void {
+
+  const logsSet = users.map((user) => `${logsPath}/${logName}-${user}.json`)
+  test(testName, everyLogsConvergeMacro, logsSet, false)
+}
+
+testConvergentLogs(
+  "convergent-logs-AKj-set",
+  "logs/logs-AKjlI6j4yD",
+  "log-AKjlI6j4yD-combat-salary-clara",
+  ["1", "2", "3"])
+
+testConvergentLogs(
+  "convergent-logs-4u0-set",
+  "logs/logs-4u0HUYhI3a",
+  "log-4u0HUYhI3a-amigo-pilot-verbal",
+  ["1", "2", "3"])
+
+testConvergentLogs(
+  "convergent-logs-iWY-set",
+  "logs/logs-iWYksvoqJo",
+  "log-iWYksvoqJo-holiday-field-summer",
+  ["1", "2", "3"])
+
+testDivergentLogs(
+  "divergent-logs-rXF-set-1",
+  "logs/logs-rXFbhTf8Ct",
+  "log-rXFbhTf8Ct",
+  ["original-log", "incorrect-operations-order"])
+
+testDivergentLogs(
+  "divergent-logs-rXF-set-2",
+  "logs/logs-rXFbhTf8Ct",
+  "log-rXFbhTf8Ct",
+  ["original-log", "additional-operations"])
