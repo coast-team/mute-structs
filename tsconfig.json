@@ -18,8 +18,5 @@
     "strictNullChecks": true,
 
     "pretty": true
-  },
-  "exclude": [
-    "test/tree.test.ts"
-  ]
+  }
 }

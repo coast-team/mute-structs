@@ -19,8 +19,8 @@ test.failing("non-convergent-balanced-trees-different-digests", (t) => {
     const docs: LogootSRopes[] = []
 
     const files = [
-        "trees/trees-nct/tree-nct-tornado-candid-mayday-chrome.json",
-        "trees/trees-nct/tree-nct-tornado-candid-mayday-mac.json"
+        "trees/trees-nct/tree-nct-nikita-button-shirt-1.json",
+        "trees/trees-nct/tree-nct-nikita-button-shirt-2.json"
     ]
 
     files.forEach((file) => {
