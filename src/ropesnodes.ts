@@ -58,7 +58,7 @@ export class RopesNodes {
     constructor (block: LogootSBlock, actualBegin: number, length: number,
         left: RopesNodes | null, right: RopesNodes | null) {
 
-        console.assert(Number.isInteger(actualBegin), "actualBegin must be an integer")
+        console.assert(Number.isSafeInteger(actualBegin), "actualBegin must be a safe integer")
         console.assert(block.idInterval.begin <= actualBegin, "actualBegin must be greater than or equal to idInterval.begin")
 
         this.block = block
@@ -80,8 +80,8 @@ export class RopesNodes {
           const plainRight: SafeAny<RopesNodes> = o.right
 
           if (plainBlock instanceof Object &&
-              typeof actualBegin === "number" && Number.isInteger(actualBegin) &&
-              typeof length === "number" && Number.isInteger(length) &&
+              typeof actualBegin === "number" && Number.isSafeInteger(actualBegin) &&
+              typeof length === "number" && Number.isSafeInteger(length) &&
               length >= 0) {
 
               const block: LogootSBlock | null = LogootSBlock.fromPlain(plainBlock)
@@ -183,9 +183,9 @@ export class RopesNodes {
      * @returns {RopesNodes | null} The resulting block if a split occured, null otherwise
      */
     deleteOffsets (begin: number, end: number): RopesNodes | null {
-        console.assert(typeof begin === "number" && Number.isInteger(begin),
+        console.assert(typeof begin === "number" && Number.isSafeInteger(begin),
             "begin = " + begin)
-        console.assert(typeof end === "number" && Number.isInteger(end),
+        console.assert(typeof end === "number" && Number.isSafeInteger(end),
             "end = " + end)
         console.assert(begin <= end, "begin <= end: " + begin, " <= " + end)
         console.assert(this.block.idInterval.begin <= begin, "this.block.idInterval.begin <= to begin: " + this.block.idInterval.begin, " <= " + begin)

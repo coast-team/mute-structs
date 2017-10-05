@@ -31,7 +31,7 @@ export class TextInsert {
     * @param {string} content - the content to be inserted in the sequence.
     */
     constructor (offset: number, content: string) {
-        console.assert(typeof offset === "number" && Number.isInteger(offset),
+        console.assert(typeof offset === "number" && Number.isSafeInteger(offset),
             "offset = ", offset)
         console.assert(typeof content === "string", "content = ", content)
 

@@ -74,7 +74,7 @@ export class Identifier {
      * @return {IdentifierTuple} The generated Identifier
      */
     static generateWithSameBase (id: Identifier, offset: number): Identifier {
-        console.assert(Number.isInteger(offset), "offset must be an integer")
+        console.assert(Number.isSafeInteger(offset), "offset must be a safe integer")
         console.assert(offset > INT_32_MIN_VALUE && offset <= INT_32_MAX_VALUE, "offset ∈ ]INT_32_MIN_VALUE, INT_32_MAX_VALUE]")
 
         const tuples: IdentifierTuple[] = id.tuples.map((tuple: IdentifierTuple, i: number) => {
@@ -262,7 +262,7 @@ export class Identifier {
      */
     hasPlaceAfter (length: number): boolean {
         // Precondition: the node which contains this identifier must be appendableAfter()
-        console.assert(Number.isInteger(length), "length must be an integer")
+        console.assert(Number.isSafeInteger(length), "length must be a safe integer")
         console.assert(length > 0, "length must be superior to 0 ")
 
         // Prevent an overflow when computing lastOffset + length
@@ -278,7 +278,7 @@ export class Identifier {
      */
     hasPlaceBefore (length: number): boolean {
         // Precondition: the node which contains this identifier must be appendableBefore()
-        console.assert(Number.isInteger(length), "length must be an integer")
+        console.assert(Number.isSafeInteger(length), "length must be a safe integer")
         console.assert(length > 0, "length must be superior to 0 ")
 
         // Prevent an underflow when computing lastOffset - length
@@ -294,7 +294,7 @@ export class Identifier {
      * @return {number} The actual offset we can use
      */
     maxOffsetBeforeNext (next: Identifier, max: number): number {
-        console.assert(Number.isInteger(max), "max must be an integer")
+        console.assert(Number.isSafeInteger(max), "max must be a safe integer")
         console.assert(this.compareTo(next) === Ordering.Less, "this must be less than next")
 
         if (this.equalsBase(next)) {
@@ -321,8 +321,8 @@ export class Identifier {
      */
     minOffsetAfterPrev (prev: Identifier, min: number): number {
         console.assert(prev instanceof Identifier, "prev = ", prev)
-        console.assert(typeof min === "number" && Number.isInteger(min),
-            "min = ", min)
+        console.assert(Number.isSafeInteger(min),
+            "min must be a safe integer")
 
         if (this.equalsBase(prev)) {
             // Happen if we receive append/prepend operations in causal disorder
