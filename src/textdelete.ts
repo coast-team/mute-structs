@@ -32,9 +32,9 @@ export class TextDelete {
     * @param {number} length - the length of the range to be deleted in the sequence.
     */
     constructor (offset: number, length: number) {
-        console.assert(typeof offset === "number" && Number.isInteger(offset),
+        console.assert(typeof offset === "number" && Number.isSafeInteger(offset),
             "offset = ", offset)
-        console.assert(typeof length === "number" && Number.isInteger(length),
+        console.assert(typeof length === "number" && Number.isSafeInteger(length),
             "length = ", length)
         console.assert(length > 0, "" + length + " > 0")
 

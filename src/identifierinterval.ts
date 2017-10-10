@@ -29,7 +29,7 @@ export class IdentifierInterval {
 
 // Creation
     constructor (idBegin: Identifier, end: number) {
-        console.assert(Number.isInteger(end), "end must be an integer")
+        console.assert(Number.isSafeInteger(end), "end must be a safe integer")
         console.assert(idBegin.lastOffset <= end, "idBegin must be less than or equal to idEnd")
 
         this.idBegin = idBegin
@@ -40,7 +40,7 @@ export class IdentifierInterval {
         if (typeof o === "object" && o !== null) {
             const idBegin: Identifier | null = Identifier.fromPlain(o.idBegin)
             if (idBegin !== null && typeof o.end === "number" &&
-                Number.isInteger(o.end) && idBegin.lastOffset <= o.end) {
+                Number.isSafeInteger(o.end) && idBegin.lastOffset <= o.end) {
 
                 return new IdentifierInterval(idBegin, o.end)
             }
@@ -97,8 +97,8 @@ export class IdentifierInterval {
      * @return {IdentifierInterval} this U [aBegin, aEnd]
      */
     union (aBegin: number, aEnd: number): IdentifierInterval {
-        console.assert(Number.isInteger(aBegin), "aBegin must be an integer")
-        console.assert(Number.isInteger(aEnd), "aEnd must be an integer")
+        console.assert(Number.isSafeInteger(aBegin), "aBegin must be a safe integer")
+        console.assert(Number.isSafeInteger(aEnd), "aEnd must be a safe integer")
 
         const minBegin = Math.min(this.begin, aBegin)
         const maxEnd = Math.max(this.end, aEnd)
@@ -126,8 +126,9 @@ export class IdentifierInterval {
      * @return {Identifier} The identifier
      */
     getBaseId (offset: number): Identifier {
-        console.assert(Number.isInteger(offset), "offset must be an integer")
-        console.assert(this.begin <= offset && offset <= this.end, "offset must be included in the interval")
+        console.assert(Number.isSafeInteger(offset), "offset must be a safe integer")
+        console.assert(this.begin <= offset && offset <= this.end,
+            "offset must be included in the interval")
 
         return Identifier.generateWithSameBase(this.idBegin, offset)
     }

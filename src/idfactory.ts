@@ -27,8 +27,8 @@ export function isMine (replica: number): (id: Identifier) => boolean {
 export function createBetweenPosition (id1: Identifier | null,
     id2: Identifier | null, replicaNumber: number, clock: number): Identifier {
 
-    console.assert(Number.isInteger(replicaNumber), "replicaNumber must be an integer")
-    console.assert(Number.isInteger(clock) && clock >= 0, "clock must be a positive integer")
+    console.assert(Number.isSafeInteger(replicaNumber), "replicaNumber must be a safe integer")
+    console.assert(Number.isSafeInteger(clock) && clock >= 0, "clock must be a positive safe integer")
 
     const minTuple: IdentifierTuple = new IdentifierTuple(INT_32_MIN_VALUE, 0, 0, 0)
     const maxTuple: IdentifierTuple = new IdentifierTuple(INT_32_MAX_VALUE, 0, 0, 0)

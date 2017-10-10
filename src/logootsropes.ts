@@ -19,7 +19,11 @@
 
 import {SafeAny} from "safe-any"
 
-import {Identifier} from './identifier'
+import {
+    Identifier,
+    INT_32_MIN_VALUE,
+    INT_32_MAX_VALUE
+} from './identifier'
 import {IdentifierInterval} from './identifierinterval'
 import * as IDFactory from './idfactory'
 import {
@@ -51,9 +55,14 @@ function rightChildOf (aNode: RopesNodes): RopesNodes | null {
 export class LogootSRopes {
 
     constructor (replica = 0, clock = 0, root: RopesNodes | null = null, str = "") {
-
-        console.assert(typeof replica === "number",
-            "replicaNumber = " + replica)
+        console.assert(Number.isSafeInteger(replica),
+            "replica must be a safe integer")
+        console.assert(INT_32_MIN_VALUE <= replica && replica <= INT_32_MAX_VALUE,
+            "replica ∈ [INT_32_MIN_VALUE, INT_32_MAX_VALUE]")
+        console.assert(Number.isSafeInteger(clock),
+            "clock must be a safe integer")
+        console.assert(INT_32_MIN_VALUE <= clock && clock <= INT_32_MAX_VALUE,
+            "clock ∈ [INT_32_MIN_VALUE, INT_32_MAX_VALUE]")
 
         this.replicaNumber = replica
         this.clock = clock
@@ -62,12 +71,18 @@ export class LogootSRopes {
 
         const baseToBlock: {[key: string]: LogootSBlock} = {}
         if (root !== null) {
+            console.assert(str.length === root.sizeNodeAndChildren,
+                "str length must match the number of elements in the model")
+
             const blocks = root.getBlocks()
 
             for (const b of blocks) {
                 const key = b.idInterval.base.join(",")
                 baseToBlock[key] = b
             }
+        } else {
+            console.assert(str.length === 0,
+                "str must be empty when no root is provided")
         }
         this.mapBaseToBlock = baseToBlock
     }
@@ -77,14 +92,21 @@ export class LogootSRopes {
     }
 
     static fromPlain (replica: number, clock: number, o: SafeAny<LogootSRopes>): LogootSRopes | null {
+        console.assert(Number.isSafeInteger(replica), "replica = " + replica)
+        console.assert(INT_32_MIN_VALUE <= replica && replica <= INT_32_MAX_VALUE,
+            "replica ∈ [INT_32_MIN_VALUE, INT_32_MAX_VALUE]")
+        console.assert(Number.isSafeInteger(clock),
+            "clock must be a safe integer")
+        console.assert(INT_32_MIN_VALUE <= clock && clock <= INT_32_MAX_VALUE,
+            "clock ∈ [INT_32_MIN_VALUE, INT_32_MAX_VALUE]")
+
         if (typeof o === "object" && o !== null) {
             const str = o.str
             const plainRoot = o.root
 
             if (typeof str === "string") {
                 const root: RopesNodes | null = RopesNodes.fromPlain(plainRoot)
-                if (str.length !== 0 && root !== null) {
-                    // FIXME: Need more checking (str's length compared to tree length?)
+                if (root !== null && str.length === root.sizeNodeAndChildren) {
                     return new LogootSRopes(replica, clock, root, str)
                 }
             }
