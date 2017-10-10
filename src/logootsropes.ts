@@ -369,7 +369,7 @@ export class LogootSRopes {
                 path = []
                 path.push(this.root)
                 n = this.getXest(leftChildOf, path)
-                if (n.isAppendableBefore()) {
+                if (n.isAppendableBefore(l.length)) {
                     const id = n.appendBegin(l.length)
                     this.ascendentUpdate(path, l.length)
                     return new LogootSAdd(id, l)
@@ -381,7 +381,7 @@ export class LogootSRopes {
                 path = []
                 path.push(this.root)
                 n = this.getXest(rightChildOf, path)
-                if (n.isAppendableAfter()) {// append
+                if (n.isAppendableAfter(l.length)) { // append
                     const id3 = n.appendEnd(l.length)
                     this.ascendentUpdate(path, l.length)
                     return new LogootSAdd(id3, l)
@@ -401,16 +401,14 @@ export class LogootSRopes {
                 } else {
                     const prev = this.searchNode(pos - 1) as ResponseIntNode
                         // TODO: why non-null?
-                    if (inPos.node.isAppendableBefore() &&
-                            inPos.node.getIdBegin().hasPlaceBefore(l.length)) {
+                    if (inPos.node.isAppendableBefore(l.length)) {
                         // append before
 
                         const id5 = inPos.node.appendBegin(l.length)
                         this.ascendentUpdate(inPos.path, l.length)
 
                         return new LogootSAdd(id5, l)
-                    } else if (prev.node.isAppendableAfter() &&
-                            prev.node.getIdEnd().hasPlaceAfter(l.length)) {
+                    } else if (prev.node.isAppendableAfter(l.length)) {
                             // append after
 
                         const id4 = prev.node.appendEnd(l.length)
