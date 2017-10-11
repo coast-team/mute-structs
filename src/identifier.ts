@@ -38,6 +38,10 @@ export class Identifier {
 // Creation
     constructor (tuples: IdentifierTuple[]) {
         console.assert(tuples.length > 0, "tuples must not be empty")
+        // Last random must be different of INT_32_MIN_VALUE
+        // This ensures a dense set.
+        const lastRandom = tuples[tuples.length - 1].random
+        console.assert(lastRandom > INT_32_MIN_VALUE)
 
         this.tuples = tuples
     }
@@ -58,7 +62,7 @@ export class Identifier {
                     }
                     i++
                 }
-                if (isOk) {
+                if (isOk && tuples[tuples.length - 1].random > INT_32_MIN_VALUE) {
                     return new Identifier(tuples)
                 }
             }
@@ -75,7 +79,7 @@ export class Identifier {
      */
     static generateWithSameBase (id: Identifier, offset: number): Identifier {
         console.assert(Number.isSafeInteger(offset), "offset must be a safe integer")
-        console.assert(offset > INT_32_MIN_VALUE && offset <= INT_32_MAX_VALUE, "offset ∈ ]INT_32_MIN_VALUE, INT_32_MAX_VALUE]")
+        console.assert(offset >= INT_32_MIN_VALUE && offset <= INT_32_MAX_VALUE, "offset ∈ ]INT_32_MIN_VALUE, INT_32_MAX_VALUE]")
 
         const tuples: IdentifierTuple[] = id.tuples.map((tuple: IdentifierTuple, i: number) => {
             if (i === id.length - 1) {
@@ -282,7 +286,7 @@ export class Identifier {
         console.assert(length > 0, "length must be superior to 0 ")
 
         // Prevent an underflow when computing lastOffset - length
-        return this.lastOffset > INT_32_MIN_VALUE + length
+        return this.lastOffset >= INT_32_MIN_VALUE + length
     }
 
     /**
