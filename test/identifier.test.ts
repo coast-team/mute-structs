@@ -145,7 +145,7 @@ test("hasPlaceAfter-max-last", (t) => {
 })
 
 test("hasPlaceBefore-min-last", (t) => {
-    const tuple: IdentifierTuple = new IdentifierTuple(1, 0, 0, INT_32_MIN_VALUE + 2)
+    const tuple: IdentifierTuple = new IdentifierTuple(1, 0, 0, INT_32_MIN_VALUE + 1)
     const id = new Identifier([tuple])
 
     t.true(id.hasPlaceBefore(1))
