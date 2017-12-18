@@ -17,7 +17,12 @@
 
 import test from "ava"
 import {AssertContext} from "ava"
-import {Identifier, INT_32_MIN_VALUE, INT_32_MAX_VALUE} from "../src/identifier"
+
+import {
+    INT32_BOTTOM,
+    INT32_TOP
+} from '../src/int32'
+import {Identifier} from "../src/identifier"
 import {IdentifierTuple} from "../src/identifiertuple"
 import {Ordering} from "../src/ordering"
 
@@ -137,7 +142,7 @@ test("compare-to-base", (t) => {
 })
 
 test("hasPlaceAfter-max-last", (t) => {
-    const tuple: IdentifierTuple = new IdentifierTuple(0, 0, 0, INT_32_MAX_VALUE - 1)
+    const tuple: IdentifierTuple = new IdentifierTuple(0, 0, 0, INT32_TOP - 1)
     const id = new Identifier([tuple])
 
     t.true(id.hasPlaceAfter(1))
@@ -145,7 +150,7 @@ test("hasPlaceAfter-max-last", (t) => {
 })
 
 test("hasPlaceBefore-min-last", (t) => {
-    const tuple: IdentifierTuple = new IdentifierTuple(1, 0, 0, INT_32_MIN_VALUE + 1)
+    const tuple: IdentifierTuple = new IdentifierTuple(1, 0, 0, INT32_BOTTOM + 1)
     const id = new Identifier([tuple])
 
     t.true(id.hasPlaceBefore(1))

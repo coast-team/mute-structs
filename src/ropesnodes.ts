@@ -19,6 +19,7 @@
 
 import {SafeAny} from "safe-any"
 
+import {isInt32} from './int32'
 import {Identifier} from './identifier'
 import {IdentifierInterval} from './identifierinterval'
 import {LogootSBlock} from './logootsblock'
@@ -58,7 +59,7 @@ export class RopesNodes {
     constructor (block: LogootSBlock, actualBegin: number, length: number,
         left: RopesNodes | null, right: RopesNodes | null) {
 
-        console.assert(Number.isSafeInteger(actualBegin), "actualBegin must be a safe integer")
+        console.assert(isInt32(actualBegin), "actualBegin ∈ int32")
         console.assert(block.idInterval.begin <= actualBegin, "actualBegin must be greater than or equal to idInterval.begin")
 
         this.block = block

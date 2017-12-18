@@ -19,19 +19,9 @@
 
 import {SafeAny} from "safe-any"
 
-import {Ordering} from './ordering'
-
-/**
- * Holds the minimum value an integer can have.
- */
-export const INT_32_MIN_VALUE = - 0x80000000
-
-/**
- * Holds the maximum value an integer can have.
- */
-export const INT_32_MAX_VALUE = 0x7fffffff
-
 import {IdentifierTuple} from './identifiertuple'
+import {INT32_BOTTOM, INT32_TOP, isInt32} from './int32'
+import {Ordering} from './ordering'
 
 export class Identifier {
 
@@ -41,7 +31,7 @@ export class Identifier {
         // Last random must be different of INT_32_MIN_VALUE
         // This ensures a dense set.
         const lastRandom = tuples[tuples.length - 1].random
-        console.assert(lastRandom > INT_32_MIN_VALUE)
+        console.assert(lastRandom > INT32_BOTTOM)
 
         this.tuples = tuples
     }
@@ -62,7 +52,7 @@ export class Identifier {
                     }
                     i++
                 }
-                if (isOk && tuples[tuples.length - 1].random > INT_32_MIN_VALUE) {
+                if (isOk && tuples[tuples.length - 1].random > INT32_BOTTOM) {
                     return new Identifier(tuples)
                 }
             }
@@ -78,8 +68,7 @@ export class Identifier {
      * @return {IdentifierTuple} The generated Identifier
      */
     static generateWithSameBase (id: Identifier, offset: number): Identifier {
-        console.assert(Number.isSafeInteger(offset), "offset must be a safe integer")
-        console.assert(offset >= INT_32_MIN_VALUE && offset <= INT_32_MAX_VALUE, "offset ∈ ]INT_32_MIN_VALUE, INT_32_MAX_VALUE]")
+        console.assert(isInt32(offset), "offset ∈ int32")
 
         const tuples: IdentifierTuple[] = id.tuples.map((tuple: IdentifierTuple, i: number) => {
             if (i === id.length - 1) {
@@ -266,11 +255,11 @@ export class Identifier {
      */
     hasPlaceAfter (length: number): boolean {
         // Precondition: the node which contains this identifier must be appendableAfter()
-        console.assert(Number.isSafeInteger(length), "length must be a safe integer")
-        console.assert(length > 0, "length must be superior to 0 ")
+        console.assert(isInt32(length), "length ∈ int32")
+        console.assert(length > 0, "length > 0 ")
 
         // Prevent an overflow when computing lastOffset + length
-        return this.lastOffset <= INT_32_MAX_VALUE - length
+        return this.lastOffset <= INT32_TOP - length
     }
 
     /**
@@ -282,11 +271,11 @@ export class Identifier {
      */
     hasPlaceBefore (length: number): boolean {
         // Precondition: the node which contains this identifier must be appendableBefore()
-        console.assert(Number.isSafeInteger(length), "length must be a safe integer")
-        console.assert(length > 0, "length must be superior to 0 ")
+        console.assert(isInt32(length), "length ∈ int32")
+        console.assert(length > 0, "length > 0 ")
 
         // Prevent an underflow when computing lastOffset - length
-        return this.lastOffset >= INT_32_MIN_VALUE + length
+        return this.lastOffset >= INT32_BOTTOM + length
     }
 
     /**
@@ -298,7 +287,7 @@ export class Identifier {
      * @return {number} The actual offset we can use
      */
     maxOffsetBeforeNext (next: Identifier, max: number): number {
-        console.assert(Number.isSafeInteger(max), "max must be a safe integer")
+        console.assert(isInt32(max), "max ∈ int32")
         console.assert(this.compareTo(next) === Ordering.Less, "this must be less than next")
 
         if (this.equalsBase(next)) {
@@ -324,9 +313,7 @@ export class Identifier {
      * @return {number} The actual offset we can use
      */
     minOffsetAfterPrev (prev: Identifier, min: number): number {
-        console.assert(prev instanceof Identifier, "prev = ", prev)
-        console.assert(Number.isSafeInteger(min),
-            "min must be a safe integer")
+        console.assert(isInt32(min), "min ∈ int32")
 
         if (this.equalsBase(prev)) {
             // Happen if we receive append/prepend operations in causal disorder

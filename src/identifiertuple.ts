@@ -19,7 +19,7 @@
 
 import {SafeAny} from 'safe-any'
 
-import {INT_32_MIN_VALUE, INT_32_MAX_VALUE} from './identifier'
+import {isInt32} from './int32'
 import {Ordering} from './ordering'
 
 export class IdentifierTuple {
@@ -30,10 +30,8 @@ export class IdentifierTuple {
     readonly offset: number
 
     constructor (random: number, replicaNumber: number, clock: number, offset: number) {
-        [random, replicaNumber, clock, offset].forEach((value) => {
-            console.assert(Number.isSafeInteger(value), "Each value must be a safe integer")
-            console.assert(value >= INT_32_MIN_VALUE && value <= INT_32_MAX_VALUE, "Each value ∈ [INT_32_MIN_VALUE, INT_32_MAX_VALUE]")
-        })
+        console.assert([random, replicaNumber, clock, offset].every(isInt32),
+            "each value ∈ int32")
 
         this.random = random
         this.replicaNumber = replicaNumber
@@ -42,15 +40,11 @@ export class IdentifierTuple {
     }
 
     static fromPlain (o: SafeAny<IdentifierTuple>): IdentifierTuple | null {
-        if (typeof o === "object" && o !== null &&
-            typeof o.random === "number" && Number.isSafeInteger(o.random) &&
-            INT_32_MIN_VALUE <= o.random && o.random <= INT_32_MAX_VALUE &&
-            typeof o.replicaNumber === "number" && Number.isSafeInteger(o.replicaNumber) &&
-            INT_32_MIN_VALUE <= o.replicaNumber && o.replicaNumber <= INT_32_MAX_VALUE &&
-            typeof o.clock === "number" && Number.isSafeInteger(o.clock) &&
-            INT_32_MIN_VALUE <= o.clock && o.clock <= INT_32_MAX_VALUE &&
-            typeof o.offset === "number" && Number.isSafeInteger(o.offset) &&
-            INT_32_MIN_VALUE <= o.offset && o.offset <= INT_32_MAX_VALUE) {
+        if (typeof o === "object" && o !== null
+            && typeof o.random === "number" && isInt32(o.random)
+            && typeof o.replicaNumber === "number" && isInt32(o.replicaNumber)
+            && typeof o.clock === "number" && isInt32(o.clock)
+            && typeof o.offset === "number" && isInt32(o.offset)) {
 
             return new IdentifierTuple(o.random, o.replicaNumber, o.clock, o.offset)
         }
@@ -65,9 +59,7 @@ export class IdentifierTuple {
      * @return {IdentifierTuple} The generated IdentifierTuple
      */
     static generateWithSameBase (tuple: IdentifierTuple, offset: number): IdentifierTuple {
-        console.assert(Number.isSafeInteger(offset), "offset must be a safe integer")
-        console.assert(offset >= INT_32_MIN_VALUE && offset <= INT_32_MAX_VALUE,
-            "offset ∈ ]INT_32_MIN_VALUE, INT_32_MAX_VALUE]")
+        console.assert(isInt32(offset), "offset ∈ int32")
 
         return new IdentifierTuple(tuple.random, tuple.replicaNumber, tuple.clock, offset)
     }

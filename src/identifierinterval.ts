@@ -20,6 +20,7 @@
 import {SafeAny} from "safe-any"
 
 import {Identifier} from './identifier'
+import {isInt32} from './int32'
 import {Ordering} from './ordering'
 
 /**
@@ -29,7 +30,7 @@ export class IdentifierInterval {
 
 // Creation
     constructor (idBegin: Identifier, end: number) {
-        console.assert(Number.isSafeInteger(end), "end must be a safe integer")
+        console.assert(isInt32(end), "end ∈ int32")
         console.assert(idBegin.lastOffset <= end, "idBegin must be less than or equal to idEnd")
 
         this.idBegin = idBegin
@@ -40,7 +41,7 @@ export class IdentifierInterval {
         if (typeof o === "object" && o !== null) {
             const idBegin: Identifier | null = Identifier.fromPlain(o.idBegin)
             if (idBegin !== null && typeof o.end === "number" &&
-                Number.isSafeInteger(o.end) && idBegin.lastOffset <= o.end) {
+                isInt32(o.end) && idBegin.lastOffset <= o.end) {
 
                 return new IdentifierInterval(idBegin, o.end)
             }
@@ -97,8 +98,8 @@ export class IdentifierInterval {
      * @return {IdentifierInterval} this U [aBegin, aEnd]
      */
     union (aBegin: number, aEnd: number): IdentifierInterval {
-        console.assert(Number.isSafeInteger(aBegin), "aBegin must be a safe integer")
-        console.assert(Number.isSafeInteger(aEnd), "aEnd must be a safe integer")
+        console.assert(isInt32(aBegin), "aBegin ∈ int32")
+        console.assert(isInt32(aEnd), "aEnd ∈ int32")
 
         const minBegin = Math.min(this.begin, aBegin)
         const maxEnd = Math.max(this.end, aEnd)
@@ -126,7 +127,7 @@ export class IdentifierInterval {
      * @return {Identifier} The identifier
      */
     getBaseId (offset: number): Identifier {
-        console.assert(Number.isSafeInteger(offset), "offset must be a safe integer")
+        console.assert(isInt32(offset), "offset ∈ int32")
         console.assert(this.begin <= offset && offset <= this.end,
             "offset must be included in the interval")
 

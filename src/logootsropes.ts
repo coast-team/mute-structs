@@ -19,11 +19,8 @@
 
 import {SafeAny} from "safe-any"
 
-import {
-    Identifier,
-    INT_32_MIN_VALUE,
-    INT_32_MAX_VALUE
-} from './identifier'
+import {isInt32} from './int32'
+import {Identifier} from './identifier'
 import {IdentifierInterval} from './identifierinterval'
 import * as IDFactory from './idfactory'
 import {
@@ -55,14 +52,8 @@ function rightChildOf (aNode: RopesNodes): RopesNodes | null {
 export class LogootSRopes {
 
     constructor (replica = 0, clock = 0, root: RopesNodes | null = null, str = "") {
-        console.assert(Number.isSafeInteger(replica),
-            "replica must be a safe integer")
-        console.assert(INT_32_MIN_VALUE <= replica && replica <= INT_32_MAX_VALUE,
-            "replica ∈ [INT_32_MIN_VALUE, INT_32_MAX_VALUE]")
-        console.assert(Number.isSafeInteger(clock),
-            "clock must be a safe integer")
-        console.assert(INT_32_MIN_VALUE <= clock && clock <= INT_32_MAX_VALUE,
-            "clock ∈ [INT_32_MIN_VALUE, INT_32_MAX_VALUE]")
+        console.assert(isInt32(replica), "replica ∈ int32")
+        console.assert(isInt32(clock), "clock ∈ int32")
 
         this.replicaNumber = replica
         this.clock = clock
@@ -92,13 +83,8 @@ export class LogootSRopes {
     }
 
     static fromPlain (replica: number, clock: number, o: SafeAny<LogootSRopes>): LogootSRopes | null {
-        console.assert(Number.isSafeInteger(replica), "replica = " + replica)
-        console.assert(INT_32_MIN_VALUE <= replica && replica <= INT_32_MAX_VALUE,
-            "replica ∈ [INT_32_MIN_VALUE, INT_32_MAX_VALUE]")
-        console.assert(Number.isSafeInteger(clock),
-            "clock must be a safe integer")
-        console.assert(INT_32_MIN_VALUE <= clock && clock <= INT_32_MAX_VALUE,
-            "clock ∈ [INT_32_MIN_VALUE, INT_32_MAX_VALUE]")
+        console.assert(isInt32(replica), "replica ∈ int32")
+        console.assert(isInt32(clock), "clock ∈ int32")
 
         if (typeof o === "object" && o !== null) {
             const str = o.str

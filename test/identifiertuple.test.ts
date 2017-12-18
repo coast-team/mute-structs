@@ -19,7 +19,6 @@
 
 import test from "ava"
 import {AssertContext} from "ava"
-import {INT_32_MIN_VALUE, INT_32_MAX_VALUE} from "../src/identifier"
 import {IdentifierTuple} from "../src/identifiertuple"
 import {Ordering} from "../src/ordering"
 
