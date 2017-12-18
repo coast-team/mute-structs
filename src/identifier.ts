@@ -101,13 +101,12 @@ export class Identifier {
     }
 
     get base (): number[] {
-        return this.tuples
-            .reduce((acc: number[], tuple: IdentifierTuple, index: number) => {
-                return acc.concat(tuple.asArray())
-            }, [])
-            .filter((value: number, index: number, array: number[]): boolean => {
-                return index !== array.length - 1
-            })
+        const result = this.tuples
+        .reduce((acc: number[], tuple) => (
+            acc.concat(tuple.asArray())
+        ), [])
+        result.pop() // remove last offset
+        return result
     }
 
     /**
