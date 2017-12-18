@@ -81,8 +81,6 @@ export class LogootSDel {
     * @return {TextDelete[]} the list of deletions to be applied on the sequence representing the document content.
     */
     execute (doc: LogootSRopes): TextDelete[] {
-        console.assert(doc instanceof LogootSRopes, "doc = ", doc)
-
         return arrayConcat.apply([], this.lid.map(
             (aId: IdentifierInterval): TextDelete[] => doc.delBlock(aId)))
     }

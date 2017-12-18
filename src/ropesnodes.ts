@@ -30,8 +30,6 @@ import {LogootSBlock} from './logootsblock'
 * @returns Height of aNode or 0 if aNode is null
 */
 function heightOf (aNode: RopesNodes | null): number {
-    console.assert(aNode === null || aNode instanceof RopesNodes, "aNode = ", aNode)
-
     if (aNode !== null) {
         return aNode.height
     } else {
@@ -44,8 +42,6 @@ function heightOf (aNode: RopesNodes | null): number {
 * @returns size of aNode (including children sizes) or 0 if aNode is null
 */
 function subtreeSizeOf (aNode: RopesNodes | null): number {
-    console.assert(aNode === null || aNode instanceof RopesNodes, "aNode = ", aNode)
-
     if (aNode !== null) {
         return aNode.sizeNodeAndChildren
     } else {
@@ -81,8 +77,8 @@ export class RopesNodes {
           const plainRight: SafeAny<RopesNodes> = o.right
 
           if (plainBlock instanceof Object &&
-              typeof actualBegin === "number" && Number.isSafeInteger(actualBegin) &&
-              typeof length === "number" && Number.isSafeInteger(length) &&
+              typeof actualBegin === "number" && isInt32(actualBegin) &&
+              typeof length === "number" && isInt32(length) &&
               length >= 0) {
 
               const block: LogootSBlock | null = LogootSBlock.fromPlain(plainBlock)
@@ -100,14 +96,13 @@ export class RopesNodes {
         return null
     }
 
-    static leaf (aBlock: LogootSBlock, aOffset: number, aLength: number): RopesNodes {
-        console.assert(aBlock instanceof LogootSBlock, "aBlock = ", aBlock)
-        console.assert(typeof aOffset === "number", "aOffset = " + aOffset)
-        console.assert(typeof aLength === "number", "aLength = " + aLength)
-        console.assert(aLength > 0, "" + aLength, " > 0")
+    static leaf (block: LogootSBlock, offset: number, lenth: number): RopesNodes {
+        console.assert(isInt32(offset), "aOffset ∈ int32")
+        console.assert(isInt32(lenth), "lenth ∈ int32")
+        console.assert(lenth > 0, "lenth > 0")
 
-        aBlock.addBlock(aOffset, aLength) // Mutation
-        return new RopesNodes(aBlock, aOffset, aLength, null, null)
+        block.addBlock(offset, lenth) // Mutation
+        return new RopesNodes(block, offset, lenth, null, null)
     }
 
 // Access
@@ -148,14 +143,14 @@ export class RopesNodes {
     }
 
     addString (length: number): void {
-        console.assert(typeof length === "number", "length = " + length)
+        console.assert(isInt32(length), "length  ∈ int32")
         // `length' may be negative
 
         this.sizeNodeAndChildren += length
     }
 
     appendEnd (length: number): Identifier {
-        console.assert(typeof length === "number", "length = ", length)
+        console.assert(isInt32(length), "length  ∈ int32")
         console.assert(length > 0, "" + length, " > 0")
 
         const b = this.actualEnd + 1
@@ -165,7 +160,7 @@ export class RopesNodes {
     }
 
     appendBegin (length: number): Identifier {
-        console.assert(typeof length === "number", "length = ", length)
+        console.assert(isInt32(length), "length  ∈ int32")
         console.assert(length > 0, "" + length, " > 0")
 
         this.actualBegin -= length
@@ -184,10 +179,8 @@ export class RopesNodes {
      * @returns {RopesNodes | null} The resulting block if a split occured, null otherwise
      */
     deleteOffsets (begin: number, end: number): RopesNodes | null {
-        console.assert(typeof begin === "number" && Number.isSafeInteger(begin),
-            "begin = " + begin)
-        console.assert(typeof end === "number" && Number.isSafeInteger(end),
-            "end = " + end)
+        console.assert(isInt32(begin), "begin  ∈ int32")
+        console.assert(isInt32(end), "end  ∈ int32")
         console.assert(begin <= end, "begin <= end: " + begin, " <= " + end)
         console.assert(this.block.idInterval.begin <= begin, "this.block.idInterval.begin <= to begin: " + this.block.idInterval.begin, " <= " + begin)
         console.assert(end <= this.block.idInterval.end, "end <= this.block.idInterval.end: " + end, " <= " + this.block.idInterval.end)
@@ -221,10 +214,6 @@ export class RopesNodes {
     }
 
     split (size: number, node: RopesNodes | null): RopesNodes {
-        console.assert(typeof size === "number", "size = ", size)
-        console.assert(node instanceof RopesNodes || node === null,
-            "node = ", node)
-
         const newRight = new RopesNodes(this.block,
             this.actualBegin + size, this.length - size, node, this.right)
         this.length = size

@@ -19,6 +19,7 @@
 
 import {SafeAny} from "safe-any"
 
+import {isInt32} from './int32'
 import {IdentifierInterval} from './identifierinterval'
 
 
@@ -26,7 +27,8 @@ export class LogootSBlock {
 
 // Creation
     constructor (idInterval: IdentifierInterval, nbElt: number, mine = false) {
-        console.assert(Number.isInteger(nbElt) && nbElt >= 0, "nbElt must be a positive integer")
+        console.assert(isInt32(nbElt) && nbElt >= 0,
+            "nbElt must be a positive integer")
 
         this.idInterval = idInterval
         this.nbElement = nbElt
@@ -66,14 +68,14 @@ export class LogootSBlock {
     readonly mine: boolean
 
     addBlock (pos: number, length: number): void {
-        console.assert(Number.isInteger(length) && length > 0, "length must be a positive integer")
+        console.assert(isInt32(length) && length > 0, "length must be a positive int32")
 
         this.nbElement += length
         this.idInterval = this.idInterval.union(pos, pos + length - 1)
     }
 
     delBlock (nbElt: number): void {
-        console.assert(Number.isInteger(nbElt) && nbElt > 0, "nbElt must be a positive integer")
+        console.assert(isInt32(nbElt) && nbElt > 0, "nbElt must be a positive int32")
 
         this.nbElement -= nbElt
     }

@@ -38,14 +38,10 @@ import * as TextUtils from './textutils'
 
 
 function leftChildOf (aNode: RopesNodes): RopesNodes | null {
-    console.assert(aNode instanceof RopesNodes, "aNode = ", aNode)
-
     return aNode.left
 }
 
 function rightChildOf (aNode: RopesNodes): RopesNodes | null {
-    console.assert(aNode instanceof RopesNodes, "aNode = ", aNode)
-
     return aNode.right
 }
 
@@ -306,9 +302,6 @@ export class LogootSRopes {
     }
 
     addBlock (str: string, id: Identifier): TextInsert[] {
-        console.assert(typeof str === "string", "str = " + str)
-        console.assert(id instanceof Identifier, "id = ", id)
-
         const idi = new IdentifierInterval(id,
                 id.lastOffset + str.length - 1)
 
@@ -325,10 +318,8 @@ export class LogootSRopes {
     }
 
     mkNode (id1: Identifier | null, id2: Identifier | null, length: number): RopesNodes {
-        console.assert(id1 === null || id1 instanceof Identifier, "id1 = ", id1)
-        console.assert(id2 === null || id2 instanceof Identifier, "id2 = ", id2)
-        console.assert(typeof length === "number", "length = " + length)
-        console.assert(length > 0, "" + length, " > 0")
+        console.assert(isInt32(length) && length > 0, "length ∈ int32")
+        console.assert(length > 0, "length > 0")
 
         const id = IDFactory.createBetweenPosition(id1, id2, this.replicaNumber, this.clock++)
         const idi = new IdentifierInterval(id, length - 1)
@@ -338,8 +329,7 @@ export class LogootSRopes {
     }
 
     insertLocal (pos: number, l: string): LogootSAdd {
-        console.assert(typeof pos === "number", "pos = ", pos)
-        console.assert(typeof l === "string", "l = ", l)
+        console.assert(isInt32(pos), "pos ∈ int32")
         let n
 
         if (this.root === null) { // empty tree
@@ -419,8 +409,6 @@ export class LogootSRopes {
 
     getXest (aChildOf: (a: RopesNodes) => RopesNodes | null,
             aPath: RopesNodes[]): RopesNodes {
-        console.assert(aChildOf instanceof Function, "aChildOf = ", aChildOf)
-        console.assert(aPath instanceof Array, "aPath = ", aPath)
 
         let n = aPath[aPath.length - 1]
         let child = aChildOf(n)
@@ -433,9 +421,6 @@ export class LogootSRopes {
     }
 
     searchPos (id: Identifier, path: RopesNodes[]): number {
-        console.assert(id instanceof Identifier, "id = ", id)
-        console.assert(path instanceof Array, "path = ", path)
-
         let i = 0
         let node = this.root
         while (node !== null) {
@@ -459,7 +444,7 @@ export class LogootSRopes {
     }
 
     searchNode (pos: number): ResponseIntNode | null {
-        console.assert(typeof pos === "number", "pos = ", pos)
+        console.assert(isInt32(pos), "pos ∈ int32")
 
         let node1 = this.root
         let path1: RopesNodes[] = []
@@ -484,8 +469,7 @@ export class LogootSRopes {
     }
 
     ascendentUpdate (path: RopesNodes[], length: number): void {
-        console.assert(path instanceof Array, "path = ", path)
-        console.assert(typeof length === "number", "length = ", length)
+        console.assert(isInt32(length), "length ∈ int32")
         // `length' may be negative
 
         for (const item of path) {
@@ -548,8 +532,8 @@ export class LogootSRopes {
     }
 
     delLocal (begin: number, end: number): LogootSDel {
-        console.assert(typeof begin === "number", "begin = " + begin)
-        console.assert(typeof end === "number", "end = " + end)
+        console.assert(isInt32(begin), "begin ∈ int32")
+        console.assert(isInt32(end), "end ∈ int32")
         console.assert(begin <= end, "" + begin, " <= " + end)
 
         this.str = TextUtils.del(this.str, begin, end)
@@ -584,8 +568,6 @@ export class LogootSRopes {
     }
 
     delNode (path: RopesNodes[]): void {
-        console.assert(path instanceof Array, "path = ", path)
-
         const node = path[path.length - 1]
         if (node.block.nbElement === 0) {
             delete this.mapBaseToBlock[node.block.idInterval.base.join(",")]
@@ -616,7 +598,6 @@ export class LogootSRopes {
     }
 
     getMinPath (path: RopesNodes[]): RopesNodes {
-        console.assert(path instanceof Array, "path = ", path)
         console.assert(path.length !== 0, "`path' has at least one item")
 
         let node = path[path.length - 1] as RopesNodes // precondition
@@ -629,8 +610,6 @@ export class LogootSRopes {
 
     // TODO: Implémenter la balance de Google (voir AVL.js) et vérifier ses performances en comparaison
     balance (path: RopesNodes[]): void {
-        console.assert(path instanceof Array, "path = ", path)
-
         while (path.length > 0) {
             let node = path.pop() as RopesNodes // Loop condition
 
@@ -660,9 +639,6 @@ export class LogootSRopes {
     }
 
     rotateLeft (node: RopesNodes, father: RopesNodes | null): RopesNodes {
-        console.assert(node instanceof RopesNodes, "node = ", node)
-        console.assert(father === null || father instanceof RopesNodes,
-            "father = ", father)
         console.assert(node.right !== null, "There exists a right node")
         console.assert((node === this.root) === (father === null), "The father is null when we are rotating left the root")
 
@@ -683,9 +659,6 @@ export class LogootSRopes {
     }
 
     rotateRight (node: RopesNodes, father: RopesNodes | null): RopesNodes {
-        console.assert(node instanceof RopesNodes, "node = ", node)
-        console.assert(father === null || father instanceof RopesNodes,
-            "father = ", father)
         console.assert(node.left !== null, "There exists a left node")
         console.assert((node === this.root) === (father === null), "The father is null when we are rotating right the root")
 
@@ -706,9 +679,6 @@ export class LogootSRopes {
     }
 
     rotateRL (node: RopesNodes, father: RopesNodes | null): RopesNodes {
-        console.assert(node instanceof RopesNodes, "node = ", node)
-        console.assert(father === null || father instanceof RopesNodes,
-            "father = ", father)
         console.assert(node.right !== null, "There exists a right node")
         const rightNode = node.right as RopesNodes // precondition
         console.assert(rightNode.left !== null,
@@ -719,9 +689,6 @@ export class LogootSRopes {
     }
 
     rotateLR (node: RopesNodes, father: RopesNodes | null): RopesNodes {
-        console.assert(node instanceof RopesNodes, "node = ", node)
-        console.assert(father === null || father instanceof RopesNodes,
-            "father = ", father)
         console.assert(node.left !== null, "There exists a left node")
         const leftNode = node.left as RopesNodes // precondition
         console.assert(leftNode.right !== null,
@@ -732,8 +699,6 @@ export class LogootSRopes {
     }
 
     getNext (path: RopesNodes[]): boolean {
-        console.assert(path instanceof Array, "path = ", path)
-
         const node = path[path.length - 1]
         if (node.right === null) {
             if (path.length > 1) {

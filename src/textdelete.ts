@@ -17,6 +17,7 @@
  *  along with Mute-structs.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+ import {isInt32} from './int32'
 import {LogootSRopes} from './logootsropes'
 import {LogootSDel} from './logootsdel'
 
@@ -32,11 +33,9 @@ export class TextDelete {
     * @param {number} length - the length of the range to be deleted in the sequence.
     */
     constructor (offset: number, length: number) {
-        console.assert(typeof offset === "number" && Number.isSafeInteger(offset),
-            "offset = ", offset)
-        console.assert(typeof length === "number" && Number.isSafeInteger(length),
-            "length = ", length)
-        console.assert(length > 0, "" + length + " > 0")
+        console.assert(isInt32(offset), "offset  ∈ int32", offset)
+        console.assert(isInt32(length), "length  ∈ int32", length)
+        console.assert(length > 0, "length > 0")
 
         this.offset = offset
         this.length = length

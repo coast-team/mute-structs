@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016 Victorien Elvinger
+ *  Copyright 2016-2017 Victorien Elvinger
  *
  *  This file is part of Mute-structs.
  *
@@ -26,9 +26,7 @@
   * @return {string} the resulting string aOriginal[0:index]+string+aOriginal[index+1:aOriginal.length-1].
   */
 function insert (aOriginal: string, index: number, str: string): string {
-    console.assert(typeof aOriginal === "string", "aOriginal = ", aOriginal)
-    console.assert(typeof index === "number", "index = ", index)
-    console.assert(typeof str === "string", "string = " + str)
+    console.assert(Number.isSafeInteger(index), "index ∈ safe integer")
 
     const positiveIndex = Math.max(0, index)
     return aOriginal.slice(0, positiveIndex) +
@@ -44,9 +42,8 @@ function insert (aOriginal: string, index: number, str: string): string {
   * @return {string} the resulting string aOriginal[0:begin]+aOriginal[end:aOriginal.length-1].
   */
 function del (aOriginal: string, begin: number, end: number): string {
-    console.assert(typeof aOriginal === "string", "aOriginal = ", aOriginal)
-    console.assert(typeof begin === "number", "begin = ", begin)
-    console.assert(typeof end === "number", "end = ", end)
+    console.assert(Number.isSafeInteger(begin), "begin ∈ safe integer")
+    console.assert(Number.isSafeInteger(end), "end ∈ safe integer")
 
     return aOriginal.slice(0, begin) +
         aOriginal.slice(end + 1)
@@ -59,9 +56,6 @@ function del (aOriginal: string, begin: number, end: number): string {
   * @return {number} the occurence count.
   */
 function occurrences (str: string, substring: string): number {
-    console.assert(typeof str === "string", "string = " + str)
-    console.assert(typeof substring === "string", "substring = ", substring)
-
     let result = 0
     const substringLength = substring.length
 
@@ -75,4 +69,3 @@ function occurrences (str: string, substring: string): number {
 }
 
 export {insert, del, occurrences}
-

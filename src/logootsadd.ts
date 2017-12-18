@@ -80,8 +80,6 @@ export class LogootSAdd {
     * @return {TextInsert[]} the insertion to be applied on the sequence representing the document content.
     */
     execute (doc: LogootSRopes): TextInsert[] {
-        console.assert(doc instanceof LogootSRopes, "doc = ", doc)
-
         return doc.addBlock(this.content, this.id)
     }
 

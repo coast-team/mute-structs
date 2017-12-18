@@ -17,6 +17,7 @@
  *  along with Mute-structs.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {isInt32} from './int32'
 import {LogootSRopes} from './logootsropes'
 import {LogootSAdd} from './logootsadd'
 
@@ -31,9 +32,7 @@ export class TextInsert {
     * @param {string} content - the content to be inserted in the sequence.
     */
     constructor (offset: number, content: string) {
-        console.assert(typeof offset === "number" && Number.isSafeInteger(offset),
-            "offset = ", offset)
-        console.assert(typeof content === "string", "content = ", content)
+        console.assert(isInt32(offset), "offset ∈ int32")
 
         this.offset = offset
         this.content = content
@@ -54,8 +53,6 @@ export class TextInsert {
     * @return {LogootSAdd} the logootsplit insertion that is related to the insertion that has been performed.
     */
     applyTo (doc: LogootSRopes): LogootSAdd {
-        console.assert(doc instanceof LogootSRopes, "doc = ", doc)
-
         return doc.insertLocal(this.offset, this.content)
     }
 
