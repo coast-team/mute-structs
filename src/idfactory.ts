@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014 Matthieu Nicolas
+ *  Copyright 2014-2017 Matthieu Nicolas, Victorien Elvinger
  *
  *  This file is part of Mute-structs.
  *
@@ -24,6 +24,7 @@ import {
 } from './int32'
 import {Identifier} from './identifier'
 import {IdentifierTuple} from './identifiertuple'
+import {Ordering} from './ordering'
 
 const MIN_TUPLE: IdentifierTuple = new IdentifierTuple(INT32_BOTTOM, 0, 0, 0)
 const MAX_TUPLE: IdentifierTuple = new IdentifierTuple(INT32_TOP, 0, 0, 0)
@@ -35,47 +36,70 @@ export function isMine (replica: number): (id: Identifier) => boolean {
 export function createBetweenPosition (id1: Identifier | null,
     id2: Identifier | null, replicaNumber: number, clock: number): Identifier {
 
-    console.assert(isInt32(replicaNumber), "replicaNumber ∈ int32")
-    console.assert(isInt32(clock), "clock ∈ int32")
+    console.assert(id1 === null || id2 === null ||
+        id1.compareTo(id2) === Ordering.Less, "id1 < id2")
+    console.assert(isInt32(replicaNumber), "replicaNumber is an int32")
+    console.assert(isInt32(clock), "clock is an int32")
 
-    const tuples1: IdentifierTuple[] = id1 !== null ? id1.tuples : []
-    const seq1: IterableIterator<IdentifierTuple> = infiniteSequence(tuples1, MIN_TUPLE)
-    const tuples2: IdentifierTuple[] = id2 !== null ? id2.tuples : []
-    const seq2: IterableIterator<IdentifierTuple> = infiniteSequence(tuples2, MAX_TUPLE)
-
+    const seq1 = infiniteSequence(tuplesOf(id1), MIN_TUPLE)
+    const seq2 = infiniteSequence(tuplesOf(id2), MAX_TUPLE)
     const tuples: IdentifierTuple[] = []
 
-    do {
-        const tuple1: IdentifierTuple = seq1.next().value
-        const tuple2: IdentifierTuple = seq2.next().value
-        if (tuple2.random - tuple1.random > 2) {
-            // Can insert a new tuple between tuple1 and tuple2
-            const newRandom = (Math.random() * (tuple2.random - tuple1.random - 2)) + tuple1.random + 1 // Generate a random number ∈ ]b1, b2[
-            const i = newRandom | 0 // Truncate the float in order to get a 32bits int
-            tuples.push(new IdentifierTuple(i, replicaNumber, clock, 0))
-            break
-        } else {
-            // Copy the whole tuple <random, replicaNumber, clock, offset>
-            tuples.push(tuple1)
-        }
-    } while (true)
+    let tuple1 = seq1.next().value
+    let tuple2 = seq2.next().value
+    while ((tuple2.random - tuple1.random) < 2) {
+        // Cannot insert a new tuple between tuple1 and tuple2
+        tuples.push(tuple1)
+        tuple1 = seq1.next().value
+        tuple2 = seq2.next().value
+    }
+    const random = randomInt32(tuple1.random + 1, tuple2.random)
+    tuples.push(new IdentifierTuple(random, replicaNumber, clock, 0))
 
-    const id: Identifier = new Identifier(tuples)
-    console.assert(isMine(replicaNumber)(id), "the generated identifier must belong to me")
-    return id
+    return new Identifier(tuples)
 }
 
 /**
  * Generate an infinite sequence of tuples
  *
- * @param tuples
+ * @param values
  * @param defaultValue
  */
-function *infiniteSequence (tuples: IdentifierTuple[], defaultValue: IdentifierTuple): IterableIterator<IdentifierTuple> {
-    for (const tuple of tuples) {
-        yield tuple
+function *infiniteSequence <T>
+    (values: T[], defaultValue: T): IterableIterator<T> {
+
+    for (const v of values) {
+        yield v
     }
     while (true) {
         yield defaultValue
     }
+}
+
+/**
+ * @param l lower bound
+ * @param u upper bound
+ * @return random integer 32 in [l, u[
+ */
+function randomInt32 (l: number, u: number): number {
+    console.assert(isInt32(l), "l must be an int32")
+    console.assert(isInt32(u), "u must be an int32")
+    console.assert(l < u, "u is greater than l")
+
+    const randomFloat = (Math.random() * (u - l)) + l
+        // Generate a random float number in [b1, b2[
+    const result = randomFloat | 0
+        // Truncate the float in order to get a 32bits integer
+
+    console.assert(isInt32(result) && l <= result && result < u,
+        "result is an integer 32 in [l, u[")
+    return result
+}
+
+/**
+ * @param id
+ * @return Tuples of `a' or an empty array if none.
+ */
+function tuplesOf (id: Identifier | null): IdentifierTuple[] {
+    return (id !== null) ? id.tuples : []
 }
