@@ -235,7 +235,7 @@ export class RopesNodes {
         this.sizeNodeAndChildren = this.leftSubtreeSize() + this.rightSubtreeSize() + this.length
     }
 
-    replaceChildren (node: RopesNodes | null, by: RopesNodes | null): void {
+    replaceChildren (node: RopesNodes, by: RopesNodes | null): void {
         if (this.left === node) {
             this.left = by
         }
