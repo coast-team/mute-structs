@@ -20,7 +20,8 @@
 import {
     INT32_BOTTOM,
     INT32_TOP,
-    isInt32
+    isInt32,
+    randomInt32
 } from './int32'
 import {Identifier} from './identifier'
 import {IdentifierTuple} from './identifiertuple'
@@ -74,26 +75,6 @@ function *infiniteSequence <T>
     while (true) {
         yield defaultValue
     }
-}
-
-/**
- * @param l lower bound
- * @param u upper bound
- * @return random integer 32 in [l, u[
- */
-function randomInt32 (l: number, u: number): number {
-    console.assert(isInt32(l), "l must be an int32")
-    console.assert(isInt32(u), "u must be an int32")
-    console.assert(l < u, "u is greater than l")
-
-    const randomFloat = (Math.random() * (u - l)) + l
-        // Generate a random float number in [b1, b2[
-    const result = randomFloat | 0
-        // Truncate the float in order to get a 32bits integer
-
-    console.assert(isInt32(result) && l <= result && result < u,
-        "result is an integer 32 in [l, u[")
-    return result
 }
 
 /**
