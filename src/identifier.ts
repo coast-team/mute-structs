@@ -83,6 +83,13 @@ export class Identifier {
     readonly tuples: IdentifierTuple[]
 
     /**
+     * @return replica which generated this identifier.
+     */
+    get generator(): number {
+        return this.tuples[this.tuples.length - 1].replicaNumber
+    }
+
+    /**
      * Shortcut to retrieve the length of the Identifier
      *
      * @return {number} The length

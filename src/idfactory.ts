@@ -30,10 +30,6 @@ import {Ordering} from './ordering'
 const MIN_TUPLE: IdentifierTuple = new IdentifierTuple(INT32_BOTTOM, 0, 0, 0)
 const MAX_TUPLE: IdentifierTuple = new IdentifierTuple(INT32_TOP, 0, 0, 0)
 
-export function isMine (replica: number): (id: Identifier) => boolean {
-    return (id: Identifier) => id.tuples[id.length - 1].replicaNumber === replica
-}
-
 export function createBetweenPosition (id1: Identifier | null,
     id2: Identifier | null, replicaNumber: number, clock: number): Identifier {
 

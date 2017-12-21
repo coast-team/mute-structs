@@ -26,21 +26,12 @@ import {IdentifierInterval} from './identifierinterval'
 export class LogootSBlock {
 
 // Creation
-    constructor (idInterval: IdentifierInterval, nbElt: number, mine = false) {
+    constructor (idInterval: IdentifierInterval, nbElt: number) {
         console.assert(isInt32(nbElt) && nbElt >= 0,
             "nbElt must be a positive integer")
 
         this.idInterval = idInterval
         this.nbElement = nbElt
-        this.mine = mine
-    }
-
-    static mine (idInterval: IdentifierInterval, nbElt: number): LogootSBlock {
-        return new LogootSBlock(idInterval, nbElt, true)
-    }
-
-    static foreign (idInterval: IdentifierInterval, nbElt: number): LogootSBlock {
-        return new LogootSBlock(idInterval, nbElt, false)
     }
 
     static fromPlain (o: SafeAny<LogootSBlock>): LogootSBlock | null {
@@ -52,7 +43,7 @@ export class LogootSBlock {
 
                 const id = IdentifierInterval.fromPlain(plainId)
                 if (id !== null) {
-                    return LogootSBlock.foreign(id, nbElt)
+                    return new LogootSBlock(id, nbElt)
                         // FIXME: Always not mine?
                 }
             }
@@ -65,7 +56,9 @@ export class LogootSBlock {
 
     nbElement: number
 
-    readonly mine: boolean
+    isMine(replicaNumber: number): boolean {
+        return this.idInterval.idBegin.generator === replicaNumber
+    }
 
     addBlock (pos: number, length: number): void {
         console.assert(isInt32(length) && length > 0, "length must be a positive int32")
@@ -81,7 +74,7 @@ export class LogootSBlock {
     }
 
     toString (): string {
-        return '{' + this.nbElement + ',' + this.idInterval.toString() + ', ' + (this.mine ? 'mine' : 'its') + '}'
+        return '{' + this.nbElement + ',' + this.idInterval.toString() + '}'
     }
 
 }

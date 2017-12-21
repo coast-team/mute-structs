@@ -323,7 +323,7 @@ export class LogootSRopes {
 
         const id = IDFactory.createBetweenPosition(id1, id2, this.replicaNumber, this.clock++)
         const idi = new IdentifierInterval(id, length - 1)
-        const newBlock = LogootSBlock.mine(idi, 0)
+        const newBlock = new LogootSBlock(idi, 0)
         this.mapBaseToBlock[idi.base.join(",")] = newBlock
         return RopesNodes.leaf(newBlock, 0, length)
     }
@@ -357,7 +357,7 @@ export class LogootSRopes {
                 path = []
                 path.push(this.root)
                 n = this.getXest(rightChildOf, path)
-                if (n.isAppendableAfter(l.length)) { // append
+                if (n.isAppendableAfter(this.replicaNumber, l.length)) { // append
                     const id3 = n.appendEnd(l.length)
                     this.ascendentUpdate(path, l.length)
                     return new LogootSAdd(id3, l)
@@ -377,14 +377,14 @@ export class LogootSRopes {
                 } else {
                     const prev = this.searchNode(pos - 1) as ResponseIntNode
                         // TODO: why non-null?
-                    if (inPos.node.isAppendableBefore(l.length)) {
+                    if (inPos.node.isAppendableBefore(this.replicaNumber, l.length)) {
                         // append before
 
                         const id5 = inPos.node.appendBegin(l.length)
                         this.ascendentUpdate(inPos.path, l.length)
 
                         return new LogootSAdd(id5, l)
-                    } else if (prev.node.isAppendableAfter(l.length)) {
+                    } else if (prev.node.isAppendableAfter(this.replicaNumber, l.length)) {
                             // append after
 
                         const id4 = prev.node.appendEnd(l.length)

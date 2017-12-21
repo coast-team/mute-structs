@@ -255,14 +255,14 @@ export class RopesNodes {
         this.block = node.block
     }
 
-    isAppendableAfter (length: number): boolean {
-        return this.block.mine &&
+    isAppendableAfter (replicaNumber: number, length: number): boolean {
+        return this.block.isMine(replicaNumber) &&
             this.block.idInterval.end === this.actualEnd &&
             this.block.idInterval.idEnd.hasPlaceAfter(length)
     }
 
-    isAppendableBefore (length: number): boolean {
-        return this.block.mine &&
+    isAppendableBefore (replicaNumber: number, length: number): boolean {
+        return this.block.isMine(replicaNumber) &&
             this.block.idInterval.begin === this.actualBegin &&
             this.block.idInterval.idBegin.hasPlaceBefore(length)
     }

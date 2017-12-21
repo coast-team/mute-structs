@@ -51,3 +51,11 @@ test("two-contiguous-bases", (t: AssertContext) => {
     t.is(newId.length, id1.length + 1)
     t.true(id1.isPrefix(newId))
 })
+
+test("is-mine", (t: AssertContext) => {
+    const replicaNumber = 0
+    const clock = 1
+    const newId: Identifier = createBetweenPosition(null, null, replicaNumber, clock)
+
+    t.is(newId.generator, replicaNumber)
+})
