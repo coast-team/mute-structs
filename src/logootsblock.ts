@@ -28,7 +28,7 @@ export class LogootSBlock {
 // Creation
     constructor (idInterval: IdentifierInterval, nbElt: number) {
         console.assert(isInt32(nbElt) && nbElt >= 0,
-            "nbElt must be a positive integer")
+            "nbElt must be a non-negative integer")
 
         this.idInterval = idInterval
         this.nbElement = nbElt
@@ -39,7 +39,7 @@ export class LogootSBlock {
             const plainId: SafeAny<IdentifierInterval> = o.idInterval
             const nbElt: SafeAny<number> = o.nbElement
             if (plainId instanceof Object && typeof nbElt === "number" &&
-                Number.isInteger(nbElt) && nbElt >= 0) {
+                isInt32(nbElt) && nbElt >= 0) {
 
                 const id = IdentifierInterval.fromPlain(plainId)
                 if (id !== null) {
