@@ -54,7 +54,8 @@ export function createBetweenPosition (id1: Identifier | null,
         tuple1 = seq1.next().value
         tuple2 = seq2.next().value
     }
-    const random = randomInt32(tuple1.random + 1, tuple2.random)
+    const random = randomInt32(tuple1.random, tuple2.random) + 1
+        // random ∈ ]tuple1.random, tuple2.random]
     tuples.push(new IdentifierTuple(random, replicaNumber, clock, 0))
 
     return new Identifier(tuples)
