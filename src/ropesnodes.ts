@@ -290,6 +290,9 @@ export class RopesNodes {
         return new IdentifierInterval(this.getIdBegin(), this.actualEnd)
     }
 
+    /**
+     * @return list of blocks (potentially with occurrences)
+     */
     getBlocks (): LogootSBlock[] {
         let result = [this.block]
 
