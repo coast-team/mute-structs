@@ -56,6 +56,7 @@ export function createBetweenPosition (id1: Identifier | null,
     }
     const random = randomInt32(tuple1.random, tuple2.random) + 1
         // random ∈ ]tuple1.random, tuple2.random]
+        // tuple2.random exclusion ensures a dense set
     tuples.push(new IdentifierTuple(random, replicaNumber, clock, 0))
 
     return new Identifier(tuples)

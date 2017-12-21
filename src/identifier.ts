@@ -28,7 +28,7 @@ export class Identifier {
 // Creation
     constructor (tuples: IdentifierTuple[]) {
         console.assert(tuples.length > 0, "tuples must not be empty")
-        // Last random must be different of INT_32_MIN_VALUE
+        // Last random must be different of INT32_BOTTOM
         // This ensures a dense set.
         const lastRandom = tuples[tuples.length - 1].random
         console.assert(lastRandom > INT32_BOTTOM)
