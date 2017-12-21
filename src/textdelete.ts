@@ -33,8 +33,8 @@ export class TextDelete {
     * @param {number} length - the length of the range to be deleted in the sequence.
     */
     constructor (offset: number, length: number) {
-        console.assert(isInt32(offset), "offset  ∈ int32", offset)
-        console.assert(isInt32(length), "length  ∈ int32", length)
+        console.assert(isInt32(offset), "offset  ∈ int32")
+        console.assert(isInt32(length), "length  ∈ int32")
         console.assert(length > 0, "length > 0")
 
         this.offset = offset
@@ -56,8 +56,6 @@ export class TextDelete {
     * @return {LogootSDel} the logootsplit deletion that is related to the deletion that has been performed.
     */
     applyTo (doc: LogootSRopes): LogootSDel {
-        console.assert(doc instanceof LogootSRopes, "doc = ", doc)
-
         return doc.delLocal(this.offset, this.offset + this.length - 1)
     }
 
