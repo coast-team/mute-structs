@@ -8,3 +8,6 @@ dist
 
 # Generated pack
 mute-structs-*.tgz
+
+# Document files
+logs/**/doc-*

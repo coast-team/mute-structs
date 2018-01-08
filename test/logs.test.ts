@@ -144,6 +144,18 @@ testConvergentLogs(
   ["1", "2", "3"])
 
 testDivergentLogs(
+  "divergent-logs-ct20171019-set",
+  "logs/logs-ct20171019",
+  "log-ct20171019",
+  ["join-iris-berlin", "ocean-button-contour"])
+
+testDivergentLogs(
+  "divergent-logs-quT-set",
+  "logs/logs-quTF5eAc",
+  "log-quTF5eAc",
+  ["harbor-royal-explain", "number-speed-metal", "prelude-chris-tourist"])
+
+testDivergentLogs(
   "divergent-logs-rXF-set-1",
   "logs/logs-rXFbhTf8Ct",
   "log-rXFbhTf8Ct",
