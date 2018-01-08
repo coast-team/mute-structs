@@ -255,10 +255,12 @@ export class LogootSRopes {
                                 from.right.getIdBegin(), idi.end)
                         const l = str.substr(0, split + 1 - idi.begin)
                         i = i + from.leftSubtreeSize() + from.length
-                        from.appendEnd(l.length)
-                        result.push(new TextInsert(i, l))
+                        if (l.length > 0) {
+                            from.appendEnd(l.length)
+                            result.push(new TextInsert(i, l))
 
-                        this.ascendentUpdate(path, l.length)
+                            this.ascendentUpdate(path, l.length)
+                        }
 
                         if (idi.end >= (split + 1)) {
                             str = str.substr(split + 1 - idi.begin, str.length)
