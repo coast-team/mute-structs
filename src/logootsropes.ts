@@ -226,10 +226,12 @@ export class LogootSRopes {
                         const split = from.getIdBegin().minOffsetAfterPrev(
                                 from.left.getIdEnd(), idi.begin)
                         const l = str.substr(split - idi.begin, str.length)
-                        from.appendBegin(l.length)
-                        result.push(new TextInsert(i + from.leftSubtreeSize(), l))
+                        if (l.length > 0) {
+                            from.appendBegin(l.length)
+                            result.push(new TextInsert(i + from.leftSubtreeSize(), l))
 
-                        this.ascendentUpdate(path, l.length)
+                            this.ascendentUpdate(path, l.length)
+                        }
 
                         // check if previous is smaller or not
                         if ((split - 1) >= idi.begin) {
