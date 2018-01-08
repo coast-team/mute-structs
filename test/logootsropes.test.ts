@@ -440,3 +440,24 @@ test("append-replayed-as-insert" , (t) => {
     t.is(docA.str, expectedString)
     t.is(docA.digest(), docB.digest())
 })
+
+test("prepend-replayed-as-insert" , (t) => {
+    const replicaNumberA = 1
+    const docA = new LogootSRopes(replicaNumberA)
+    const replicaNumberB = 2
+    const docB = new LogootSRopes(replicaNumberB)
+
+    const insertOp1 = docA.insertLocal(0, "a")
+    const insertOp2 = docA.insertLocal(1, "c")
+    const insertOp3 = docA.insertLocal(1, "b")
+
+    insertOp2.execute(docB)
+    insertOp3.execute(docB)
+    insertOp1.execute(docB)
+
+    const expectedString = "abc"
+
+    t.is(docA.str, expectedString)
+    t.is(docA.str, docB.str)
+    t.is(docA.digest(), docB.digest())
+})
