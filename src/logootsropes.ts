@@ -206,7 +206,7 @@ export class LogootSRopes {
 
                     ls = str.substr(offsetToSplit + 1 - idi.begin, str.length)
                     const newIdBegin =
-                        Identifier.generateWithSameBase(idi.idBegin, offsetToSplit + 1)
+                        Identifier.fromBase(idi.idBegin, offsetToSplit + 1)
                     idi1 = new IdentifierInterval(newIdBegin, idi.end)
                     i = i + from.leftSubtreeSize() + from.length
                     if (from.right === null) {
@@ -267,7 +267,7 @@ export class LogootSRopes {
                         if (idi.end >= (split + 1)) {
                             str = str.substr(split + 1 - idi.begin, str.length)
                             const newIdBegin =
-                                Identifier.generateWithSameBase(idi.idBegin, split + 1)
+                                Identifier.fromBase(idi.idBegin, split + 1)
                             idi = new IdentifierInterval(newIdBegin, idi.end)
                             from = from.right
                             i = i + l.length
@@ -491,7 +491,7 @@ export class LogootSRopes {
                 if (idInterval.begin < idInterval.end) {
                     // Shifting the interval and resuming the search
                     const newIdBegin =
-                        Identifier.generateWithSameBase(idInterval.idBegin, idInterval.begin + 1)
+                        Identifier.fromBase(idInterval.idBegin, idInterval.begin + 1)
                     idInterval =
                         new IdentifierInterval(newIdBegin, idInterval.end)
                 } else {
@@ -521,7 +521,7 @@ export class LogootSRopes {
                 } else {
                     // TODO: Check if still valid
                     const newIdBegin =
-                        Identifier.generateWithSameBase(idInterval.idBegin, end)
+                        Identifier.fromBase(idInterval.idBegin, end)
                     idInterval = new IdentifierInterval(newIdBegin, idInterval.end)
                 }
             }
@@ -549,7 +549,7 @@ export class LogootSRopes {
                 const newEnd = Math.min(newBegin + length - 1, start.node.actualEnd)
                 const prevIdBegin = start.node.getIdBegin()
                 const newIdBegin =
-                    Identifier.generateWithSameBase(prevIdBegin, newBegin)
+                    Identifier.fromBase(prevIdBegin, newBegin)
                 li.push(new IdentifierInterval(newIdBegin, newEnd))
                 const r = start.node.deleteOffsets(newBegin, newEnd)
                 length -= newEnd - newBegin + 1

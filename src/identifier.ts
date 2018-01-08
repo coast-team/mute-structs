@@ -67,12 +67,12 @@ export class Identifier {
      * @param {number} offset The last offset of the new Identifier
      * @return {IdentifierTuple} The generated Identifier
      */
-    static generateWithSameBase (id: Identifier, offset: number): Identifier {
+    static fromBase (id: Identifier, offset: number): Identifier {
         console.assert(isInt32(offset), "offset ∈ int32")
 
         const tuples: IdentifierTuple[] = id.tuples.map((tuple: IdentifierTuple, i: number) => {
             if (i === id.length - 1) {
-                return IdentifierTuple.generateWithSameBase(tuple, offset)
+                return IdentifierTuple.fromBase(tuple, offset)
             }
             return tuple
         })
@@ -122,7 +122,7 @@ export class Identifier {
      * @param {Identifier} other The other identifier
      * @return {IdentifierTuple[]} The longest common prefix
      */
-    getLongestCommonPrefix (other: Identifier): IdentifierTuple[] {
+    longestCommonPrefix (other: Identifier): IdentifierTuple[] {
         const commonPrefix: IdentifierTuple[] = []
         const minLength = Math.min(this.tuples.length, other.tuples.length)
         let i = 0
@@ -139,7 +139,7 @@ export class Identifier {
      * @param {Identifier} other The other identifier
      * @return {IdentifierTuple[]} The longest common base
      */
-    getLongestCommonBase (other: Identifier): IdentifierTuple[] {
+    longestCommonBase (other: Identifier): IdentifierTuple[] {
         const commonBase: IdentifierTuple[] = []
         const minLength = Math.min(this.tuples.length, other.tuples.length)
 
@@ -196,7 +196,7 @@ export class Identifier {
      * @param other The other identifier
      * @return {number} The length of the common prefix
      */
-    getLengthCommonPrefix (other: Identifier): number {
+    commonPrefixLength (other: Identifier): number {
         const minLength = Math.min(this.tuples.length, other.tuples.length)
         let i = 0
         while (i < minLength && this.tuples[i].equals(other.tuples[i])) {
@@ -248,7 +248,7 @@ export class Identifier {
         if (other.isPrefix(this)) {
             return Ordering.Greater
         }
-        const index = this.getLengthCommonPrefix(other)
+        const index = this.commonPrefixLength(other)
         return this.tuples[index].compareTo(other.tuples[index])
     }
 

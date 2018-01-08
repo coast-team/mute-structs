@@ -86,7 +86,7 @@ test("fromPlain-wrong-type", (t: AssertContext) => {
 test("generateWithSameBase", (t: AssertContext) => {
     const expected = 5
     const tuple1: IdentifierTuple = new IdentifierTuple(42, 7, 8, 26)
-    const tuple2: IdentifierTuple = IdentifierTuple.generateWithSameBase(tuple1, expected)
+    const tuple2: IdentifierTuple = IdentifierTuple.fromBase(tuple1, expected)
 
     t.true(tuple1.equalsBase(tuple2))
     t.is(tuple2.offset, expected)

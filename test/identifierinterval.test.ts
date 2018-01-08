@@ -55,7 +55,7 @@ test("getBaseId", (t) => {
 
     const offset = 2
     const expectedId: Identifier =
-        Identifier.generateWithSameBase(idInterval.idBegin, offset)
+        Identifier.fromBase(idInterval.idBegin, offset)
     const actualId = idInterval.getBaseId(offset)
 
     t.true(actualId.equals(expectedId))

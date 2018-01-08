@@ -58,7 +58,7 @@ export class IdentifierTuple {
      * @param {number} offset The offset of the new IdentifierTuple
      * @return {IdentifierTuple} The generated IdentifierTuple
      */
-    static generateWithSameBase (tuple: IdentifierTuple, offset: number): IdentifierTuple {
+    static fromBase (tuple: IdentifierTuple, offset: number): IdentifierTuple {
         console.assert(isInt32(offset), "offset ∈ int32")
 
         return new IdentifierTuple(tuple.random, tuple.replicaNumber, tuple.clock, offset)

@@ -104,7 +104,7 @@ export class IdentifierInterval {
         const minBegin = Math.min(this.begin, aBegin)
         const maxEnd = Math.max(this.end, aEnd)
 
-        const newIdBegin: Identifier = Identifier.generateWithSameBase(this.idBegin, minBegin)
+        const newIdBegin: Identifier = Identifier.fromBase(this.idBegin, minBegin)
 
         return new IdentifierInterval(newIdBegin, maxEnd)
     }
@@ -131,7 +131,7 @@ export class IdentifierInterval {
         console.assert(this.begin <= offset && offset <= this.end,
             "offset must be included in the interval")
 
-        return Identifier.generateWithSameBase(this.idBegin, offset)
+        return Identifier.fromBase(this.idBegin, offset)
     }
 
     digest (): number {
