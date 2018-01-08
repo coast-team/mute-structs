@@ -5,14 +5,14 @@
   "main": "./dist/src/index.js",
   "types": "./dist/src/index.d.ts",
   "dependencies": {
-    "safe-any": "^1.0.0"
+    "safe-any": "^1.0.2"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/coast-team/mute-structs"
   },
   "devDependencies": {
-    "@types/node": "^8.0.14",
+    "@types/node": "^8.5.7",
     "ava": "^0.24.0",
     "tslint": "^3.15.1",
     "typescript": "^2.6.0"
