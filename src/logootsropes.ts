@@ -334,7 +334,6 @@ export class LogootSRopes {
 
     insertLocal (pos: number, l: string): LogootSAdd {
         console.assert(isInt32(pos), "pos ∈ int32")
-        let n
 
         if (this.root === null) { // empty tree
             this.root = this.mkNode(null, null, l.length)
@@ -348,8 +347,8 @@ export class LogootSRopes {
             if (pos === 0) { // begin of string
                 path = []
                 path.push(this.root)
-                n = this.getXest(leftChildOf, path)
-                if (n.isAppendableBefore(l.length)) {
+                const n = this.getXest(leftChildOf, path)
+                if (n.isAppendableBefore(this.replicaNumber, l.length)) {
                     const id = n.appendBegin(l.length)
                     this.ascendentUpdate(path, l.length)
                     return new LogootSAdd(id, l)
@@ -360,7 +359,7 @@ export class LogootSRopes {
             } else if (pos >= length) { // end
                 path = []
                 path.push(this.root)
-                n = this.getXest(rightChildOf, path)
+                const n = this.getXest(rightChildOf, path)
                 if (n.isAppendableAfter(this.replicaNumber, l.length)) { // append
                     const id3 = n.appendEnd(l.length)
                     this.ascendentUpdate(path, l.length)

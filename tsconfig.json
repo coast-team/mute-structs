@@ -12,10 +12,8 @@
 
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
-    "noImplicitAny" : false,
     "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "strictNullChecks": true,
+    "strict": true,
 
     "pretty": true
   }

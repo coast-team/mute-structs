@@ -23,6 +23,25 @@ import {Identifier} from './identifier'
 import {LogootSRopes} from './logootsropes'
 import {TextInsert} from './textinsert'
 
+class LogootSAddV1 {
+    readonly id: Identifier
+
+    readonly l: string
+
+    static fromPlain (o: SafeAny<LogootSAddV1>): LogootSAdd | null {
+        if (typeof o === "object" && o !== null) {
+            const l: SafeAny<string> = o.l
+            if (typeof l === "string" && l.length > 0) {
+                const plainId: SafeAny<Identifier> = o.id
+                const id: Identifier | null = Identifier.fromPlain(plainId)
+                if (id !== null) {
+                    return new LogootSAdd(id, l)
+                }
+            }
+        }
+        return null
+    }
+}
 
 /**
  * Represents a LogootSplit insert operation.
@@ -43,23 +62,17 @@ export class LogootSAdd {
 
     static fromPlain (o: SafeAny<LogootSAdd>): LogootSAdd | null {
         if (typeof o === "object" && o !== null) {
-            const plainId: SafeAny<Identifier> = o.id
             const content: SafeAny<string> = o.content
             if (typeof content === "string" && content.length > 0) {
+                const plainId: SafeAny<Identifier> = o.id
                 const id: Identifier | null = Identifier.fromPlain(plainId)
                 if (id !== null) {
                     return new LogootSAdd(id, content)
                 }
-            }
-
-            // For backward compatibility
-            // Allow to replay and update previous log of operations
-            const l: SafeAny<string> = o["l"]
-            if (typeof l === "string" && l.length > 0) {
-                const id: Identifier | null = Identifier.fromPlain(plainId)
-                if (id !== null) {
-                    return new LogootSAdd(id, l)
-                }
+            } else {
+                // For backward compatibility
+                // Allow to replay and update previous log of operations
+                return LogootSAddV1.fromPlain(o as SafeAny<LogootSAddV1>)
             }
         }
         return null
