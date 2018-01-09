@@ -24,9 +24,9 @@ import {LogootSRopes} from './logootsropes'
 import {TextInsert} from './textinsert'
 
 class LogootSAddV1 {
-    readonly id: Identifier
+    readonly id?: Identifier
 
-    readonly l: string
+    readonly l?: string
 
     static fromPlain (o: SafeAny<LogootSAddV1>): LogootSAdd | null {
         if (typeof o === "object" && o !== null) {
