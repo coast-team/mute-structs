@@ -82,12 +82,13 @@ export class IdentifierTuple {
             i++
         }
 
-        if (array[i] < otherArray[i]) {
+        if (i === array.length) {
+            return Ordering.Equal
+        } else if (array[i] < otherArray[i]) {
             return Ordering.Less
-        } else if (array[i] > otherArray[i]) {
+        } else {
             return Ordering.Greater
         }
-        return Ordering.Equal
     }
 
     equals (other: IdentifierTuple): boolean {
