@@ -143,6 +143,36 @@ testConvergentLogs(
   "log-iWYksvoqJo-holiday-field-summer",
   ["1", "2", "3"])
 
+testConvergentLogs(
+  "convergent-logs-20170117-test1-set",
+  "logs/logs-20170117-test1",
+  "log-20170117-test1-village-august-immune",
+  ["1", "2"])
+
+testConvergentLogs(
+  "convergent-logs-20170117-test2-set",
+  "logs/logs-20170117-test2",
+  "log-20170117-test2-galileo-camel-motor",
+  ["1", "2"])
+
+testDivergentLogs(
+  "convergent-logs-20170117-test3-set",
+  "logs/logs-20170117-test3",
+  "log-20170117-test3",
+  ["galileo-camel-motor", "village-august-immune"])
+
+testDivergentLogs(
+  "convergent-logs-20170117-test4-set",
+  "logs/logs-20170117-test4",
+  "log-20170117-test4",
+  ["nobel-letter-neutral", "telex-lobby-sweet"])
+
+testDivergentLogs(
+  "convergent-logs-20170117-test5-set",
+  "logs/logs-20170117-test5",
+  "log-20170117-test5",
+  ["banana-oxygen-pilgrim", "epoxy-tango-engine", "jasmine-bravo-vital"])
+
 testDivergentLogs(
   "divergent-logs-ct20171019-set",
   "logs/logs-ct20171019",
