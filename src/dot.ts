@@ -16,20 +16,19 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-export {Dot} from './dot'
-export {IdentifierTuple} from './identifiertuple'
-export {Identifier} from './identifier'
-export {IdentifierInterval} from './identifierinterval'
 
-export {LogootSBlock} from './logootsblock'
-export {LogootSRopes} from './logootsropes'
-export {RopesNodes} from './ropesnodes'
+import {isInt32} from './int32'
 
-export {LogootSAdd} from './logootsadd'
-export {LogootSDel} from './logootsdel'
-export {LogootSOperation} from './logootsoperation'
-export {TextDelete} from './textdelete'
-export {TextInsert} from './textinsert'
-export {TextOperation} from './textoperation'
+export class Dot {
 
-export {insert, del, occurrences} from './textutils'
+    readonly replicaNumber: number
+    readonly clock: number
+
+    constructor (replicaNumber: number, clock: number) {
+        console.assert([replicaNumber, clock].every(isInt32),
+            "each value ∈ int32")
+
+        this.replicaNumber = replicaNumber
+        this.clock = clock
+    }
+}
