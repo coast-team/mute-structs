@@ -19,6 +19,7 @@
 
 import {SafeAny} from "safe-any"
 
+import {Dot} from './dot'
 import {Identifier} from './identifier'
 import {isInt32} from './int32'
 import {Ordering} from './ordering'
@@ -83,6 +84,10 @@ export class IdentifierInterval {
 
     get base (): number[] {
         return this.idBegin.base
+    }
+
+    get dot (): Dot {
+        return new Dot(this.idBegin.replicaNumber, this.idBegin.clock)
     }
 
     equals (aOther: IdentifierInterval): boolean {
