@@ -98,6 +98,14 @@ export class Identifier {
         return this.tuples.length
     }
 
+    get replicaNumber(): number {
+        return this.tuples[this.length - 1].replicaNumber
+    }
+
+    get clock(): number {
+        return this.tuples[this.length - 1].clock
+    }
+
     /**
      * Retrieve the offset of the last tuple of the identifier
      *
