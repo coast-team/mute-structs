@@ -17,18 +17,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import {isInt32} from "./int32"
-
-export class Dot {
-
+export interface Dot {
     readonly replicaNumber: number
     readonly clock: number
-
-    constructor (replicaNumber: number, clock: number) {
-        console.assert([replicaNumber, clock].every(isInt32),
-            "each value ∈ int32")
-
-        this.replicaNumber = replicaNumber
-        this.clock = clock
-    }
 }

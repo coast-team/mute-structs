@@ -19,6 +19,7 @@
 
 import {SafeAny} from "safe-any"
 
+import {Dot} from "./dot"
 import {IdentifierTuple} from "./identifiertuple"
 import {INT32_BOTTOM, INT32_TOP, isInt32} from "./int32"
 import {Ordering} from "./ordering"
@@ -104,6 +105,13 @@ export class Identifier {
 
     get clock (): number {
         return this.tuples[this.length - 1].clock
+    }
+
+    get dot (): Dot {
+        return {
+            replicaNumber: this.replicaNumber,
+            clock: this.clock,
+        }
     }
 
     /**

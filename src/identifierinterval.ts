@@ -87,7 +87,7 @@ export class IdentifierInterval {
     }
 
     get dot (): Dot {
-        return new Dot(this.idBegin.replicaNumber, this.idBegin.clock)
+        return this.idBegin.dot
     }
 
     equals (aOther: IdentifierInterval): boolean {
