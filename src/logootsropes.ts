@@ -19,23 +19,22 @@
 
 import {SafeAny} from "safe-any"
 
-import {isInt32} from './int32'
-import {Identifier} from './identifier'
-import {IdentifierInterval} from './identifierinterval'
-import * as IDFactory from './idfactory'
+import {Identifier} from "./identifier"
+import {IdentifierInterval} from "./identifierinterval"
+import * as IDFactory from "./idfactory"
+import {isInt32} from "./int32"
 import {
     compareBase,
-    IdentifierIteratorResults
-} from './iteratorhelperidentifier'
-import {LogootSAdd} from './logootsadd'
-import {LogootSBlock} from './logootsblock'
-import {LogootSDel} from './logootsdel'
-import {ResponseIntNode} from './responseintnode'
-import {RopesNodes} from './ropesnodes'
-import {TextDelete} from './textdelete'
-import {TextInsert} from './textinsert'
-import * as TextUtils from './textutils'
-
+    IdentifierIteratorResults,
+} from "./iteratorhelperidentifier"
+import {LogootSAdd} from "./logootsadd"
+import {LogootSBlock} from "./logootsblock"
+import {LogootSDel} from "./logootsdel"
+import {ResponseIntNode} from "./responseintnode"
+import {RopesNodes} from "./ropesnodes"
+import {TextDelete} from "./textdelete"
+import {TextInsert} from "./textinsert"
+import * as TextUtils from "./textutils"
 
 function leftChildOf (aNode: RopesNodes): RopesNodes | null {
     return aNode.left
@@ -46,6 +45,34 @@ function rightChildOf (aNode: RopesNodes): RopesNodes | null {
 }
 
 export class LogootSRopes {
+
+    static empty (): LogootSRopes {
+        return new LogootSRopes(0, 0)
+    }
+
+    static fromPlain (replica: number, clock: number, o: SafeAny<LogootSRopes>): LogootSRopes | null {
+        console.assert(isInt32(replica), "replica ∈ int32")
+        console.assert(isInt32(clock), "clock ∈ int32")
+
+        if (typeof o === "object" && o !== null) {
+            const str = o.str
+            const plainRoot = o.root
+
+            if (typeof str === "string") {
+                const root: RopesNodes | null = RopesNodes.fromPlain(plainRoot)
+                if (root !== null && str.length === root.sizeNodeAndChildren) {
+                    return new LogootSRopes(replica, clock, root, str)
+                }
+            }
+        }
+        return null
+    }
+
+    readonly replicaNumber: number
+    clock: number
+    root: RopesNodes | null
+    readonly mapBaseToBlock: {[key: string]: LogootSBlock}
+    str: string
 
     constructor (replica = 0, clock = 0, root: RopesNodes | null = null, str = "") {
         console.assert(isInt32(replica), "replica ∈ int32")
@@ -74,38 +101,6 @@ export class LogootSRopes {
         this.mapBaseToBlock = baseToBlock
     }
 
-    static empty (): LogootSRopes {
-        return new LogootSRopes(0, 0)
-    }
-
-    static fromPlain (replica: number, clock: number, o: SafeAny<LogootSRopes>): LogootSRopes | null {
-        console.assert(isInt32(replica), "replica ∈ int32")
-        console.assert(isInt32(clock), "clock ∈ int32")
-
-        if (typeof o === "object" && o !== null) {
-            const str = o.str
-            const plainRoot = o.root
-
-            if (typeof str === "string") {
-                const root: RopesNodes | null = RopesNodes.fromPlain(plainRoot)
-                if (root !== null && str.length === root.sizeNodeAndChildren) {
-                    return new LogootSRopes(replica, clock, root, str)
-                }
-            }
-        }
-        return null
-    }
-
-    readonly replicaNumber: number
-
-    clock: number
-
-    root: RopesNodes | null
-
-    readonly mapBaseToBlock: {[key: string]: LogootSBlock}
-
-    str: string
-
     getBlock (idInterval: IdentifierInterval): LogootSBlock {
         const mapBaseToBlock = this.mapBaseToBlock
         const key = idInterval.base.join(",")
@@ -128,18 +123,22 @@ export class LogootSRopes {
      * @param {IdentifierInterval} idi The corresponding interval of identifiers
      * @param {RopesNodes} from The starting point of the search
      * @param {number} startOffset ???
-     **/
-    addBlockFrom (str: string, idi: IdentifierInterval,
-            from: RopesNodes, startOffset: number): TextInsert[] {
+     */
+    addBlockFrom (
+        str: string, idi: IdentifierInterval,
+        from: RopesNodes, startOffset: number): TextInsert[] {
+
         const result: TextInsert[] = this.addBlockFromRec(str, idi, from, startOffset)
         result.forEach((textInsert: TextInsert) => {
-          this.applyTextInsert(textInsert)
+            this.applyTextInsert(textInsert)
         })
         return result
     }
 
-    addBlockFromRec (str: string, idi: IdentifierInterval,
-            from: RopesNodes, startOffset: number): TextInsert[] {
+    addBlockFromRec (
+        str: string, idi: IdentifierInterval,
+        from: RopesNodes, startOffset: number): TextInsert[] {
+
         const path: RopesNodes[] = []
         const result: TextInsert[] = []
         let con = true
@@ -150,145 +149,144 @@ export class LogootSRopes {
             // B1 is the block we are adding
             // B2 is the block to which we are comparing
             switch (compareBase(idi, from.getIdentifierInterval())) {
-                case IdentifierIteratorResults.B1_AFTER_B2: {
-                    if (from.right === null) {
-                        from.right = RopesNodes.leaf(this.getBlock(idi),
-                            idi.begin, str.length)
-                        i = i + from.leftSubtreeSize() + from.length
-                        result.push(new TextInsert(i, str))
-                        con = false
-                    } else {
-                        i = i + from.leftSubtreeSize() + from.length
-                        from = from.right
-                    }
-                    break
-                }
-                case IdentifierIteratorResults.B1_BEFORE_B2: {
-                    if (from.left === null) {
-                        from.left = RopesNodes.leaf(this.getBlock(idi),
-                            idi.begin, str.length)
-                        result.push(new TextInsert(i, str))
-                        con = false
-                    } else {
-                        from = from.left
-                    }
-                    break
-                }
-                case IdentifierIteratorResults.B1_INSIDE_B2: {
-                    // split b2 the object node
-                    const indexOffset: number = from.getIdBegin().length - 1
-                    const offsetToSplit = idi.idBegin.tuples[indexOffset].offset
-                    const rp = RopesNodes.leaf(this.getBlock(idi),
+            case IdentifierIteratorResults.B1_AFTER_B2: {
+                if (from.right === null) {
+                    from.right = RopesNodes.leaf(this.getBlock(idi),
                         idi.begin, str.length)
-                    path.push(from.split(offsetToSplit - from.actualBegin + 1, rp))
-                    i = i + from.leftSubtreeSize()
-                    result.push(new TextInsert(i + offsetToSplit - from.actualBegin + 1, str))
-                    con = false
-                    break
-                }
-                case IdentifierIteratorResults.B2_INSIDE_B1: {
-                    // split b1 the node to insert
-                    const indexOffset: number = idi.idBegin.length - 1
-                    const offsetToSplit: number =
-                        from.getIdBegin().tuples[indexOffset].offset
-                    let ls = str.substr(0, offsetToSplit + 1 - idi.begin)
-                    let idi1 = new IdentifierInterval(idi.idBegin, offsetToSplit)
-                    if (from.left === null) {
-                        from.left = RopesNodes.leaf(this.getBlock(idi1),
-                            idi1.begin, ls.length)
-                        result.push(new TextInsert(i, ls))
-                    } else {
-                        Array.prototype.push.apply(result,
-                            this.addBlockFromRec(ls, idi1, from.left, i))
-                    }
-
-                    // i=i+ls.size()
-
-                    ls = str.substr(offsetToSplit + 1 - idi.begin, str.length)
-                    const newIdBegin =
-                        Identifier.fromBase(idi.idBegin, offsetToSplit + 1)
-                    idi1 = new IdentifierInterval(newIdBegin, idi.end)
                     i = i + from.leftSubtreeSize() + from.length
-                    if (from.right === null) {
-                        from.right = RopesNodes.leaf(this.getBlock(idi1),
-                            idi1.begin, ls.length)
-                        result.push(new TextInsert(i, ls))
-                    } else {
-                        Array.prototype.push.apply(result,
-                            this.addBlockFromRec(ls, idi1, from.right, i))
-                    }
+                    result.push(new TextInsert(i, str))
                     con = false
-                    break
+                } else {
+                    i = i + from.leftSubtreeSize() + from.length
+                    from = from.right
                 }
-                case IdentifierIteratorResults.B1_CONCAT_B2: {
-                    // node to insert concat the node
-                    if (from.left !== null) {
-                        const split = from.getIdBegin().minOffsetAfterPrev(
-                                from.left.getIdEnd(), idi.begin)
-                        const l = str.substr(split - idi.begin, str.length)
-                        if (l.length > 0) {
-                            from.appendBegin(l.length)
-                            result.push(new TextInsert(i + from.leftSubtreeSize(), l))
-
-                            this.ascendentUpdate(path, l.length)
-                        }
-
-                        // check if previous is smaller or not
-                        if ((split - 1) >= idi.begin) {
-                            str = str.substr(0, split - idi.begin)
-                            idi = new IdentifierInterval(idi.idBegin, split - 1)
-                            from = from.left
-                        } else {
-                            con = false
-                        }
-                    } else {
-                        result.push(new TextInsert(i, str))
-                        from.appendBegin(str.length)
-                        this.ascendentUpdate(path, str.length)
-                        con = false
-                    }
-
-                    break
+                break
+            }
+            case IdentifierIteratorResults.B1_BEFORE_B2: {
+                if (from.left === null) {
+                    from.left = RopesNodes.leaf(this.getBlock(idi),
+                        idi.begin, str.length)
+                    result.push(new TextInsert(i, str))
+                    con = false
+                } else {
+                    from = from.left
                 }
-                case IdentifierIteratorResults.B2_CONCAT_B1: {
-                    // concat at end
-                    if (from.right !== null) {
-                        const split = from.getIdEnd().maxOffsetBeforeNext(
-                                from.right.getIdBegin(), idi.end)
-                        const l = str.substr(0, split + 1 - idi.begin)
-                        i = i + from.leftSubtreeSize() + from.length
-                        if (l.length > 0) {
-                            from.appendEnd(l.length)
-                            result.push(new TextInsert(i, l))
-
-                            this.ascendentUpdate(path, l.length)
-                        }
-
-                        if (idi.end >= (split + 1)) {
-                            str = str.substr(split + 1 - idi.begin, str.length)
-                            const newIdBegin =
-                                Identifier.fromBase(idi.idBegin, split + 1)
-                            idi = new IdentifierInterval(newIdBegin, idi.end)
-                            from = from.right
-                            i = i + l.length
-                        } else {
-                            con = false
-                        }
-                    } else {
-                        i = i + from.leftSubtreeSize() + from.length
-                        result.push(new TextInsert(i, str))
-                        from.appendEnd(str.length)
-                        this.ascendentUpdate(path, str.length)
-                        con = false
-                    }
-
-                    break
-                }
-              case IdentifierIteratorResults.B1_EQUALS_B2: {
+                break
+            }
+            case IdentifierIteratorResults.B1_INSIDE_B2: {
+                // split b2 the object node
+                const indexOffset: number = from.getIdBegin().length - 1
+                const offsetToSplit = idi.idBegin.tuples[indexOffset].offset
+                const rp = RopesNodes.leaf(this.getBlock(idi),
+                    idi.begin, str.length)
+                path.push(from.split(offsetToSplit - from.actualBegin + 1, rp))
+                i = i + from.leftSubtreeSize()
+                result.push(new TextInsert(i + offsetToSplit - from.actualBegin + 1, str))
                 con = false
                 break
-              }
             }
+            case IdentifierIteratorResults.B2_INSIDE_B1: {
+                // split b1 the node to insert
+                const indexOffset: number = idi.idBegin.length - 1
+                const offsetToSplit: number =
+                    from.getIdBegin().tuples[indexOffset].offset
+                let ls = str.substr(0, offsetToSplit + 1 - idi.begin)
+                let idi1 = new IdentifierInterval(idi.idBegin, offsetToSplit)
+                if (from.left === null) {
+                    from.left = RopesNodes.leaf(this.getBlock(idi1),
+                        idi1.begin, ls.length)
+                    result.push(new TextInsert(i, ls))
+                } else {
+                    Array.prototype.push.apply(result,
+                        this.addBlockFromRec(ls, idi1, from.left, i))
+                }
+
+                // i=i+ls.size()
+
+                ls = str.substr(offsetToSplit + 1 - idi.begin, str.length)
+                const newIdBegin =
+                    Identifier.fromBase(idi.idBegin, offsetToSplit + 1)
+                idi1 = new IdentifierInterval(newIdBegin, idi.end)
+                i = i + from.leftSubtreeSize() + from.length
+                if (from.right === null) {
+                    from.right = RopesNodes.leaf(this.getBlock(idi1),
+                        idi1.begin, ls.length)
+                    result.push(new TextInsert(i, ls))
+                } else {
+                    Array.prototype.push.apply(result,
+                        this.addBlockFromRec(ls, idi1, from.right, i))
+                }
+                con = false
+                break
+            }
+            case IdentifierIteratorResults.B1_CONCAT_B2: {
+                // node to insert concat the node
+                if (from.left !== null) {
+                    const split = from.getIdBegin().minOffsetAfterPrev(
+                            from.left.getIdEnd(), idi.begin)
+                    const l = str.substr(split - idi.begin, str.length)
+                    if (l.length > 0) {
+                        from.appendBegin(l.length)
+                        result.push(new TextInsert(i + from.leftSubtreeSize(), l))
+
+                        this.ascendentUpdate(path, l.length)
+                    }
+
+                    // check if previous is smaller or not
+                    if ((split - 1) >= idi.begin) {
+                        str = str.substr(0, split - idi.begin)
+                        idi = new IdentifierInterval(idi.idBegin, split - 1)
+                        from = from.left
+                    } else {
+                        con = false
+                    }
+                } else {
+                    result.push(new TextInsert(i, str))
+                    from.appendBegin(str.length)
+                    this.ascendentUpdate(path, str.length)
+                    con = false
+                }
+
+                break
+            }
+            case IdentifierIteratorResults.B2_CONCAT_B1: {
+                // concat at end
+                if (from.right !== null) {
+                    const split = from.getIdEnd().maxOffsetBeforeNext(
+                            from.right.getIdBegin(), idi.end)
+                    const l = str.substr(0, split + 1 - idi.begin)
+                    i = i + from.leftSubtreeSize() + from.length
+                    if (l.length > 0) {
+                        from.appendEnd(l.length)
+                        result.push(new TextInsert(i, l))
+
+                        this.ascendentUpdate(path, l.length)
+                    }
+
+                    if (idi.end >= (split + 1)) {
+                        str = str.substr(split + 1 - idi.begin, str.length)
+                        const newIdBegin =
+                            Identifier.fromBase(idi.idBegin, split + 1)
+                        idi = new IdentifierInterval(newIdBegin, idi.end)
+                        from = from.right
+                        i = i + l.length
+                    } else {
+                        con = false
+                    }
+                } else {
+                    i = i + from.leftSubtreeSize() + from.length
+                    result.push(new TextInsert(i, str))
+                    from.appendEnd(str.length)
+                    this.ascendentUpdate(path, str.length)
+                    con = false
+                }
+
+                break
+            }
+            case IdentifierIteratorResults.B1_EQUALS_B2: {
+                con = false
+                break
+            } }
         }
         this.balance(path)
         return result
@@ -296,13 +294,13 @@ export class LogootSRopes {
 
     // FIXME: Put this function elsewhere?
     applyTextInsert (textInsert: TextInsert): void {
-      this.str = TextUtils.insert(this.str, textInsert.offset, textInsert.content)
+        this.str = TextUtils.insert(this.str, textInsert.offset, textInsert.content)
     }
 
     // FIXME: Put this function elsewhere?
     applyTextDelete (textDelete: TextDelete): void {
-      const end: number = textDelete.offset + textDelete.length - 1
-      this.str = TextUtils.del(this.str, textDelete.offset, end)
+        const end: number = textDelete.offset + textDelete.length - 1
+        this.str = TextUtils.del(this.str, textDelete.offset, end)
     }
 
     addBlock (str: string, id: Identifier): TextInsert[] {
@@ -410,8 +408,9 @@ export class LogootSRopes {
         }
     }
 
-    getXest (aChildOf: (a: RopesNodes) => RopesNodes | null,
-            aPath: RopesNodes[]): RopesNodes {
+    getXest (
+        aChildOf: (a: RopesNodes) => RopesNodes | null,
+        aPath: RopesNodes[]): RopesNodes {
 
         let n = aPath[aPath.length - 1]
         let child = aChildOf(n)
@@ -435,10 +434,10 @@ export class LogootSRopes {
                 node = node.right
             } else {
                 if (id.equalsBase(node.getIdBegin())) {
-                  return i + node.leftSubtreeSize()
+                    return i + node.leftSubtreeSize()
                 } else {
-                  // Could not find the identifier, stop the search
-                  node = null
+                    // Could not find the identifier, stop the search
+                    node = null
                 }
             }
         }
@@ -449,23 +448,23 @@ export class LogootSRopes {
     searchNode (pos: number): ResponseIntNode | null {
         console.assert(isInt32(pos), "pos ∈ int32")
 
-        let node1 = this.root
-        let path1: RopesNodes[] = []
-        while (node1 !== null) {
-            path1.push(node1)
+        let node = this.root
+        const path: RopesNodes[] = []
+        while (node !== null) {
+            path.push(node)
 
-            const before = node1.leftSubtreeSize()
+            const before = node.leftSubtreeSize()
             if (pos < before) {
-                node1 = node1.left
-            } else if (pos < before + node1.length) {
+                node = node.left
+            } else if (pos < before + node.length) {
                 return {
                     i: pos - before,
-                    node: node1,
-                    path: path1
+                    node,
+                    path,
                 }
             } else {
-                pos -= before + node1.length
-                node1 = node1.right
+                pos -= before + node.length
+                node = node.right
             }
         }
         return null
@@ -473,7 +472,7 @@ export class LogootSRopes {
 
     ascendentUpdate (path: RopesNodes[], length: number): void {
         console.assert(isInt32(length), "length ∈ int32")
-        // `length' may be negative
+        // `length" may be negative
 
         for (const item of path) {
             item.addString(length)
@@ -481,7 +480,7 @@ export class LogootSRopes {
     }
 
     delBlock (idInterval: IdentifierInterval): TextDelete[] {
-        let l: TextDelete[] = []
+        const l: TextDelete[] = []
         let i
         while (true) {
             const path: RopesNodes[] = []
@@ -528,7 +527,7 @@ export class LogootSRopes {
         }
 
         l.forEach((textDelete: TextDelete) => {
-          this.applyTextDelete(textDelete)
+            this.applyTextDelete(textDelete)
         })
 
         return l
@@ -541,7 +540,7 @@ export class LogootSRopes {
 
         this.str = TextUtils.del(this.str, begin, end)
         let length = end - begin + 1
-        let li: IdentifierInterval[] = []
+        const li: IdentifierInterval[] = []
         do {
             const start = this.searchNode(begin)
             if (start !== null) {
@@ -601,7 +600,7 @@ export class LogootSRopes {
     }
 
     getMinPath (path: RopesNodes[]): RopesNodes {
-        console.assert(path.length !== 0, "`path' has at least one item")
+        console.assert(path.length !== 0, "path has at least one item")
 
         let node = path[path.length - 1] as RopesNodes // precondition
         while (node.left !== null) {
@@ -614,7 +613,7 @@ export class LogootSRopes {
     // TODO: Implémenter la balance de Google (voir AVL.js) et vérifier ses performances en comparaison
     balance (path: RopesNodes[]): void {
         while (path.length > 0) {
-            let node = path.pop() as RopesNodes // Loop condition
+            const node = path.pop() as RopesNodes // Loop condition
 
             let father = path.length === 0 ? null : path[path.length - 1]
             node.sumDirectChildren()
@@ -643,7 +642,8 @@ export class LogootSRopes {
 
     rotateLeft (node: RopesNodes, father: RopesNodes | null): RopesNodes {
         console.assert(node.right !== null, "There exists a right node")
-        console.assert((node === this.root) === (father === null), "The father is null when we are rotating left the root")
+        console.assert((node === this.root) === (father === null),
+            "The father is null when we are rotating left the root")
 
         const r = node.right as RopesNodes // precondition
         if (node === this.root) {
@@ -663,7 +663,8 @@ export class LogootSRopes {
 
     rotateRight (node: RopesNodes, father: RopesNodes | null): RopesNodes {
         console.assert(node.left !== null, "There exists a left node")
-        console.assert((node === this.root) === (father === null), "The father is null when we are rotating right the root")
+        console.assert((node === this.root) === (father === null),
+            "The father is null when we are rotating right the root")
 
         const r = node.left as RopesNodes // precondition
         if (node === this.root) {
@@ -727,7 +728,7 @@ export class LogootSRopes {
         const root = this.root
         if (root !== null) {
             const linearRpr = root.toList()
-            for (let idi of linearRpr) {
+            for (const idi of linearRpr) {
                 result = (result * 17 + idi.digest()) | 0
                     // Convert to 32bits integer
             }

@@ -19,16 +19,15 @@
 
 import {SafeAny} from "safe-any"
 
-import {isInt32} from './int32'
-import {Identifier} from './identifier'
-import {IdentifierInterval} from './identifierinterval'
-import {LogootSBlock} from './logootsblock'
-
+import {Identifier} from "./identifier"
+import {IdentifierInterval} from "./identifierinterval"
+import {isInt32} from "./int32"
+import {LogootSBlock} from "./logootsblock"
 
 /**
-* @param aNode may be null
-* @returns Height of aNode or 0 if aNode is null
-*/
+ * @param aNode may be null
+ * @returns Height of aNode or 0 if aNode is null
+ */
 function heightOf (aNode: RopesNodes | null): number {
     if (aNode !== null) {
         return aNode.height
@@ -38,9 +37,9 @@ function heightOf (aNode: RopesNodes | null): number {
 }
 
 /**
-* @param aNode may be null
-* @returns size of aNode (including children sizes) or 0 if aNode is null
-*/
+ * @param aNode may be null
+ * @returns size of aNode (including children sizes) or 0 if aNode is null
+ */
 function subtreeSizeOf (aNode: RopesNodes | null): number {
     if (aNode !== null) {
         return aNode.sizeNodeAndChildren
@@ -51,47 +50,30 @@ function subtreeSizeOf (aNode: RopesNodes | null): number {
 
 export class RopesNodes {
 
-// Creation
-    constructor (block: LogootSBlock, actualBegin: number, length: number,
-        left: RopesNodes | null, right: RopesNodes | null) {
-
-        console.assert(isInt32(actualBegin), "actualBegin ∈ int32")
-        console.assert(block.idInterval.begin <= actualBegin, "actualBegin must be greater than or equal to idInterval.begin")
-
-        this.block = block
-        this.actualBegin = actualBegin
-        this.length = length
-        this.left = left
-        this.right = right
-        this.height = Math.max(heightOf(left), heightOf(right)) + 1
-        this.sizeNodeAndChildren = length +
-            subtreeSizeOf(left) + subtreeSizeOf(right)
-    }
-
     static fromPlain (o: SafeAny<RopesNodes>): RopesNodes | null {
         if (typeof o === "object" && o !== null) {
-          const plainBlock: SafeAny<LogootSBlock> = o.block
-          const actualBegin: SafeAny<number> = o.actualBegin
-          const length: SafeAny<number> = o.length
-          const plainLeft: SafeAny<RopesNodes> = o.left
-          const plainRight: SafeAny<RopesNodes> = o.right
+            const plainBlock: SafeAny<LogootSBlock> = o.block
+            const actualBegin: SafeAny<number> = o.actualBegin
+            const length: SafeAny<number> = o.length
+            const plainLeft: SafeAny<RopesNodes> = o.left
+            const plainRight: SafeAny<RopesNodes> = o.right
 
-          if (plainBlock instanceof Object &&
-              typeof actualBegin === "number" && isInt32(actualBegin) &&
-              typeof length === "number" && isInt32(length) &&
-              length >= 0) {
+            if (plainBlock instanceof Object &&
+                typeof actualBegin === "number" && isInt32(actualBegin) &&
+                typeof length === "number" && isInt32(length) &&
+                length >= 0) {
 
-              const block: LogootSBlock | null = LogootSBlock.fromPlain(plainBlock)
-              const right: RopesNodes | null = RopesNodes.fromPlain(plainRight)
-              const left: RopesNodes | null = RopesNodes.fromPlain(plainLeft)
+                const block: LogootSBlock | null = LogootSBlock.fromPlain(plainBlock)
+                const right: RopesNodes | null = RopesNodes.fromPlain(plainRight)
+                const left: RopesNodes | null = RopesNodes.fromPlain(plainLeft)
 
-              if (block !== null &&
-                  block.idInterval.begin <= actualBegin &&
-                  (block.idInterval.end - block.idInterval.begin) >= length - 1) {
+                if (block !== null &&
+                    block.idInterval.begin <= actualBegin &&
+                    (block.idInterval.end - block.idInterval.begin) >= length - 1) {
 
-                  return new RopesNodes(block, actualBegin, length, left, right)
-              }
-          }
+                    return new RopesNodes(block, actualBegin, length, left, right)
+                }
+            }
         }
         return null
     }
@@ -128,11 +110,30 @@ export class RopesNodes {
      */
     length: number
 
-    get actualEnd(): number {
-        return this.actualBegin + this.length - 1
+    sizeNodeAndChildren: number
+
+// Creation
+    constructor (
+        block: LogootSBlock, actualBegin: number, length: number,
+        left: RopesNodes | null, right: RopesNodes | null) {
+
+        console.assert(isInt32(actualBegin), "actualBegin ∈ int32")
+        console.assert(block.idInterval.begin <= actualBegin,
+            "actualBegin must be greater than or equal to idInterval.begin")
+
+        this.block = block
+        this.actualBegin = actualBegin
+        this.length = length
+        this.left = left
+        this.right = right
+        this.height = Math.max(heightOf(left), heightOf(right)) + 1
+        this.sizeNodeAndChildren = length +
+            subtreeSizeOf(left) + subtreeSizeOf(right)
     }
 
-    sizeNodeAndChildren: number
+    get actualEnd (): number {
+        return this.actualBegin + this.length - 1
+    }
 
     getIdBegin (): Identifier {
         return this.block.idInterval.getBaseId(this.actualBegin)
@@ -144,7 +145,7 @@ export class RopesNodes {
 
     addString (length: number): void {
         console.assert(isInt32(length), "length  ∈ int32")
-        // `length' may be negative
+        // `length" may be negative
 
         this.sizeNodeAndChildren += length
     }
@@ -171,7 +172,7 @@ export class RopesNodes {
 
     /**
      * Delete a interval of identifiers belonging to this node
-     * Reduces the node's {@link RopesNodes#length} and/or shifts its {@link RopesNodes#offset}
+     * Reduces the node"s {@link RopesNodes#length} and/or shifts its {@link RopesNodes#offset}
      * May also trigger a split of the current node if the deletion cuts it in two parts
      *
      * @param {number} begin The start of the interval to delete
@@ -182,8 +183,10 @@ export class RopesNodes {
         console.assert(isInt32(begin), "begin  ∈ int32")
         console.assert(isInt32(end), "end  ∈ int32")
         console.assert(begin <= end, "begin <= end: " + begin, " <= " + end)
-        console.assert(this.block.idInterval.begin <= begin, "this.block.idInterval.begin <= to begin: " + this.block.idInterval.begin, " <= " + begin)
-        console.assert(end <= this.block.idInterval.end, "end <= this.block.idInterval.end: " + end, " <= " + this.block.idInterval.end)
+        console.assert(this.block.idInterval.begin <= begin,
+            "this.block.idInterval.begin <= to begin: " + this.block.idInterval.begin, " <= " + begin)
+        console.assert(end <= this.block.idInterval.end,
+            "end <= this.block.idInterval.end: " + end, " <= " + this.block.idInterval.end)
 
         let ret: RopesNodes | null = null
 
@@ -194,20 +197,19 @@ export class RopesNodes {
         const actualEnd: number = Math.min(this.actualEnd, end)
 
         if (actualBegin <= actualEnd) {
-          const sizeToDelete = actualEnd - actualBegin + 1
-          this.block.delBlock(sizeToDelete)
+            const sizeToDelete = actualEnd - actualBegin + 1
+            this.block.delBlock(sizeToDelete)
 
-          if (sizeToDelete !== this.length) {
-            if (actualBegin === this.actualBegin) {
-              // Deleting the beginning of the block
-              this.actualBegin = actualEnd + 1
-            } else if (actualEnd !== this.actualEnd) {
-              // Deleting the middle of the block
-              ret = this.split(actualEnd - this.actualBegin + 1, null)
+            if (sizeToDelete !== this.length) {
+                if (actualBegin === this.actualBegin) {
+                    // Deleting the beginning of the block
+                    this.actualBegin = actualEnd + 1
+                } else if (actualEnd !== this.actualEnd) {
+                    // Deleting the middle of the block
+                    ret = this.split(actualEnd - this.actualBegin + 1, null)
+                }
             }
-          }
-
-          this.length = this.length - sizeToDelete
+            this.length = this.length - sizeToDelete
         }
 
         return ret
@@ -238,8 +240,7 @@ export class RopesNodes {
     replaceChildren (node: RopesNodes, by: RopesNodes | null): void {
         if (this.left === node) {
             this.left = by
-        }
-        else if (this.right === node) {
+        } else if (this.right === node) {
             this.right = by
         }
     }

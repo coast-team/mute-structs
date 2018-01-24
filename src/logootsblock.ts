@@ -19,20 +19,10 @@
 
 import {SafeAny} from "safe-any"
 
-import {isInt32} from './int32'
-import {IdentifierInterval} from './identifierinterval'
-
+import {IdentifierInterval} from "./identifierinterval"
+import {isInt32} from "./int32"
 
 export class LogootSBlock {
-
-// Creation
-    constructor (idInterval: IdentifierInterval, nbElt: number) {
-        console.assert(isInt32(nbElt) && nbElt >= 0,
-            "nbElt must be a non-negative integer")
-
-        this.idInterval = idInterval
-        this.nbElement = nbElt
-    }
 
     static fromPlain (o: SafeAny<LogootSBlock>): LogootSBlock | null {
         if (typeof o === "object" && o !== null) {
@@ -53,10 +43,18 @@ export class LogootSBlock {
 
 // Access
     idInterval: IdentifierInterval
-
     nbElement: number
 
-    isMine(replicaNumber: number): boolean {
+// Creation
+    constructor (idInterval: IdentifierInterval, nbElt: number) {
+        console.assert(isInt32(nbElt) && nbElt >= 0,
+            "nbElt must be a non-negative integer")
+
+        this.idInterval = idInterval
+        this.nbElement = nbElt
+    }
+
+    isMine (replicaNumber: number): boolean {
         return this.idInterval.idBegin.generator === replicaNumber
     }
 
@@ -74,7 +72,7 @@ export class LogootSBlock {
     }
 
     toString (): string {
-        return '{' + this.nbElement + ',' + this.idInterval.toString() + '}'
+        return "{" + this.nbElement + "," + this.idInterval.toString() + "}"
     }
 
 }

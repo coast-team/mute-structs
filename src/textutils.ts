@@ -18,12 +18,12 @@
 */
 
 /**
-  * Insert a string at a specific position in an existing string.
-  * @param {string} aOriginal - the string in which to insert the new content.
-  * @param {number} index - the position where to perform the insertion.
-  * @param {string} string - the string to be inserted.
-  * @return {string} the resulting string aOriginal[0:index]+string+aOriginal[index+1:aOriginal.length-1].
-  */
+ * Insert a string at a specific position in an existing string.
+ * @param {string} aOriginal - the string in which to insert the new content.
+ * @param {number} index - the position where to perform the insertion.
+ * @param {string} string - the string to be inserted.
+ * @return {string} the resulting string aOriginal[0:index]+string+aOriginal[index+1:aOriginal.length-1].
+ */
 function insert (aOriginal: string, index: number, str: string): string {
     console.assert(Number.isSafeInteger(index), "index ∈ safe integer")
 
@@ -34,12 +34,12 @@ function insert (aOriginal: string, index: number, str: string): string {
 }
 
 /**
-  * Remove a range of characters from a string.
-  * @param {string} aOriginal - the string in which to insert the new content.
-  * @param {number} begin - the beginning index of the range to be removed.
-  * @param {number} end - the end index of the range to be removed.
-  * @return {string} the resulting string aOriginal[0:begin]+aOriginal[end:aOriginal.length-1].
-  */
+ * Remove a range of characters from a string.
+ * @param {string} aOriginal - the string in which to insert the new content.
+ * @param {number} begin - the beginning index of the range to be removed.
+ * @param {number} end - the end index of the range to be removed.
+ * @return {string} the resulting string aOriginal[0:begin]+aOriginal[end:aOriginal.length-1].
+ */
 function del (aOriginal: string, begin: number, end: number): string {
     console.assert(Number.isSafeInteger(begin), "begin ∈ safe integer")
     console.assert(Number.isSafeInteger(end), "end ∈ safe integer")
@@ -49,11 +49,11 @@ function del (aOriginal: string, begin: number, end: number): string {
 }
 
 /**
-  * Compute the number of disjoint-occurence of a string within a string.
-  * @param {string} string - the string in which to count occurences.
-  * @param {string} substring - the substring to look for.
-  * @return {number} the occurence count.
-  */
+ * Compute the number of disjoint-occurence of a string within a string.
+ * @param {string} string - the string in which to count occurences.
+ * @param {string} substring - the substring to look for.
+ * @return {number} the occurence count.
+ */
 function occurrences (str: string, substring: string): number {
     let result = 0
     const substringLength = substring.length

@@ -17,21 +17,24 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
- import {isInt32} from './int32'
-import {LogootSRopes} from './logootsropes'
-import {LogootSDel} from './logootsdel'
-
+import {isInt32} from "./int32"
+import {LogootSDel} from "./logootsdel"
+import {LogootSRopes} from "./logootsropes"
 
 /**
  * Represents a sequence operation (deletion).
  */
 export class TextDelete {
 
+    readonly offset: number
+
+    readonly length: number
+
     /**
-    * @constructor
-    * @param {number} offset - the position of the first element to be deleted in the sequence.
-    * @param {number} length - the length of the range to be deleted in the sequence.
-    */
+     * @constructor
+     * @param {number} offset - the position of the first element to be deleted in the sequence.
+     * @param {number} length - the length of the range to be deleted in the sequence.
+     */
     constructor (offset: number, length: number) {
         console.assert(isInt32(offset), "offset  ∈ int32")
         console.assert(isInt32(length), "length  ∈ int32")
@@ -41,23 +44,17 @@ export class TextDelete {
         this.length = length
     }
 
-    readonly offset: number
-
-    readonly length: number
-
     equals (other: TextDelete): boolean {
         return this.offset === other.offset &&
             this.length === other.length
     }
 
     /**
-    * Apply the current delete operation to a LogootSplit document.
-    * @param {LogootSDocument} doc - the LogootSplit document on which the deletion wil be performed.
-    * @return {LogootSDel} the logootsplit deletion that is related to the deletion that has been performed.
-    */
+     * Apply the current delete operation to a LogootSplit document.
+     * @param {LogootSDocument} doc - the LogootSplit document on which the deletion wil be performed.
+     * @return {LogootSDel} the logootsplit deletion that is related to the deletion that has been performed.
+     */
     applyTo (doc: LogootSRopes): LogootSDel {
         return doc.delLocal(this.offset, this.offset + this.length - 1)
     }
-
 }
-

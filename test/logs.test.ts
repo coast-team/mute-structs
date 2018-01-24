@@ -33,8 +33,8 @@ import {LogootSRopes} from "../src/logootsropes.js"
  * @param {T[]} inputs - An array
  * @param {any} expected - The expected value of each element
  */
-function everyEqualsTo<T>(inputs: T[], expected: T): boolean {
-  return inputs.every((input) => input === expected)
+function everyEqualsTo<T> (inputs: T[], expected: T): boolean {
+    return inputs.every((input) => input === expected)
 }
 
 /**
@@ -44,85 +44,86 @@ function everyEqualsTo<T>(inputs: T[], expected: T): boolean {
  * @param {string[]} logFiles - The set of files containing the logs to compare
  * @param {boolean} expected - Should the logs converge or not
  */
-function everyLogsConvergeMacro(t: AssertContext, logFiles: string[], expected: boolean): void {
-  const logs: LogootSOperation[][] = []
+function everyLogsConvergeMacro (t: AssertContext, logFiles: string[], expected: boolean): void {
+    const logs: LogootSOperation[][] = []
 
-  // Retrieve operation logs from files
-  logFiles.forEach((file) => {
-    const data = fs.readFileSync(file, 'utf8')
-    const log = JSON.parse(data)
+    // Retrieve operation logs from files
+    logFiles.forEach((file) => {
+        const data = fs.readFileSync(file, "utf8")
+        const log = JSON.parse(data)
 
-    // Has to set explicitly the type of richLogootSOps
-    // so that TypeScript does its job and infers the return type of richLogootSOps.map(...)
-    const richLogootSOps: SafeAny<{richLogootSOps: SafeAny<LogootSOperation>[]}> = log.richLogootSOps
+        // Has to set explicitly the type of richLogootSOps
+        // so that TypeScript does its job and infers the return type of richLogootSOps.map(...)
+        const richLogootSOps: SafeAny<{richLogootSOps: Array<SafeAny<LogootSOperation>>}> = log.richLogootSOps
 
+        if (richLogootSOps instanceof Array && richLogootSOps.length > 0) {
+            let isOk = true
+            let i = 0
 
-    if (richLogootSOps instanceof Array && richLogootSOps.length > 0) {
-      let isOk = true
-      let i = 0
+            const logootSOps: LogootSOperation[] = []
 
-      const logootSOps: LogootSOperation[] = []
+            while (isOk && i < richLogootSOps.length) {
+                const plainLogootSOp: SafeAny<LogootSOperation> = richLogootSOps[i].logootSOp
+                let logootSOp: LogootSOperation | null = LogootSDel.fromPlain(plainLogootSOp)
+                if (logootSOp === null) {
+                    logootSOp = LogootSAdd.fromPlain(plainLogootSOp)
+                }
+                if (logootSOp === null) {
+                    isOk = false
+                } else {
+                    logootSOps.push(logootSOp)
+                }
+                i++
+            }
 
-      while (isOk && i < richLogootSOps.length) {
-        const plainLogootSOp: SafeAny<LogootSOperation> = richLogootSOps[i].logootSOp
-        let logootSOp: LogootSOperation | null = LogootSDel.fromPlain(plainLogootSOp)
-        if (logootSOp === null) {
-          logootSOp = LogootSAdd.fromPlain(plainLogootSOp)
-        }
-        if (logootSOp === null) {
-          isOk = false
+            if (isOk) {
+                logs.push(logootSOps)
+            } else {
+                t.fail("the log must contains only valid logoots operations")
+            }
         } else {
-          logootSOps.push(logootSOp)
+            t.fail("the log must not be empty")
         }
-        i++
-      }
+    })
+    const docs: LogootSRopes[] = []
+    let j = 0
 
-      if (isOk) {
-        logs.push(logootSOps)
-      } else {
-        t.fail("the log must contains only valid logoots operations")
-      }
-    } else {
-      t.fail("the log must not be empty")
-    }
-  })
-  const docs: LogootSRopes[] = []
-  let i = 0
+    // Replay operation logs
+    logs.forEach((log) => {
+        const doc = new LogootSRopes(j)
 
-  // Replay operation logs
-  logs.forEach((log) => {
-    const doc = new LogootSRopes(i)
+        log.forEach((logootSOp) => {
+            logootSOp.execute(doc)
+        })
 
-    log.forEach((logootSOp) => {
-      logootSOp.execute(doc)
+        docs.push(doc)
+        j++
     })
 
-    docs.push(doc)
-    i++
-  })
+    const actualDigests = docs.map((doc) => doc.digest())
+    const expectedDigest = actualDigests[0]
 
-  const actualDigests = docs.map((doc) => doc.digest())
-  const expectedDigest = actualDigests[0]
+    const actualStrings = docs.map((doc) => doc.str)
+    const expectedString = actualStrings[0]
 
-  const actualStrings = docs.map((doc) => doc.str)
-  const expectedString = actualStrings[0]
-
-  t.is(everyEqualsTo(actualDigests, expectedDigest), expected)
-  t.is(everyEqualsTo(actualStrings, expectedString), expected)
+    t.is(everyEqualsTo(actualDigests, expectedDigest), expected)
+    t.is(everyEqualsTo(actualStrings, expectedString), expected)
 }
 
-function testConvergentLogs (testName: string,
-  logsPath: string, logName: string, users: string[]): void {
+function testConvergentLogs (
+    testName: string,
+    logsPath: string, logName: string, users: string[]): void {
 
-  const logsSet = users.map((user) => `${logsPath}/${logName}-${user}.json`)
-  test(testName, everyLogsConvergeMacro, logsSet, true)
+    const logsSet = users.map((user) => `${logsPath}/${logName}-${user}.json`)
+    test(testName, everyLogsConvergeMacro, logsSet, true)
 }
 
-function testDivergentLogs (testName: string,
-  logsPath: string, logName: string, users: string[]): void {
+function testDivergentLogs (
+    testName: string,
+    logsPath: string, logName: string, users: string[]): void {
 
-  const logsSet = users.map((user) => `${logsPath}/${logName}-${user}.json`)
-  test(testName, everyLogsConvergeMacro, logsSet, false)
+    const logsSet = users.map((user) => `${logsPath}/${logName}-${user}.json`)
+    test(testName, everyLogsConvergeMacro, logsSet, false)
 }
 
 testConvergentLogs(

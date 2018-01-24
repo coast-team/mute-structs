@@ -14,7 +14,8 @@
   "devDependencies": {
     "@types/node": "^8.5.7",
     "ava": "^0.24.0",
-    "tslint": "^3.15.1",
+    "tslint": "^5.8.0",
+    "tslint-eslint-rules": "^4.1.1",
     "typescript": "^2.6.0"
   },
   "scripts": {

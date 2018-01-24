@@ -17,8 +17,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import {RopesNodes} from './ropesnodes'
-
+import {RopesNodes} from "./ropesnodes"
 
 export interface ResponseIntNode {
 
@@ -29,4 +28,3 @@ export interface ResponseIntNode {
     readonly path: RopesNodes[]
 
 }
-

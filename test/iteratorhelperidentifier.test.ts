@@ -24,10 +24,11 @@ import {IdentifierInterval} from "../src/identifierinterval"
 import {IdentifierTuple} from "../src/identifiertuple"
 import {
     compareBase,
-    IdentifierIteratorResults
+    IdentifierIteratorResults,
 } from "../src/iteratorhelperidentifier"
 
-function compareBaseMacro (t: AssertContext,
+function compareBaseMacro (
+    t: AssertContext,
     idInterval1: IdentifierInterval, idInterval2: IdentifierInterval,
     expected: IdentifierIteratorResults): void {
 

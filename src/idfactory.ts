@@ -17,21 +17,22 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+import {Identifier} from "./identifier"
+import {IdentifierTuple} from "./identifiertuple"
 import {
     INT32_BOTTOM,
     INT32_TOP,
     isInt32,
-    randomInt32
-} from './int32'
-import {Identifier} from './identifier'
-import {IdentifierTuple} from './identifiertuple'
-import {Ordering} from './ordering'
+    randomInt32,
+} from "./int32"
+import {Ordering} from "./ordering"
 
 const MIN_TUPLE: IdentifierTuple = new IdentifierTuple(INT32_BOTTOM, 0, 0, 0)
 const MAX_TUPLE: IdentifierTuple = new IdentifierTuple(INT32_TOP, 0, 0, 0)
 
-export function createBetweenPosition (id1: Identifier | null,
-    id2: Identifier | null, replicaNumber: number, clock: number): Identifier {
+export function createBetweenPosition (
+    id1: Identifier | null, id2: Identifier | null,
+    replicaNumber: number, clock: number): Identifier {
 
     console.assert(id1 === null || id2 === null ||
         id1.compareTo(id2) === Ordering.Less, "id1 < id2")

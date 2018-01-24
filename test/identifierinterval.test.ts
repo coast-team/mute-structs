@@ -39,7 +39,7 @@ test("from-plain-factory", (t) => {
     const idInterval: IdentifierInterval | null = IdentifierInterval.fromPlain(plain)
 
     if (idInterval === null) {
-      t.fail("The identifier interval should have been correctly instantiated")
+        t.fail("The identifier interval should have been correctly instantiated")
     } else {
         t.true(idInterval.idBegin.equals(plain.idBegin))
         t.is(idInterval.begin, begin)

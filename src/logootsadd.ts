@@ -19,15 +19,11 @@
 
 import {SafeAny} from "safe-any"
 
-import {Identifier} from './identifier'
-import {LogootSRopes} from './logootsropes'
-import {TextInsert} from './textinsert'
+import {Identifier} from "./identifier"
+import {LogootSRopes} from "./logootsropes"
+import {TextInsert} from "./textinsert"
 
 class LogootSAddV1 {
-    readonly id?: Identifier
-
-    readonly l?: string
-
     static fromPlain (o: SafeAny<LogootSAddV1>): LogootSAdd | null {
         if (typeof o === "object" && o !== null) {
             const l: SafeAny<string> = o.l
@@ -41,24 +37,15 @@ class LogootSAddV1 {
         }
         return null
     }
+
+    readonly id?: Identifier
+    readonly l?: string
 }
 
 /**
  * Represents a LogootSplit insert operation.
  */
 export class LogootSAdd {
-
-    /**
-    * @constructor
-    * @param {Identifier} id - the identifier that localise the insertion in the logoot sequence.
-    * @param {string} content - the content of the block to be inserted.
-    */
-    constructor (id: Identifier, content: string) {
-        console.assert(content.length > 0, "content must not be empty")
-
-        this.id = id
-        this.content = content
-    }
 
     static fromPlain (o: SafeAny<LogootSAdd>): LogootSAdd | null {
         if (typeof o === "object" && o !== null) {
@@ -79,8 +66,19 @@ export class LogootSAdd {
     }
 
     readonly id: Identifier
-
     readonly content: string
+
+    /**
+     * @constructor
+     * @param {Identifier} id - the identifier that localise the insertion in the logoot sequence.
+     * @param {string} content - the content of the block to be inserted.
+     */
+    constructor (id: Identifier, content: string) {
+        console.assert(content.length > 0, "content must not be empty")
+
+        this.id = id
+        this.content = content
+    }
 
     equals (aOther: LogootSAdd): boolean {
         return this.id.equals(aOther.id) &&
@@ -88,10 +86,10 @@ export class LogootSAdd {
     }
 
     /**
-    * Apply the current insert operation to a LogootSplit document.
-    * @param {LogootSRopes} doc - the LogootSplit document on which the operation wil be applied.
-    * @return {TextInsert[]} the insertion to be applied on the sequence representing the document content.
-    */
+     * Apply the current insert operation to a LogootSplit document.
+     * @param {LogootSRopes} doc - the LogootSplit document on which the operation wil be applied.
+     * @return {TextInsert[]} the insertion to be applied on the sequence representing the document content.
+     */
     execute (doc: LogootSRopes): TextInsert[] {
         return doc.addBlock(this.content, this.id)
     }

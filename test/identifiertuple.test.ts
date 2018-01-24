@@ -25,7 +25,11 @@ import {Ordering} from "../src/ordering"
 /**
  * Macro to check if compareTo() returns the expected result
  */
-function compareTuplesMacro(t: AssertContext, tuple: IdentifierTuple, other: IdentifierTuple, expected: Ordering): void {
+function compareTuplesMacro (
+    t: AssertContext,
+    tuple: IdentifierTuple, other: IdentifierTuple,
+    expected: Ordering): void {
+
     const actual: Ordering = tuple.compareTo(other)
     t.is(actual, expected)
 }
@@ -33,7 +37,11 @@ function compareTuplesMacro(t: AssertContext, tuple: IdentifierTuple, other: Ide
 /**
  * Macro to check if equalsBase() returns the expected result
  */
-function equalsBaseMacro(t: AssertContext, tuple: IdentifierTuple, other: IdentifierTuple, expected: boolean): void {
+function equalsBaseMacro (
+    t: AssertContext,
+    tuple: IdentifierTuple, other: IdentifierTuple,
+    expected: boolean): void {
+
     const actual: boolean = tuple.equalsBase(other)
     t.is(actual, expected)
 }
@@ -43,7 +51,7 @@ test("fromPlain", (t: AssertContext) => {
         random: 42,
         replicaNumber: 1,
         clock: 10,
-        offset: -5
+        offset: -5,
     }
 
     const tuple: IdentifierTuple | null = IdentifierTuple.fromPlain(plain)
@@ -62,7 +70,7 @@ test("fromPlain-missing-property", (t: AssertContext) => {
     const plain = {
         replicaNumber: 1,
         clock: 10,
-        offset: -5
+        offset: -5,
     }
 
     const tuple: IdentifierTuple | null = IdentifierTuple.fromPlain(plain)
@@ -75,7 +83,7 @@ test("fromPlain-wrong-type", (t: AssertContext) => {
         random: 42.7,
         replicaNumber: 1,
         clock: 10,
-        offset: -5
+        offset: -5,
     }
 
     const tuple: IdentifierTuple | null = IdentifierTuple.fromPlain(plain)

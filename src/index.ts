@@ -16,20 +16,20 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-export {Dot} from './dot'
-export {IdentifierTuple} from './identifiertuple'
-export {Identifier} from './identifier'
-export {IdentifierInterval} from './identifierinterval'
+export {Dot} from "./dot"
+export {IdentifierTuple} from "./identifiertuple"
+export {Identifier} from "./identifier"
+export {IdentifierInterval} from "./identifierinterval"
 
-export {LogootSBlock} from './logootsblock'
-export {LogootSRopes} from './logootsropes'
-export {RopesNodes} from './ropesnodes'
+export {LogootSBlock} from "./logootsblock"
+export {LogootSRopes} from "./logootsropes"
+export {RopesNodes} from "./ropesnodes"
 
-export {LogootSAdd} from './logootsadd'
-export {LogootSDel} from './logootsdel'
-export {LogootSOperation} from './logootsoperation'
-export {TextDelete} from './textdelete'
-export {TextInsert} from './textinsert'
-export {TextOperation} from './textoperation'
+export {LogootSAdd} from "./logootsadd"
+export {LogootSDel} from "./logootsdel"
+export {LogootSOperation} from "./logootsoperation"
+export {TextDelete} from "./textdelete"
+export {TextInsert} from "./textinsert"
+export {TextOperation} from "./textoperation"
 
-export {insert, del, occurrences} from './textutils'
+export {insert, del, occurrences} from "./textutils"

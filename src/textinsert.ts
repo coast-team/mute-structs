@@ -17,20 +17,24 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import {isInt32} from './int32'
-import {LogootSRopes} from './logootsropes'
-import {LogootSAdd} from './logootsadd'
+import {isInt32} from "./int32"
+import {LogootSAdd} from "./logootsadd"
+import {LogootSRopes} from "./logootsropes"
 
 /**
  * Represents a sequence operation (insert).
  */
 export class TextInsert {
 
+    readonly offset: number
+
+    readonly content: string
+
     /**
-    * @constructor
-    * @param {number} offset - the insertion position in the sequence.
-    * @param {string} content - the content to be inserted in the sequence.
-    */
+     * @constructor
+     * @param {number} offset - the insertion position in the sequence.
+     * @param {string} content - the content to be inserted in the sequence.
+     */
     constructor (offset: number, content: string) {
         console.assert(isInt32(offset), "offset ∈ int32")
 
@@ -38,23 +42,18 @@ export class TextInsert {
         this.content = content
     }
 
-    readonly offset: number
-
-    readonly content: string
-
     equals (other: TextInsert): boolean {
         return this.offset === other.offset &&
             this.content === other.content
     }
 
     /**
-    * Apply the current insert operation to a LogootSplit document.
-    * @param {LogootSDocument} doc - the LogootSplit document on which the insertion wil be performed.
-    * @return {LogootSAdd} the logootsplit insertion that is related to the insertion that has been performed.
-    */
+     * Apply the current insert operation to a LogootSplit document.
+     * @param {LogootSDocument} doc - the LogootSplit document on which the insertion wil be performed.
+     * @return {LogootSAdd} the logootsplit insertion that is related to the insertion that has been performed.
+     */
     applyTo (doc: LogootSRopes): LogootSAdd {
         return doc.insertLocal(this.offset, this.content)
     }
 
 }
-

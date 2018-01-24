@@ -20,22 +20,24 @@
 import test from "ava"
 import {AssertContext} from "ava"
 
-import {
-    INT32_BOTTOM,
-    INT32_TOP
-} from '../src/int32'
 import {Identifier} from "../src/identifier"
 import {IdentifierTuple} from "../src/identifiertuple"
+import {
+    INT32_BOTTOM,
+    INT32_TOP,
+} from "../src/int32"
 import {Ordering} from "../src/ordering"
 
-function equalsMacro (t: AssertContext,
+function equalsMacro (
+    t: AssertContext,
     id1: Identifier, id2: Identifier, expected: boolean): void {
 
     const actual = id1.equals(id2)
     t.is(actual, expected)
 }
 
-function equalsBaseMacro (t: AssertContext,
+function equalsBaseMacro (
+    t: AssertContext,
     id1: Identifier, id2: Identifier, expected: boolean): void {
 
     const actual = id1.equalsBase(id2)
@@ -47,15 +49,15 @@ test("from-plain-factory", (t) => {
         random: 42,
         replicaNumber: 1,
         clock: 10,
-        offset: -5
+        offset: -5,
     }, {
         random: 53,
         replicaNumber: 2,
         clock: 0,
-        offset: 0
+        offset: 0,
     }]
     const plain = {
-        tuples: plainTuples
+        tuples: plainTuples,
     }
     const id: Identifier | null = Identifier.fromPlain(plain)
 
@@ -84,35 +86,37 @@ test("from-plain-factory-missing-property", (t) => {
 
 test("from-plain-factory-wrong-type", (t) => {
     const plain = {
-        tuples: [1, 2, 3, 4]
+        tuples: [1, 2, 3, 4],
     }
     const id: Identifier | null = Identifier.fromPlain(plain)
 
     t.is(id, null)
 })
 
-const tuple00 = new IdentifierTuple(0, 0, 0, 0)
-const tuple01 = new IdentifierTuple(0, 0, 0, 1)
-const tuple11 = new IdentifierTuple(0, 0, 1, 1)
+const testTuple = (): void => {
+    const tuple00 = new IdentifierTuple(0, 0, 0, 0)
+    const tuple01 = new IdentifierTuple(0, 0, 0, 1)
+    const tuple11 = new IdentifierTuple(0, 0, 1, 1)
 
-const id00 = new Identifier([tuple00])
-const id00Twin = new Identifier([tuple00])
-const id01 = new Identifier([tuple01])
-const id11 = new Identifier([tuple11])
-const id0001 = new Identifier([tuple00, tuple01])
-const id0100 = new Identifier([tuple01, tuple00])
+    const id00 = new Identifier([tuple00])
+    const id00Twin = new Identifier([tuple00])
+    const id01 = new Identifier([tuple01])
+    const id11 = new Identifier([tuple11])
+    const id0001 = new Identifier([tuple00, tuple01])
+    const id0100 = new Identifier([tuple01, tuple00])
 
-test("equals-twin", equalsMacro, id00, id00Twin, true)
-test("equals-same-length", equalsMacro, id00, id11, false)
-test("equals-different-length", equalsMacro, id00, id0001, false)
+    test("equals-twin", equalsMacro, id00, id00Twin, true)
+    test("equals-same-length", equalsMacro, id00, id11, false)
+    test("equals-different-length", equalsMacro, id00, id0001, false)
 
-test("equalsBase-twin", equalsBaseMacro, id00, id00Twin, true)
-test("equalsBase-same-base-same-length", equalsBaseMacro, id00, id01, true)
-test("equalsBase-different-base-same-length", equalsBaseMacro, id00, id11, false)
-test("equalsBase-is-prefix", equalsBaseMacro, id00, id0001, false)
-test("equalsBase-different-base-different-length", equalsBaseMacro,
-    id0001, id0100, false)
-
+    test("equalsBase-twin", equalsBaseMacro, id00, id00Twin, true)
+    test("equalsBase-same-base-same-length", equalsBaseMacro, id00, id01, true)
+    test("equalsBase-different-base-same-length", equalsBaseMacro, id00, id11, false)
+    test("equalsBase-is-prefix", equalsBaseMacro, id00, id0001, false)
+    test("equalsBase-different-base-different-length", equalsBaseMacro,
+        id0001, id0100, false)
+}
+testTuple()
 
 test("compare-to-last", (t) => {
     const id1 = new Identifier([new IdentifierTuple(0, 0, 0, 4)])

@@ -24,7 +24,7 @@ import {
     INT32_BOTTOM,
     INT32_TOP,
     isInt32,
-    randomInt32
+    randomInt32,
 } from "../src/int32.js"
 
 test("safe-integers-are-not-int32", (t: AssertContext) => {

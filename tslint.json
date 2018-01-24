@@ -1,75 +1,29 @@
 {
+  "extends": [
+    "tslint-eslint-rules",
+    "tslint:recommended"
+  ],
   "rules": {
-    "adjacent-overload-signatures": true,
-    "no-inferrable-types": true,
-    "no-internal-module": [true, "ignore-params"],
-    "no-namespace": true,
-    "no-reference": true,
-    "no-var-requires": true,
-    "only-arrow-functions": [true, "allow-declarations"],
-    "typedef": [
-      true,
-      "call-signature",
-      "property-declaration",
-      "member-variable-declaration"
-    ],
-    "typedef-whitespace": [true, {
-      "call-signature": "nospace",
-      "index-signature": "nospace",
-      "parameter": "nospace",
-      "property-declaration": "nospace",
-      "variable-declaration": "nospace"
-    }, {
-      "call-signature": "onespace",
-      "index-signature": "onespace",
-      "parameter": "onespace",
-      "property-declaration": "onespace",
-      "variable-declaration": "onespace"
-    }],
-
-    "curly": true,
-    "no-arg": true,
-    "no-conditional-assignment": true,
-    "no-duplicate-variable": true,
-    "no-eval": true,
-    "no-unreachable": true,
-    "no-unsafe-finally": true,
-    "no-unused-expression": true,
-    "no-unused-new": true,
-    "no-var-keyword": true,
-    "radix": true,
-    "triple-equals": true,
-    "use-isnan": true,
-
-    "eofline": true,
-    "indent": [true, "spaces", 4],
+    "no-console": false,
+    "no-var-requires": false,
+    "max-classes-per-file": false,
+    "member-access": false,
     "no-default-export": true,
-    "no-require-imports": true,
-    "no-trailing-whitespace": true,
-
-    "arrow-parens": true,
-    "class-name": true,
-    "comment-format": [true, "check-space"],
-    "object-literal-key-quotes": [true, "as-needed"],
-    "object-literal-shorthand": true,
-    "one-variable-per-declaration": [true, "ignore-for-loop"],
-    "quotemark": [true, "avoid-escape"],
-    "semicolon": [true, "never"],
-    "variable-name": [
+    "no-empty": false,
+    "no-switch-case-fall-through": true,
+    "object-literal-sort-keys": false,
+    "quotemark": [
       true,
-      "ban-keywords",
-      "check-format",
-      "allow-leading-underscore"
+      "double"
     ],
-    "whitespace": [
+    "semicolon": [
       true,
-      "check-branch",
-      "check-decl",
-      "check-operator",
-      "check-module",
-      "check-separator",
-      "check-type",
-      "check-typecast"
-    ]
+      "never"
+    ],
+    "space-before-function-paren": true,
+    "ter-indent": [true, 4],
+    "interface-name": false,
+    "no-shadowed-variable": true,
+    "no-bitwise": false
   }
 }

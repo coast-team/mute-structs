@@ -17,27 +17,12 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import {SafeAny} from 'safe-any'
+import {SafeAny} from "safe-any"
 
-import {isInt32} from './int32'
-import {Ordering} from './ordering'
+import {isInt32} from "./int32"
+import {Ordering} from "./ordering"
 
 export class IdentifierTuple {
-
-    readonly random: number
-    readonly replicaNumber: number
-    readonly clock: number
-    readonly offset: number
-
-    constructor (random: number, replicaNumber: number, clock: number, offset: number) {
-        console.assert([random, replicaNumber, clock, offset].every(isInt32),
-            "each value ∈ int32")
-
-        this.random = random
-        this.replicaNumber = replicaNumber
-        this.clock = clock
-        this.offset = offset
-    }
 
     static fromPlain (o: SafeAny<IdentifierTuple>): IdentifierTuple | null {
         if (typeof o === "object" && o !== null
@@ -62,6 +47,21 @@ export class IdentifierTuple {
         console.assert(isInt32(offset), "offset ∈ int32")
 
         return new IdentifierTuple(tuple.random, tuple.replicaNumber, tuple.clock, offset)
+    }
+
+    readonly random: number
+    readonly replicaNumber: number
+    readonly clock: number
+    readonly offset: number
+
+    constructor (random: number, replicaNumber: number, clock: number, offset: number) {
+        console.assert([random, replicaNumber, clock, offset].every(isInt32),
+            "each value ∈ int32")
+
+        this.random = random
+        this.replicaNumber = replicaNumber
+        this.clock = clock
+        this.offset = offset
     }
 
     /**

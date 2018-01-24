@@ -19,10 +19,9 @@
 
 import {SafeAny} from "safe-any"
 
-import {IdentifierInterval} from './identifierinterval'
-import {LogootSRopes} from './logootsropes'
-import {TextDelete} from './textdelete'
-
+import {IdentifierInterval} from "./identifierinterval"
+import {LogootSRopes} from "./logootsropes"
+import {TextDelete} from "./textdelete"
 
 const arrayConcat = Array.prototype.concat
 
@@ -30,16 +29,6 @@ const arrayConcat = Array.prototype.concat
  * Represents a LogootSplit delete operation.
  */
 export class LogootSDel {
-
-    /**
-    * @constructor
-    * @param {IdentifierInterval[]} lid - the list of identifier that localise the deletion in the logoot sequence.
-    */
-    constructor(lid: IdentifierInterval[]) {
-        console.assert(lid.length > 0, "lid must not be empty")
-
-        this.lid = lid
-    }
 
     static fromPlain (o: SafeAny<LogootSDel>): LogootSDel | null {
         if (typeof o === "object" && o !== null) {
@@ -51,9 +40,9 @@ export class LogootSDel {
                 while (isOk && i < plainLid.length) {
                     const idi: IdentifierInterval | null = IdentifierInterval.fromPlain(plainLid[i])
                     if (idi !== null) {
-                      lid.push(idi)
+                        lid.push(idi)
                     } else {
-                      isOk = false
+                        isOk = false
                     }
                     i++
                 }
@@ -67,6 +56,16 @@ export class LogootSDel {
 
     readonly lid: IdentifierInterval[]
 
+    /**
+     * @constructor
+     * @param {IdentifierInterval[]} lid - the list of identifier that localise the deletion in the logoot sequence.
+     */
+    constructor (lid: IdentifierInterval[]) {
+        console.assert(lid.length > 0, "lid must not be empty")
+
+        this.lid = lid
+    }
+
     equals (aOther: LogootSDel): boolean {
         return this.lid.length === aOther.lid.length &&
             this.lid.every((idInterval: IdentifierInterval, index: number): boolean => {
@@ -76,10 +75,10 @@ export class LogootSDel {
     }
 
     /**
-    * Apply the current delete operation to a LogootSplit document.
-    * @param {LogootSRopes} doc - the LogootSplit document on which the deletions wil be performed.
-    * @return {TextDelete[]} the list of deletions to be applied on the sequence representing the document content.
-    */
+     * Apply the current delete operation to a LogootSplit document.
+     * @param {LogootSRopes} doc - the LogootSplit document on which the deletions wil be performed.
+     * @return {TextDelete[]} the list of deletions to be applied on the sequence representing the document content.
+     */
     execute (doc: LogootSRopes): TextDelete[] {
         return arrayConcat.apply([], this.lid.map(
             (aId: IdentifierInterval): TextDelete[] => doc.delBlock(aId)))

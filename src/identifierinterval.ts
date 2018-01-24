@@ -19,24 +19,15 @@
 
 import {SafeAny} from "safe-any"
 
-import {Dot} from './dot'
-import {Identifier} from './identifier'
-import {isInt32} from './int32'
-import {Ordering} from './ordering'
+import {Dot} from "./dot"
+import {Identifier} from "./identifier"
+import {isInt32} from "./int32"
+import {Ordering} from "./ordering"
 
 /**
  * Define an interval between two identifiers sharing the same base
  */
 export class IdentifierInterval {
-
-// Creation
-    constructor (idBegin: Identifier, end: number) {
-        console.assert(isInt32(end), "end ∈ int32")
-        console.assert(idBegin.lastOffset <= end, "idBegin must be less than or equal to idEnd")
-
-        this.idBegin = idBegin
-        this.end = end
-    }
 
     static fromPlain (o: SafeAny<IdentifierInterval>): IdentifierInterval | null {
         if (typeof o === "object" && o !== null) {
@@ -53,6 +44,15 @@ export class IdentifierInterval {
 // Access
     readonly idBegin: Identifier
     readonly end: number
+
+// Creation
+    constructor (idBegin: Identifier, end: number) {
+        console.assert(isInt32(end), "end ∈ int32")
+        console.assert(idBegin.lastOffset <= end, "idBegin must be less than or equal to idEnd")
+
+        this.idBegin = idBegin
+        this.end = end
+    }
 
     /**
      * Shortcut to retrieve the offset of the last tuple of idBegin

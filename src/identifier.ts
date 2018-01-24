@@ -19,22 +19,11 @@
 
 import {SafeAny} from "safe-any"
 
-import {IdentifierTuple} from './identifiertuple'
-import {INT32_BOTTOM, INT32_TOP, isInt32} from './int32'
-import {Ordering} from './ordering'
+import {IdentifierTuple} from "./identifiertuple"
+import {INT32_BOTTOM, INT32_TOP, isInt32} from "./int32"
+import {Ordering} from "./ordering"
 
 export class Identifier {
-
-// Creation
-    constructor (tuples: IdentifierTuple[]) {
-        console.assert(tuples.length > 0, "tuples must not be empty")
-        // Last random must be different of INT32_BOTTOM
-        // This ensures a dense set.
-        const lastRandom = tuples[tuples.length - 1].random
-        console.assert(lastRandom > INT32_BOTTOM)
-
-        this.tuples = tuples
-    }
 
     static fromPlain (o: SafeAny<Identifier>): Identifier | null {
         if (typeof o === "object" && o !== null) {
@@ -82,10 +71,21 @@ export class Identifier {
 // Access
     readonly tuples: IdentifierTuple[]
 
+// Creation
+    constructor (tuples: IdentifierTuple[]) {
+        console.assert(tuples.length > 0, "tuples must not be empty")
+        // Last random must be different of INT32_BOTTOM
+        // This ensures a dense set.
+        const lastRandom = tuples[tuples.length - 1].random
+        console.assert(lastRandom > INT32_BOTTOM)
+
+        this.tuples = tuples
+    }
+
     /**
      * @return replica which generated this identifier.
      */
-    get generator(): number {
+    get generator (): number {
         return this.tuples[this.tuples.length - 1].replicaNumber
     }
 
@@ -94,15 +94,15 @@ export class Identifier {
      *
      * @return {number} The length
      */
-    get length(): number {
+    get length (): number {
         return this.tuples.length
     }
 
-    get replicaNumber(): number {
+    get replicaNumber (): number {
         return this.tuples[this.length - 1].replicaNumber
     }
 
-    get clock(): number {
+    get clock (): number {
         return this.tuples[this.length - 1].clock
     }
 
@@ -111,7 +111,7 @@ export class Identifier {
      *
      * @return {number} The offset
      */
-    get lastOffset(): number {
+    get lastOffset (): number {
         return this.tuples[this.length - 1].offset
     }
 
@@ -161,7 +161,7 @@ export class Identifier {
             } else {
                 stop = true
                 if (tuple.equalsBase(otherTuple)) {
-                  commonBase.push(tuple)
+                    commonBase.push(tuple)
                 }
             }
             i++
@@ -346,7 +346,7 @@ export class Identifier {
 
     digest (): number {
         return this.tuples.reduce((prev: number, tuple: IdentifierTuple) => {
-          return (prev * 17 + tuple.digest()) | 0
+            return (prev * 17 + tuple.digest()) | 0
         }, 0)
     }
 

@@ -17,10 +17,10 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import {Identifier} from './identifier'
-import {IdentifierInterval} from './identifierinterval'
-import {IdentifierTuple} from './identifiertuple'
-import {Ordering} from './ordering'
+import {Identifier} from "./identifier"
+import {IdentifierInterval} from "./identifierinterval"
+import {IdentifierTuple} from "./identifiertuple"
+import {Ordering} from "./ordering"
 
 export const enum IdentifierIteratorResults {
     B1_AFTER_B2,
@@ -29,10 +29,11 @@ export const enum IdentifierIteratorResults {
     B2_INSIDE_B1,
     B1_CONCAT_B2,
     B2_CONCAT_B1,
-    B1_EQUALS_B2
+    B1_EQUALS_B2,
 }
 
-export function compareBase (idInterval1: IdentifierInterval,
+export function compareBase (
+    idInterval1: IdentifierInterval,
     idInterval2: IdentifierInterval): IdentifierIteratorResults {
 
     const id1: Identifier = idInterval1.idBegin
@@ -65,7 +66,7 @@ export function compareBase (idInterval1: IdentifierInterval,
                     again some identifiers
                 For now, do not do anything in both cases.
             */
-            console.warn('Trying to duplicate existing identifiers: ',
+            console.warn("Trying to duplicate existing identifiers: ",
             idInterval1, idInterval2)
             return IdentifierIteratorResults.B1_EQUALS_B2
         }
@@ -73,8 +74,9 @@ export function compareBase (idInterval1: IdentifierInterval,
     return compareIntervalsDifferentBases(idInterval1, idInterval2)
 }
 
-function compareIntervalsDifferentBases (idInterval1: IdentifierInterval,
-     idInterval2: IdentifierInterval): IdentifierIteratorResults {
+function compareIntervalsDifferentBases (
+    idInterval1: IdentifierInterval,
+    idInterval2: IdentifierInterval): IdentifierIteratorResults {
 
     const id1: Identifier = idInterval1.idBegin
     const id2: Identifier = idInterval2.idBegin
@@ -91,4 +93,3 @@ function compareIntervalsDifferentBases (idInterval1: IdentifierInterval,
     }
     return IdentifierIteratorResults.B1_AFTER_B2
 }
-
