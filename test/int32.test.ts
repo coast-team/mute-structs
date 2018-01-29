@@ -50,6 +50,7 @@ test("randomInt32-upper-bound-is-excluded", (t: AssertContext) => {
     // WARNING: No deterministric test (no seeded radom function)
     for (let i = 0; i < 100; i++) {
         t.is(randomInt32(0, 1), 0)
+        t.is(randomInt32(-1, 0), -1)
     }
 })
 

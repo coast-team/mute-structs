@@ -40,8 +40,7 @@ export function randomInt32 (l: number, u: number): number {
 
     const randomFloat = (Math.random() * (u - l)) + l
         // Generate a random float number in [b1, b2[
-    const result = randomFloat | 0
-        // Truncate the float in order to get a 32bits integer
+    const result = Math.floor(randomFloat)
 
     console.assert(isInt32(result) && l <= result && result < u,
         "result is an integer 32 in [l, u[")
