@@ -17,7 +17,15 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+import { SafeAny } from "safe-any"
+
 export interface Dot {
     readonly replicaNumber: number
     readonly clock: number
+}
+
+export function isDot (dot: SafeAny<Dot>): dot is Dot {
+    return typeof dot === "object" && dot !== null &&
+        typeof dot.replicaNumber === "number" && Number.isInteger(dot.replicaNumber) &&
+        typeof dot.clock === "number" && Number.isInteger(dot.clock)
 }
