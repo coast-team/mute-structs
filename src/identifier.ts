@@ -30,15 +30,8 @@ export class Identifier {
         if (typeof o === "object" && o !== null) {
             const plainTuples = o.tuples
             if (plainTuples instanceof Array && plainTuples.length > 0) {
-                let i = 0
-                const tuples: IdentifierTuple[] = []
-                do {
-                    const tuple = IdentifierTuple.fromPlain(plainTuples[i])
-                    if (tuple !== null) {
-                        tuples.push(tuple)
-                    }
-                    i++
-                } while (i < plainTuples.length && i === tuples.length)
+                const tuples = plainTuples.map(IdentifierTuple.fromPlain)
+                    .filter((v): v is IdentifierTuple => v !== null)
 
                 if (plainTuples.length === tuples.length) {
                     return new Identifier(tuples)
