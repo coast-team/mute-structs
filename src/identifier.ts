@@ -28,21 +28,12 @@ export class Identifier {
 
     static fromPlain (o: SafeAny<Identifier>): Identifier | null {
         if (typeof o === "object" && o !== null) {
-            const plainTuples: SafeAny<IdentifierTuple[]> = o.tuples
+            const plainTuples = o.tuples
             if (plainTuples instanceof Array && plainTuples.length > 0) {
-                let isOk = true
-                let i = 0
-                const tuples: IdentifierTuple[] = []
-                while (isOk && i < plainTuples.length) {
-                    const tuple: IdentifierTuple | null = IdentifierTuple.fromPlain(plainTuples[i])
-                    if (tuple !== null) {
-                        tuples.push(tuple)
-                    } else {
-                        isOk = false
-                    }
-                    i++
-                }
-                if (isOk && tuples[tuples.length - 1].random > INT32_BOTTOM) {
+                const tuples = plainTuples.map(IdentifierTuple.fromPlain)
+                    .filter((v): v is IdentifierTuple => v !== null)
+
+                if (plainTuples.length === tuples.length) {
                     return new Identifier(tuples)
                 }
             }
