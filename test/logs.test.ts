@@ -63,7 +63,11 @@ function everyLogsConvergeMacro (t: AssertContext, logFiles: string[], expected:
             const logootSOps: LogootSOperation[] = []
 
             while (isOk && i < richLogootSOps.length) {
-                const plainLogootSOp: SafeAny<LogootSOperation> = richLogootSOps[i].logootSOp
+                const plainLogootSOp: SafeAny<LogootSOperation> = {
+                    ...richLogootSOps[i].logootSOp,
+                    author: richLogootSOps[i].id,
+                }
+                console.log(plainLogootSOp)
                 let logootSOp: LogootSOperation | null = LogootSDel.fromPlain(plainLogootSOp)
                 if (logootSOp === null) {
                     logootSOp = LogootSAdd.fromPlain(plainLogootSOp)

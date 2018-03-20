@@ -91,7 +91,7 @@ export class LogootSDel extends LogootSOperation {
      */
     execute (doc: LogootSRopes): TextDelete[] {
         return arrayConcat.apply([], this.lid.map(
-            (aId: IdentifierInterval): TextDelete[] => doc.delBlock(aId)))
+            (aId: IdentifierInterval): TextDelete[] => doc.delBlock(aId, this.author)))
     }
 
 }

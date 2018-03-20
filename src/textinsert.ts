@@ -33,11 +33,13 @@ export class TextInsert extends TextOperation {
      * @constructor
      * @param {number} offset - the insertion position in the sequence.
      * @param {string} content - the content to be inserted in the sequence.
+     * @param {number} author - the author of the operation.
      */
-    constructor (index: number, content: string) {
+    constructor (index: number, content: string, author: number) {
         console.assert(isInt32(index), "index ∈ int32")
+        console.assert(isInt32(author), "author ∈ int32")
 
-        super(index)
+        super(index, author)
         this.content = content
     }
 

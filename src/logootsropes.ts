@@ -139,6 +139,7 @@ export class LogootSRopes {
         str: string, idi: IdentifierInterval,
         from: RopesNodes, startOffset: number): TextInsert[] {
 
+        const author = idi.idBegin.replicaNumber
         const path: RopesNodes[] = []
         const result: TextInsert[] = []
         let con = true
@@ -154,7 +155,7 @@ export class LogootSRopes {
                     from.right = RopesNodes.leaf(this.getBlock(idi),
                         idi.begin, str.length)
                     i = i + from.leftSubtreeSize() + from.length
-                    result.push(new TextInsert(i, str))
+                    result.push(new TextInsert(i, str, author))
                     con = false
                 } else {
                     i = i + from.leftSubtreeSize() + from.length
@@ -166,7 +167,7 @@ export class LogootSRopes {
                 if (from.left === null) {
                     from.left = RopesNodes.leaf(this.getBlock(idi),
                         idi.begin, str.length)
-                    result.push(new TextInsert(i, str))
+                    result.push(new TextInsert(i, str, author))
                     con = false
                 } else {
                     from = from.left
@@ -181,7 +182,7 @@ export class LogootSRopes {
                     idi.begin, str.length)
                 path.push(from.split(offsetToSplit - from.actualBegin + 1, rp))
                 i = i + from.leftSubtreeSize()
-                result.push(new TextInsert(i + offsetToSplit - from.actualBegin + 1, str))
+                result.push(new TextInsert(i + offsetToSplit - from.actualBegin + 1, str, author))
                 con = false
                 break
             }
@@ -195,7 +196,7 @@ export class LogootSRopes {
                 if (from.left === null) {
                     from.left = RopesNodes.leaf(this.getBlock(idi1),
                         idi1.begin, ls.length)
-                    result.push(new TextInsert(i, ls))
+                    result.push(new TextInsert(i, ls, author))
                 } else {
                     Array.prototype.push.apply(result,
                         this.addBlockFromRec(ls, idi1, from.left, i))
@@ -211,7 +212,7 @@ export class LogootSRopes {
                 if (from.right === null) {
                     from.right = RopesNodes.leaf(this.getBlock(idi1),
                         idi1.begin, ls.length)
-                    result.push(new TextInsert(i, ls))
+                    result.push(new TextInsert(i, ls, author))
                 } else {
                     Array.prototype.push.apply(result,
                         this.addBlockFromRec(ls, idi1, from.right, i))
@@ -227,7 +228,7 @@ export class LogootSRopes {
                     const l = str.substr(split - idi.begin, str.length)
                     if (l.length > 0) {
                         from.appendBegin(l.length)
-                        result.push(new TextInsert(i + from.leftSubtreeSize(), l))
+                        result.push(new TextInsert(i + from.leftSubtreeSize(), l, author))
 
                         this.ascendentUpdate(path, l.length)
                     }
@@ -241,7 +242,7 @@ export class LogootSRopes {
                         con = false
                     }
                 } else {
-                    result.push(new TextInsert(i, str))
+                    result.push(new TextInsert(i, str, author))
                     from.appendBegin(str.length)
                     this.ascendentUpdate(path, str.length)
                     con = false
@@ -258,7 +259,7 @@ export class LogootSRopes {
                     i = i + from.leftSubtreeSize() + from.length
                     if (l.length > 0) {
                         from.appendEnd(l.length)
-                        result.push(new TextInsert(i, l))
+                        result.push(new TextInsert(i, l, author))
 
                         this.ascendentUpdate(path, l.length)
                     }
@@ -275,7 +276,7 @@ export class LogootSRopes {
                     }
                 } else {
                     i = i + from.leftSubtreeSize() + from.length
-                    result.push(new TextInsert(i, str))
+                    result.push(new TextInsert(i, str, author))
                     from.appendEnd(str.length)
                     this.ascendentUpdate(path, str.length)
                     con = false
@@ -304,6 +305,7 @@ export class LogootSRopes {
     }
 
     addBlock (str: string, id: Identifier): TextInsert[] {
+        const author = id.replicaNumber
         const idi = new IdentifierInterval(id,
                 id.lastOffset + str.length - 1)
 
@@ -311,7 +313,7 @@ export class LogootSRopes {
             const bl = new LogootSBlock(idi, 0)
             this.mapBaseToBlock[bl.idInterval.base.join(",")] = bl
             this.root = RopesNodes.leaf(bl, id.lastOffset, str.length)
-            const textInsert: TextInsert = new TextInsert(0, str)
+            const textInsert: TextInsert = new TextInsert(0, str, author)
             this.applyTextInsert(textInsert)
             return [textInsert]
         } else {
@@ -479,7 +481,7 @@ export class LogootSRopes {
         }
     }
 
-    delBlock (idInterval: IdentifierInterval): TextDelete[] {
+    delBlock (idInterval: IdentifierInterval, author: number): TextDelete[] {
         const l: TextDelete[] = []
         let i
         while (true) {
@@ -502,7 +504,7 @@ export class LogootSRopes {
                 const end = Math.min(idInterval.end, node.actualEnd)
                 const pos = i + idInterval.begin - node.actualBegin
                 const length = end - idInterval.begin + 1
-                l.push(new TextDelete(pos, length))
+                l.push(new TextDelete(pos, length, author))
                 const t = node.deleteOffsets(idInterval.begin, end)
 
                 if (node.length === 0) { // del node

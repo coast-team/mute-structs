@@ -25,9 +25,11 @@ import {TextInsert} from "./textinsert"
 export abstract class TextOperation {
 
     readonly index: number
+    readonly author: number
 
-    constructor (index: number) {
+    constructor (index: number, author: number) {
         this.index = index
+        this.author = author
     }
 
     abstract applyTo (doc: LogootSRopes): LogootSOperation
