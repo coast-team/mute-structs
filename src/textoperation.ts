@@ -17,7 +17,11 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+import {LogootSOperation} from "./logootsoperation"
+import {LogootSRopes} from "./logootsropes"
 import {TextDelete} from "./textdelete"
 import {TextInsert} from "./textinsert"
 
-export type TextOperation = TextDelete | TextInsert
+export abstract class TextOperation {
+    abstract applyTo (doc: LogootSRopes): LogootSOperation
+}

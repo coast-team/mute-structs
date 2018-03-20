@@ -20,11 +20,12 @@
 import {isInt32} from "./int32"
 import {LogootSAdd} from "./logootsadd"
 import {LogootSRopes} from "./logootsropes"
+import {TextOperation} from "./textoperation"
 
 /**
  * Represents a sequence operation (insert).
  */
-export class TextInsert {
+export class TextInsert extends TextOperation {
 
     readonly offset: number
 
@@ -38,6 +39,7 @@ export class TextInsert {
     constructor (offset: number, content: string) {
         console.assert(isInt32(offset), "offset ∈ int32")
 
+        super()
         this.offset = offset
         this.content = content
     }

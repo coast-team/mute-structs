@@ -20,11 +20,12 @@
 import {isInt32} from "./int32"
 import {LogootSDel} from "./logootsdel"
 import {LogootSRopes} from "./logootsropes"
+import {TextOperation} from "./textoperation"
 
 /**
  * Represents a sequence operation (deletion).
  */
-export class TextDelete {
+export class TextDelete extends TextOperation {
 
     readonly offset: number
 
@@ -40,6 +41,7 @@ export class TextDelete {
         console.assert(isInt32(length), "length  ∈ int32")
         console.assert(length > 0, "length > 0")
 
+        super()
         this.offset = offset
         this.length = length
     }

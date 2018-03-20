@@ -20,6 +20,7 @@
 import {SafeAny} from "safe-any"
 
 import {Identifier} from "./identifier"
+import {LogootSOperation} from "./logootsoperation"
 import {LogootSRopes} from "./logootsropes"
 import {TextInsert} from "./textinsert"
 
@@ -45,7 +46,7 @@ class LogootSAddV1 {
 /**
  * Represents a LogootSplit insert operation.
  */
-export class LogootSAdd {
+export class LogootSAdd extends LogootSOperation {
 
     static fromPlain (o: SafeAny<LogootSAdd>): LogootSAdd | null {
         if (typeof o === "object" && o !== null) {
@@ -76,6 +77,7 @@ export class LogootSAdd {
     constructor (id: Identifier, content: string) {
         console.assert(content.length > 0, "content must not be empty")
 
+        super()
         this.id = id
         this.content = content
     }

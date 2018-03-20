@@ -17,7 +17,9 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import {LogootSAdd} from "./logootsadd"
-import {LogootSDel} from "./logootsdel"
+import {LogootSRopes} from "./logootsropes"
+import {TextOperation} from "./textoperation"
 
-export type LogootSOperation = LogootSAdd | LogootSDel
+export abstract class LogootSOperation {
+    abstract execute (doc: LogootSRopes): TextOperation[]
+}

@@ -20,6 +20,7 @@
 import {SafeAny} from "safe-any"
 
 import {IdentifierInterval} from "./identifierinterval"
+import {LogootSOperation} from "./logootsoperation"
 import {LogootSRopes} from "./logootsropes"
 import {TextDelete} from "./textdelete"
 
@@ -28,7 +29,7 @@ const arrayConcat = Array.prototype.concat
 /**
  * Represents a LogootSplit delete operation.
  */
-export class LogootSDel {
+export class LogootSDel extends LogootSOperation {
 
     static fromPlain (o: SafeAny<LogootSDel>): LogootSDel | null {
         if (typeof o === "object" && o !== null) {
@@ -63,6 +64,7 @@ export class LogootSDel {
     constructor (lid: IdentifierInterval[]) {
         console.assert(lid.length > 0, "lid must not be empty")
 
+        super()
         this.lid = lid
     }
 
