@@ -27,27 +27,24 @@ import {TextOperation} from "./textoperation"
  */
 export class TextDelete extends TextOperation {
 
-    readonly offset: number
-
     readonly length: number
 
     /**
      * @constructor
-     * @param {number} offset - the position of the first element to be deleted in the sequence.
+     * @param {number} index - the position of the first element to be deleted in the sequence.
      * @param {number} length - the length of the range to be deleted in the sequence.
      */
-    constructor (offset: number, length: number) {
-        console.assert(isInt32(offset), "offset  ∈ int32")
+    constructor (index: number, length: number) {
+        console.assert(isInt32(index), "index  ∈ int32")
         console.assert(isInt32(length), "length  ∈ int32")
         console.assert(length > 0, "length > 0")
 
-        super()
-        this.offset = offset
+        super(index)
         this.length = length
     }
 
     equals (other: TextDelete): boolean {
-        return this.offset === other.offset &&
+        return this.index === other.index &&
             this.length === other.length
     }
 
@@ -57,6 +54,6 @@ export class TextDelete extends TextOperation {
      * @return {LogootSDel} the logootsplit deletion that is related to the deletion that has been performed.
      */
     applyTo (doc: LogootSRopes): LogootSDel {
-        return doc.delLocal(this.offset, this.offset + this.length - 1)
+        return doc.delLocal(this.index, this.index + this.length - 1)
     }
 }

@@ -294,13 +294,13 @@ export class LogootSRopes {
 
     // FIXME: Put this function elsewhere?
     applyTextInsert (textInsert: TextInsert): void {
-        this.str = TextUtils.insert(this.str, textInsert.offset, textInsert.content)
+        this.str = TextUtils.insert(this.str, textInsert.index, textInsert.content)
     }
 
     // FIXME: Put this function elsewhere?
     applyTextDelete (textDelete: TextDelete): void {
-        const end: number = textDelete.offset + textDelete.length - 1
-        this.str = TextUtils.del(this.str, textDelete.offset, end)
+        const end: number = textDelete.index + textDelete.length - 1
+        this.str = TextUtils.del(this.str, textDelete.index, end)
     }
 
     addBlock (str: string, id: Identifier): TextInsert[] {

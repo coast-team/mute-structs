@@ -23,5 +23,12 @@ import {TextDelete} from "./textdelete"
 import {TextInsert} from "./textinsert"
 
 export abstract class TextOperation {
+
+    readonly index: number
+
+    constructor (index: number) {
+        this.index = index
+    }
+
     abstract applyTo (doc: LogootSRopes): LogootSOperation
 }

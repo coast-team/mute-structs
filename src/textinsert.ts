@@ -27,8 +27,6 @@ import {TextOperation} from "./textoperation"
  */
 export class TextInsert extends TextOperation {
 
-    readonly offset: number
-
     readonly content: string
 
     /**
@@ -36,16 +34,15 @@ export class TextInsert extends TextOperation {
      * @param {number} offset - the insertion position in the sequence.
      * @param {string} content - the content to be inserted in the sequence.
      */
-    constructor (offset: number, content: string) {
-        console.assert(isInt32(offset), "offset ∈ int32")
+    constructor (index: number, content: string) {
+        console.assert(isInt32(index), "index ∈ int32")
 
-        super()
-        this.offset = offset
+        super(index)
         this.content = content
     }
 
     equals (other: TextInsert): boolean {
-        return this.offset === other.offset &&
+        return this.index === other.index &&
             this.content === other.content
     }
 
@@ -55,7 +52,7 @@ export class TextInsert extends TextOperation {
      * @return {LogootSAdd} the logootsplit insertion that is related to the insertion that has been performed.
      */
     applyTo (doc: LogootSRopes): LogootSAdd {
-        return doc.insertLocal(this.offset, this.content)
+        return doc.insertLocal(this.index, this.content)
     }
 
 }
