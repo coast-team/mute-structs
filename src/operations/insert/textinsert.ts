@@ -17,10 +17,10 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import {isInt32} from "./int32"
+import {isInt32} from "../../int32"
+import {LogootSRopes} from "../../logootsropes"
+import {TextOperation} from "../textoperation"
 import {LogootSAdd} from "./logootsadd"
-import {LogootSRopes} from "./logootsropes"
-import {TextOperation} from "./textoperation"
 
 /**
  * Represents a sequence operation (insert).

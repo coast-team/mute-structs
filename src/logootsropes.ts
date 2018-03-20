@@ -27,13 +27,13 @@ import {
     compareBase,
     IdentifierIteratorResults,
 } from "./iteratorhelperidentifier"
-import {LogootSAdd} from "./logootsadd"
 import {LogootSBlock} from "./logootsblock"
-import {LogootSDel} from "./logootsdel"
+import {LogootSDel} from "./operations/delete/logootsdel"
+import {TextDelete} from "./operations/delete/textdelete"
+import {LogootSAdd} from "./operations/insert/logootsadd"
+import {TextInsert} from "./operations/insert/textinsert"
 import {ResponseIntNode} from "./responseintnode"
 import {RopesNodes} from "./ropesnodes"
-import {TextDelete} from "./textdelete"
-import {TextInsert} from "./textinsert"
 import * as TextUtils from "./textutils"
 
 function leftChildOf (aNode: RopesNodes): RopesNodes | null {

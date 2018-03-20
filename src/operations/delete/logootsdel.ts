@@ -19,10 +19,10 @@
 
 import {SafeAny} from "safe-any"
 
-import {IdentifierInterval} from "./identifierinterval"
-import {isInt32} from "./int32"
-import {LogootSOperation} from "./logootsoperation"
-import {LogootSRopes} from "./logootsropes"
+import {IdentifierInterval} from "../../identifierinterval"
+import {isInt32} from "../../int32"
+import {LogootSRopes} from "../../logootsropes"
+import {LogootSOperation} from "../logootsoperation"
 import {TextDelete} from "./textdelete"
 
 const arrayConcat = Array.prototype.concat

@@ -17,11 +17,18 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import {LogootSRopes} from "./logootsropes"
-import {TextOperation} from "./textoperation"
+import {LogootSRopes} from "../logootsropes"
+import {LogootSOperation} from "./logootsoperation"
 
-export abstract class LogootSOperation {
-    abstract readonly author: number
+export abstract class TextOperation {
 
-    abstract execute (doc: LogootSRopes): TextOperation[]
+    readonly index: number
+    readonly author: number
+
+    constructor (index: number, author: number) {
+        this.index = index
+        this.author = author
+    }
+
+    abstract applyTo (doc: LogootSRopes): LogootSOperation
 }

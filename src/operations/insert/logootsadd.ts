@@ -19,9 +19,9 @@
 
 import {SafeAny} from "safe-any"
 
-import {Identifier} from "./identifier"
-import {LogootSOperation} from "./logootsoperation"
-import {LogootSRopes} from "./logootsropes"
+import {Identifier} from "../../identifier"
+import {LogootSRopes} from "../../logootsropes"
+import {LogootSOperation} from "../logootsoperation"
 import {TextInsert} from "./textinsert"
 
 class LogootSAddV1 {

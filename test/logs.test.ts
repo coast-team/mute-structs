@@ -22,10 +22,10 @@ import {AssertContext} from "ava"
 import * as fs from "fs"
 import {SafeAny} from "safe-any"
 
-import {LogootSAdd} from "../src/logootsadd.js"
-import {LogootSDel} from "../src/logootsdel.js"
-import {LogootSOperation} from "../src/logootsoperation.js"
 import {LogootSRopes} from "../src/logootsropes.js"
+import {LogootSDel} from "../src/operations/delete/logootsdel.js"
+import {LogootSAdd} from "../src/operations/insert/logootsadd.js"
+import {LogootSOperation} from "../src/operations/logootsoperation.js"
 
 /**
  * Check if every element of the array provided is equals to the expected value
