@@ -69,6 +69,10 @@ export class LogootSAdd extends LogootSOperation {
     readonly id: Identifier
     readonly content: string
 
+    get author (): number {
+        return this.id.replicaNumber
+    }
+
     /**
      * @constructor
      * @param {Identifier} id - the identifier that localise the insertion in the logoot sequence.

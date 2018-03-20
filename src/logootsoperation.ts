@@ -21,5 +21,7 @@ import {LogootSRopes} from "./logootsropes"
 import {TextOperation} from "./textoperation"
 
 export abstract class LogootSOperation {
+    abstract readonly author: number
+
     abstract execute (doc: LogootSRopes): TextOperation[]
 }

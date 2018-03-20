@@ -566,7 +566,7 @@ export class LogootSRopes {
             }
         } while (length > 0)
 
-        return new LogootSDel(li)
+        return new LogootSDel(li, this.replicaNumber)
     }
 
     delNode (path: RopesNodes[]): void {

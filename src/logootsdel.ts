@@ -20,6 +20,7 @@
 import {SafeAny} from "safe-any"
 
 import {IdentifierInterval} from "./identifierinterval"
+import {isInt32} from "./int32"
 import {LogootSOperation} from "./logootsoperation"
 import {LogootSRopes} from "./logootsropes"
 import {TextDelete} from "./textdelete"
@@ -34,7 +35,10 @@ export class LogootSDel extends LogootSOperation {
     static fromPlain (o: SafeAny<LogootSDel>): LogootSDel | null {
         if (typeof o === "object" && o !== null) {
             const plainLid: SafeAny<IdentifierInterval[]> = o.lid
-            if (plainLid instanceof Array && plainLid.length > 0) {
+            const author = o.author
+            if (plainLid instanceof Array && plainLid.length > 0 &&
+                typeof author === "number" && isInt32(author)) {
+
                 let isOk = true
                 let i = 0
                 const lid: IdentifierInterval[] = []
@@ -48,7 +52,7 @@ export class LogootSDel extends LogootSOperation {
                     i++
                 }
                 if (isOk) {
-                    return new LogootSDel(lid)
+                    return new LogootSDel(lid, author)
                 }
             }
         }
@@ -56,16 +60,20 @@ export class LogootSDel extends LogootSOperation {
     }
 
     readonly lid: IdentifierInterval[]
+    readonly author: number
 
     /**
      * @constructor
      * @param {IdentifierInterval[]} lid - the list of identifier that localise the deletion in the logoot sequence.
+     * @param {number} author - the author of the operation.
      */
-    constructor (lid: IdentifierInterval[]) {
+    constructor (lid: IdentifierInterval[], author: number) {
         console.assert(lid.length > 0, "lid must not be empty")
+        console.assert(isInt32(author), "author ∈ int32")
 
         super()
         this.lid = lid
+        this.author = author
     }
 
     equals (aOther: LogootSDel): boolean {
