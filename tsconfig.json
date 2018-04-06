@@ -2,23 +2,19 @@
   "compilerOptions": {
     "allowJs": false,
     "declaration": true,
-    "lib": ["dom", "es6"],
+    "lib": ["es6"],
     "module": "commonjs",
-    "noEmitHelpers": true,
+    "noEmitHelpers": false,
     "sourceMap": true,
     "target": "ES5",
 
-    "outDir": "lib",
+    "outDir": "./dist",
 
     "forceConsistentCasingInFileNames": true,
-    "noImplicitAny" : false,
+    "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "strictNullChecks": true,
+    "strict": true,
 
     "pretty": true
-  },
-  "include": [
-    "lib-src/*"
-  ]
+  }
 }

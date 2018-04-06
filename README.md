@@ -1,9 +1,11 @@
 # MUTE-structs
 
-MUTE-structs is a Node.js module that provides an implementation of the
+[![Build Status](https://travis-ci.org/coast-team/mute-structs.svg?branch=master)](https://travis-ci.org/coast-team/mute-structs)
+
+MUTE-structs is a Typescript library that provides an implementation of the
 LogootSplit CRDT algorithm [[André et al., 2013]](#ref-1). It is an optimistic replication
 algorithm that ensures eventual consistency on replicated text sequences.
-It is used in a *real-time collaborative text editor* based on CRDT named MUTE.,
+It is used in a *real-time collaborative text editor* based on CRDT named MUTE.
 
 
 #### References
@@ -19,25 +21,27 @@ npm install mute-structs
 
 ## See also
 
-* [**mute-demo**](https://github.com/coast-team/mute-demo)
-* [**mute-client**](https://github.com/coast-team/mute-client)
-* [**mute-server**](https://github.com/coast-team/mute-server)
+* [**mute**](https://github.com/coast-team/mute)
+* [**mute-core**](https://github.com/coast-team/mute-core)
 
 ## License
 
-**mute-structs** is licensed under the GNU General Public License 3.
+**MUTE-structs** is licensed under the GNU Affero General Public License 3.
 
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU General Public License as published by the Free Software
-Foundation, either version 3 of the License, or (at your option) any later
-version.
+Copyright (C) 2017  Matthieu Nicolas, Victorien Elvinger
 
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of the
+License, or (at your option) any later version.
 
-You should have received a copy of the GNU General Public License along with
-this program. If not, see <http://www.gnu.org/licenses/>.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 The documentation, tutorial and source code are intended as a community
 resource and you can basically use, copy and improve them however you want.

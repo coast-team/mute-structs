@@ -1,0 +1,14 @@
+language: node_js
+node_js:
+- node
+- '7'
+- '6'
+deploy:
+  provider: npm
+  email: nicolasmatthieu57@gmail.com
+  api_key:
+    secure: kwaubG6oOLvWEWNwCAcAjAkUXVDYPoKK5W9fg3yl/5Pz8pDkxV8nmOho6sc2A5QNqfHgj6tEGisENiHWtSqsrJThxvwAMgTV82twzrn3dVZWxo2ZvuIdD9HWimSiDUUtaAWH2NXmgtBPUGIgaFrYxNmm7tFw7TgM6L3Q6eyH6Gk=
+  on:
+    tags: true
+    repo: coast-team/mute-structs
+  skip_cleanup: true
