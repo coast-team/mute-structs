@@ -25,14 +25,16 @@ import {TextOperation} from "./textoperation"
 
 export abstract class RenamableLogootSOperation extends RenamableListOperation {
 
-    abstract readonly author: number
-
     readonly op: LogootSOperation
 
     constructor (op: LogootSOperation, epoch: Epoch) {
         super(epoch)
 
         this.op = op
+    }
+
+    get author (): number {
+        return this.op.author
     }
 
     execute (renamableList: RenamableReplicableList): TextOperation[] {

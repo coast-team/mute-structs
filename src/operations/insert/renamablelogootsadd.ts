@@ -26,8 +26,4 @@ export class RenamableLogootSAdd extends RenamableLogootSOperation {
     constructor (op: LogootSAdd, epoch: Epoch) {
         super(op, epoch)
     }
-
-    get author (): number {
-        return this.op.author
-    }
 }
