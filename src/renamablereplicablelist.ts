@@ -21,6 +21,7 @@ import {Epoch} from "./epoch/epoch"
 import {EpochId} from "./epoch/epochid"
 import {EpochStore} from "./epoch/epochstore"
 import {LogootSRopes} from "./logootsropes"
+import {RenamableLogootSAdd} from "./operations/insert/renamablelogootsadd"
 import {RopesNodes} from "./ropesnodes"
 
 export class RenamableReplicableList {
@@ -29,7 +30,7 @@ export class RenamableReplicableList {
     readonly epochsStore: EpochStore
     readonly currentEpoch: Epoch
 
-    constructor (replicaNumber: number, clock: number, root?: RopesNodes, str?: string) {
+    constructor (replicaNumber = 0, clock = 0, root: RopesNodes | null = null, str = "") {
         this.list = new LogootSRopes(replicaNumber, clock, root, str)
 
         this.currentEpoch = new Epoch(new EpochId(0, 0))
@@ -42,5 +43,17 @@ export class RenamableReplicableList {
 
     get clock (): number {
         return this.list.clock
+    }
+
+    get str (): string {
+        return this.list.str
+    }
+
+    insertLocal (pos: number, l: string): RenamableLogootSAdd {
+        return new RenamableLogootSAdd(this.list.insertLocal(pos, l), this.currentEpoch)
+    }
+
+    digest (): number {
+        return this.list.digest()
     }
 }
