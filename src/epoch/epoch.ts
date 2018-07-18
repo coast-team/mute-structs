@@ -27,10 +27,9 @@ export class Epoch {
     readonly parentId?: EpochId
 
     constructor (id: EpochId, parentId?: EpochId) {
-        console.assert(id.epochNumber !== 0 || (id.epochNumber === 0 && parentId !== undefined),
-            "Epoch 0 does not have a parentId")
-        console.assert(parentId !== undefined || (parentId === undefined && id.epochNumber === 0),
-            "Only epoch 0 does not have a parentId")
+        console.assert((id.epochNumber !== 0 && parentId !== undefined)
+            || (id.epochNumber === 0 && parentId === undefined),
+            "Every epoch, except the 0 one, should have a parentId")
 
         this.id = id
         this.parentId = parentId
