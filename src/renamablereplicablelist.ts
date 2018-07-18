@@ -21,6 +21,7 @@ import {Epoch} from "./epoch/epoch"
 import {EpochId} from "./epoch/epochid"
 import {EpochStore} from "./epoch/epochstore"
 import {LogootSRopes} from "./logootsropes"
+import {RenamableLogootSDel} from "./operations/delete/renamablelogootsdel"
 import {RenamableLogootSAdd} from "./operations/insert/renamablelogootsadd"
 import {RopesNodes} from "./ropesnodes"
 
@@ -51,6 +52,10 @@ export class RenamableReplicableList {
 
     insertLocal (pos: number, l: string): RenamableLogootSAdd {
         return new RenamableLogootSAdd(this.list.insertLocal(pos, l), this.currentEpoch)
+    }
+
+    delLocal (begin: number, end: number): RenamableLogootSDel {
+        return new RenamableLogootSDel(this.list.delLocal(begin, end), this.currentEpoch)
     }
 
     digest (): number {
