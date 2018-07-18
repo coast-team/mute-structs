@@ -47,6 +47,15 @@ function subtreeSizeOf (aNode: RopesNodes | null): number {
     }
 }
 
+export function mkNodeAt (id: Identifier, length: number): RopesNodes {
+    console.assert(isInt32(length), "length ∈ int32")
+    console.assert(length > 0, "length > 0")
+
+    const idi = new IdentifierInterval(id, length - 1)
+    const newBlock = new LogootSBlock(idi, 0)
+    return RopesNodes.leaf(newBlock, 0, length)
+}
+
 export class RopesNodes {
 
     static fromPlain (o: unknown): RopesNodes | null {

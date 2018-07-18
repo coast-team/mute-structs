@@ -26,13 +26,13 @@ import {
     compareBase,
     IdentifierIteratorResults,
 } from "./iteratorhelperidentifier"
-import { LogootSBlock } from "./logootsblock"
-import { LogootSDel } from "./operations/delete/logootsdel"
-import { TextDelete } from "./operations/delete/textdelete"
-import { LogootSAdd } from "./operations/insert/logootsadd"
-import { TextInsert } from "./operations/insert/textinsert"
-import { ResponseIntNode } from "./responseintnode"
-import { RopesNodes } from "./ropesnodes"
+import {LogootSBlock} from "./logootsblock"
+import {LogootSDel} from "./operations/delete/logootsdel"
+import {TextDelete} from "./operations/delete/textdelete"
+import {LogootSAdd} from "./operations/insert/logootsadd"
+import {TextInsert} from "./operations/insert/textinsert"
+import {ResponseIntNode} from "./responseintnode"
+import {mkNodeAt, RopesNodes} from "./ropesnodes"
 import * as TextUtils from "./textutils"
 
 function leftChildOf (aNode: RopesNodes): RopesNodes | null {
@@ -329,10 +329,10 @@ export class LogootSRopes {
         console.assert(length > 0, "length > 0")
 
         const id = IDFactory.createBetweenPosition(id1, id2, this.replicaNumber, this.clock++)
-        const idi = new IdentifierInterval(id, length - 1)
-        const newBlock = new LogootSBlock(idi, 0)
-        this.mapBaseToBlock[idi.base.join(",")] = newBlock
-        return RopesNodes.leaf(newBlock, 0, length)
+        const node = mkNodeAt(id, length)
+        this.mapBaseToBlock[node.getIdentifierInterval().base.join(",")] = node.block
+
+        return node
     }
 
     insertLocal (pos: number, l: string): LogootSAdd {
