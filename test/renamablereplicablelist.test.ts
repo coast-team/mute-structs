@@ -72,3 +72,99 @@ test("basic-rename", (t) => {
     t.is(docA.getNbBlocks(), docB.getNbBlocks(), "docA.getNbBlocks() = docB.getNbBlocks()")
     t.is(docA.digest(), docB.digest(), "docA.digest() = docB.digest()")
 })
+
+test.failing("rename-then-concurrent-insert", (t) => {
+    const replicaNumberA = 1
+    const docA = new RenamableReplicableList(replicaNumberA)
+    const replicaNumberB = 2
+    const docB = new RenamableReplicableList(replicaNumberB)
+
+    const event1 = docA.insertLocal(0, "helo")
+    event1.execute(docB)
+    const event2 = docB.insertLocal(4, " wor")
+    event2.execute(docA)
+    const event3 = docA.insertLocal(8, "ld")
+    event3.execute(docB)
+
+    docA.renameLocal()
+    const concurrentInsert = docB.insertLocal(2, "l")
+
+    concurrentInsert.execute(docA)
+
+    const expectedStr = "hello world"
+    const expectedNbBlocks = 3
+    t.is(docA.str, expectedStr, `docA.str = ${expectedStr}`)
+    t.is(docA.getNbBlocks(), expectedNbBlocks, `docA.getNbBlocks() = ${expectedNbBlocks}`)
+})
+
+test.failing("insert-then-concurrent-rename", (t) => {
+    const replicaNumberA = 1
+    const docA = new RenamableReplicableList(replicaNumberA)
+    const replicaNumberB = 2
+    const docB = new RenamableReplicableList(replicaNumberB)
+
+    const event1 = docA.insertLocal(0, "helo")
+    event1.execute(docB)
+    const event2 = docB.insertLocal(4, " wor")
+    event2.execute(docA)
+    const event3 = docA.insertLocal(8, "ld")
+    event3.execute(docB)
+
+    const concurrentRename = docA.renameLocal()
+    docB.insertLocal(2, "l")
+
+    concurrentRename.execute(docB)
+
+    const expectedStr = "hello world"
+    const expectedNbBlocks = 3
+    t.is(docA.str, expectedStr, `docA.str = ${expectedStr}`)
+    t.is(docA.getNbBlocks(), expectedNbBlocks, `docA.getNbBlocks() = ${expectedNbBlocks}`)
+})
+
+test.failing("rename-then-concurrent-delete", (t) => {
+    const replicaNumberA = 1
+    const docA = new RenamableReplicableList(replicaNumberA)
+    const replicaNumberB = 2
+    const docB = new RenamableReplicableList(replicaNumberB)
+
+    const event1 = docA.insertLocal(0, "helllo")
+    event1.execute(docB)
+    const event2 = docB.insertLocal(4, " wor")
+    event2.execute(docA)
+    const event3 = docA.insertLocal(8, "ld")
+    event3.execute(docB)
+
+    docA.renameLocal()
+    const concurrentDelete = docB.delLocal(2, 3)
+
+    concurrentDelete.execute(docA)
+
+    const expectedStr = "hello world"
+    const expectedNbBlocks = 3
+    t.is(docA.str, expectedStr, `docA.str = ${expectedStr}`)
+    t.is(docA.getNbBlocks(), expectedNbBlocks, `docA.getNbBlocks() = ${expectedNbBlocks}`)
+})
+
+test.failing("delete-then-concurrent-rename", (t) => {
+    const replicaNumberA = 1
+    const docA = new RenamableReplicableList(replicaNumberA)
+    const replicaNumberB = 2
+    const docB = new RenamableReplicableList(replicaNumberB)
+
+    const event1 = docA.insertLocal(0, "helllo")
+    event1.execute(docB)
+    const event2 = docB.insertLocal(4, " wor")
+    event2.execute(docA)
+    const event3 = docA.insertLocal(8, "ld")
+    event3.execute(docB)
+
+    const concurrentRename = docA.renameLocal()
+    docB.delLocal(2, 3)
+
+    concurrentRename.execute(docB)
+
+    const expectedStr = "hello world"
+    const expectedNbBlocks = 3
+    t.is(docA.str, expectedStr, `docA.str = ${expectedStr}`)
+    t.is(docA.getNbBlocks(), expectedNbBlocks, `docA.getNbBlocks() = ${expectedNbBlocks}`)
+})
