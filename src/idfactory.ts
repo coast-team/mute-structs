@@ -61,6 +61,17 @@ export function createBetweenPosition (
     return new Identifier(tuples)
 }
 
+export function createAtPosition (
+    replicaNumber: number, clock: number,
+    position: number, offset: number): Identifier {
+
+    console.assert([position, replicaNumber, clock, offset].every(isInt32),
+        "each value ∈ int32")
+
+    const tuple = new IdentifierTuple(position, replicaNumber, clock, offset)
+    return new Identifier([tuple])
+}
+
 /**
  * Generate an infinite sequence of tuples
  *
