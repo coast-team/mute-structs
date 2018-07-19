@@ -341,6 +341,16 @@ export class Identifier {
         return min
     }
 
+    /**
+     * Generate a new identifier by concatening another identifier to the current one.
+     * @param {Identifier} id The identifier to concatenate
+     * @returns {Identifier} The resulting identifier, this + id
+     */
+    concat (id: Identifier): Identifier {
+        const tuples = this.tuples.concat(id.tuples)
+        return new Identifier(tuples)
+    }
+
     digest (): number {
         return this.tuples.reduce((prev: number, tuple: IdentifierTuple) => {
             return (prev * 17 + tuple.digest()) | 0
