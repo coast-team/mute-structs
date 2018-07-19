@@ -741,4 +741,10 @@ export class LogootSRopes {
         return result
     }
 
+    toList (): IdentifierInterval[] {
+        if (this.root !== null) {
+            return this.root.toList()
+        }
+        return []
+    }
 }

@@ -35,3 +35,40 @@ test("basic-insert-del-string", (t) => {
     t.is(docA.str, docB.str, "docA.str = docB.str")
     t.is(docA.digest(), docB.digest(), "docA.digest() = docB.digest()")
 })
+
+test("local-rename", (t) => {
+    const expectedStr = "hello world"
+    const replicaNumberA = 1
+    const docA = new RenamableReplicableList(replicaNumberA)
+
+    docA.insertLocal(0, "helod")
+    docA.delLocal(4, 5)
+    docA.insertLocal(4, " world")
+    docA.insertLocal(2, "l")
+
+    docA.renameLocal()
+
+    t.is(docA.str, expectedStr, `docA.str = ${expectedStr}`)
+    t.is(docA.getNbBlocks(), 1, "docA.getNbBlocks() = 1")
+})
+
+test("basic-rename", (t) => {
+    const replicaNumberA = 1
+    const docA = new RenamableReplicableList(replicaNumberA)
+    const replicaNumberB = 2
+    const docB = new RenamableReplicableList(replicaNumberB)
+
+    const event1 = docA.insertLocal(0, "helo")
+    event1.execute(docB)
+    const event2 = docB.insertLocal(4, " world")
+    event2.execute(docA)
+    const event3 = docA.insertLocal(2, "l")
+    event3.execute(docB)
+
+    const renameOp = docA.renameLocal()
+    renameOp.execute(docB)
+
+    t.is(docA.str, docB.str, "docA.str = docB.str")
+    t.is(docA.getNbBlocks(), docB.getNbBlocks(), "docA.getNbBlocks() = docB.getNbBlocks()")
+    t.is(docA.digest(), docB.digest(), "docA.digest() = docB.digest()")
+})

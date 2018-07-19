@@ -38,6 +38,6 @@ export abstract class RenamableLogootSOperation extends RenamableListOperation {
     }
 
     execute (renamableList: RenamableReplicableList): TextOperation[] {
-        return this.op.execute(renamableList.list)
+        return this.op.execute(renamableList.getList())
     }
 }
