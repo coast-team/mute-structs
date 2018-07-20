@@ -21,8 +21,16 @@ import {findPredecessor, flatten} from "../helpers"
 import {Identifier} from "../identifier"
 import {IdentifierInterval} from "../identifierinterval"
 import {createAtPosition} from "../idfactory"
+import {RenamingMap} from "./renamingmap"
 
 export class ExtendedRenamingMap {
+
+    static fromRenamingMap (renamingMap: RenamingMap): ExtendedRenamingMap {
+        const replicaNumber = renamingMap.replicaNumber
+        const clock = renamingMap.clock
+        const renamedIdIntervals = renamingMap.renamedIdIntervals
+        return new ExtendedRenamingMap(replicaNumber, clock, renamedIdIntervals)
+    }
 
     readonly replicaNumber: number
     readonly clock: number
