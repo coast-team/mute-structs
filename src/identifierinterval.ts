@@ -141,6 +141,14 @@ export class IdentifierInterval {
         return (this.idBegin.digest() * 17 + this.end) | 0
     }
 
+    toIds (): Identifier[] {
+        const res = []
+        for (let i = this.begin; i <= this.end; i++) {
+            res.push(Identifier.fromBase(this.idBegin, i))
+        }
+        return res
+    }
+
     toString (): string {
         return "IdInterval[" + this.idBegin.tuples.join(",") + " .. " + this.end + "]"
     }
