@@ -4,7 +4,7 @@ export function findPredecessor<T> (list: T[], element: T, compareFn: (a: T, b: 
     let predecessor
     let isOk = true
     let i = 0
-    while (isOk) {
+    while (isOk && i < list.length) {
         const other = list[i]
         if (compareFn(other, element) === Ordering.Less) {
             predecessor = other
