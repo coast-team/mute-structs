@@ -21,7 +21,7 @@ import {Epoch} from "../../epoch/epoch"
 import {RenamableLogootSOperation} from "../renamablelogootsoperation"
 import {LogootSDel} from "./logootsdel"
 
-export class RenamableLogootSDel extends RenamableLogootSOperation {
+export class RenamableLogootSDel extends RenamableLogootSOperation<LogootSDel> {
 
     constructor (op: LogootSDel, epoch: Epoch) {
         super(op, epoch)

@@ -23,11 +23,11 @@ import {LogootSOperation} from "./logootsoperation"
 import {RenamableListOperation} from "./renamablelistoperation"
 import {TextOperation} from "./textoperation"
 
-export abstract class RenamableLogootSOperation extends RenamableListOperation {
+export abstract class RenamableLogootSOperation<T extends LogootSOperation> extends RenamableListOperation {
 
-    readonly op: LogootSOperation
+    readonly op: T
 
-    constructor (op: LogootSOperation, epoch: Epoch) {
+    constructor (op: T, epoch: Epoch) {
         super(epoch)
 
         this.op = op
