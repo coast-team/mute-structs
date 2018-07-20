@@ -15,3 +15,7 @@ export function findPredecessor<T> (list: T[], element: T, compareFn: (a: T, b: 
     }
     return predecessor
 }
+
+export function flatten<T> (acc: T[], current: T[]): T[] {
+    return acc.concat(current)
+}
