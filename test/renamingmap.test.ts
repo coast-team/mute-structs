@@ -19,7 +19,7 @@
 
 import test from "ava"
 
-import {RenamingMap} from "../src/renamingmap"
+import {ExtendedRenamingMap} from "../src/renamingmap/extendedrenamingmap"
 import {generateIdIntervalFactory, idFactory} from "./helpers"
 
 test("constructor-simple-case", (t) => {
@@ -33,7 +33,7 @@ test("constructor-simple-case", (t) => {
         idFactory(0, 0, 0, 3),
     ]
 
-    const renamingMap = new RenamingMap(1, 1, renamedIdIntervals)
+    const renamingMap = new ExtendedRenamingMap(1, 1, renamedIdIntervals)
 
     t.deepEqual(renamingMap.renamedIds, expectedIds, "renamingMap.renamedIds = expectedIds")
 })
@@ -57,14 +57,14 @@ test("constructor-more-complex-case", (t) => {
         idFactory(0, 0, 0, 3),
     ]
 
-    const renamingMap = new RenamingMap(1, 1, renamedIdIntervals)
+    const renamingMap = new ExtendedRenamingMap(1, 1, renamedIdIntervals)
 
     t.deepEqual(renamingMap.renamedIds, expectedIds, "renamingMap.renamedIds = expectedIds")
 })
 
 test("getNewId-of-renamed-id", (t) => {
     const renamedIdIntervals = [generateIdIntervalFactory(0, 0, 0, -2)(3)]
-    const renamingMap = new RenamingMap(1, 1, renamedIdIntervals)
+    const renamingMap = new ExtendedRenamingMap(1, 1, renamedIdIntervals)
 
     const renamedId = idFactory(0, 0, 0, 1)
     const expectedNewId = idFactory(0, 1, 1, 3)
@@ -76,7 +76,7 @@ test("getNewId-of-renamed-id", (t) => {
 
 test("getNewId-of-concurrently-generated-id-before", (t) => {
     const renamedIdIntervals = [generateIdIntervalFactory(0, 0, 0, -2)(3)]
-    const renamingMap = new RenamingMap(1, 1, renamedIdIntervals)
+    const renamingMap = new ExtendedRenamingMap(1, 1, renamedIdIntervals)
 
     const idToRename = idFactory(-42, 2, 0, 0)
     const expectedNewId = idFactory(-10, 1, 1, 0, -42, 2, 0, 0)
@@ -88,7 +88,7 @@ test("getNewId-of-concurrently-generated-id-before", (t) => {
 
 test("getNewId-of-concurrently-generated-id-splitting", (t) => {
     const renamedIdIntervals = [generateIdIntervalFactory(0, 0, 0, -2)(3)]
-    const renamingMap = new RenamingMap(1, 1, renamedIdIntervals)
+    const renamingMap = new ExtendedRenamingMap(1, 1, renamedIdIntervals)
 
     const idToRename = idFactory(0, 0, 0, 1, 42, 2, 0, 0)
     const expectedNewId = idFactory(0, 1, 1, 3, 0, 0, 0, 1, 42, 2, 0, 0)
@@ -100,7 +100,7 @@ test("getNewId-of-concurrently-generated-id-splitting", (t) => {
 
 test("getNewId-of-concurrently-generated-id-after", (t) => {
     const renamedIdIntervals = [generateIdIntervalFactory(0, 0, 0, -2)(3)]
-    const renamingMap = new RenamingMap(1, 1, renamedIdIntervals)
+    const renamingMap = new ExtendedRenamingMap(1, 1, renamedIdIntervals)
 
     const idToRename = idFactory(42, 2, 0, 0)
     const expectedNewId = idFactory(0, 1, 1, 5, 42, 2, 0, 0)

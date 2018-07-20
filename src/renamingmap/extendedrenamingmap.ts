@@ -17,12 +17,12 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import {findPredecessor, flatten} from "./helpers"
-import {Identifier} from "./identifier"
-import {IdentifierInterval} from "./identifierinterval"
-import {createAtPosition} from "./idfactory"
+import {findPredecessor, flatten} from "../helpers"
+import {Identifier} from "../identifier"
+import {IdentifierInterval} from "../identifierinterval"
+import {createAtPosition} from "../idfactory"
 
-export class RenamingMap {
+export class ExtendedRenamingMap {
 
     readonly replicaNumber: number
     readonly clock: number
