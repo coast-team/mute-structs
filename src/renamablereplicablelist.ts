@@ -26,11 +26,14 @@ import {LogootSRopes} from "./logootsropes"
 import {RenamableLogootSDel} from "./operations/delete/renamablelogootsdel"
 import {RenamableLogootSAdd} from "./operations/insert/renamablelogootsadd"
 import {LogootSRename} from "./operations/rename/logootsrename"
+import {RenamingMap} from "./renamingmap/renamingmap"
+import {RenamingMapStore} from "./renamingmap/renamingmapstore"
 import {mkNodeAt, RopesNodes} from "./ropesnodes"
 
 export class RenamableReplicableList {
 
     readonly epochsStore: EpochStore
+    readonly renamingMapStore: RenamingMapStore
     private list: LogootSRopes
     private currentEpoch: Epoch
 
@@ -39,6 +42,7 @@ export class RenamableReplicableList {
 
         this.currentEpoch = new Epoch(new EpochId(0, 0))
         this.epochsStore = new EpochStore(this.currentEpoch)
+        this.renamingMapStore = new RenamingMapStore()
     }
 
     get replicaNumber (): number {
@@ -75,6 +79,9 @@ export class RenamableReplicableList {
         this.epochsStore.addEpoch(this.currentEpoch)
 
         const newClock = this.clock + 1
+        const renamingMap = new RenamingMap(this.replicaNumber, newClock, renamedIdIntervals)
+        this.renamingMapStore.add(this.currentEpoch, renamingMap)
+
         const baseId = createAtPosition(this.replicaNumber, newClock, 0, 0)
         const newRoot = mkNodeAt(baseId, this.str.length)
         this.list = new LogootSRopes(this.replicaNumber, newClock, newRoot, this.str)
@@ -85,7 +92,10 @@ export class RenamableReplicableList {
     renameRemote (replicaNumber: number, clock: number, newEpoch: Epoch,
                   renamedIdIntervals: IdentifierInterval[]) {
 
+        const renamingMap = new RenamingMap(replicaNumber, clock, renamedIdIntervals)
         this.epochsStore.addEpoch(newEpoch)
+        this.renamingMapStore.add(newEpoch, renamingMap)
+
         // TODO: Compare currentEpoch and newEpoch to determine if currentEpoch should change
         this.currentEpoch = newEpoch
 
