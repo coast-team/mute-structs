@@ -37,6 +37,25 @@ import {RenamingMap} from "./renamingmap/renamingmap"
 import {RenamingMapStore} from "./renamingmap/renamingmapstore"
 import {mkNodeAt, RopesNodes} from "./ropesnodes"
 
+function computeNewIdIntervals (
+    extendedRenamingMap: ExtendedRenamingMap,
+    idsToRename: Identifier[]): IdentifierInterval[] {
+
+    const newIds = idsToRename.map((id: Identifier) => extendedRenamingMap.getNewId(id))
+    return IdentifierInterval.mergeIdsIntoIntervals(newIds)
+}
+
+function generateInsertOps (idIntervals: IdentifierInterval[], str: string): LogootSAdd[] {
+    let currentOffset = 0
+    return idIntervals
+        .map((idInterval: IdentifierInterval): LogootSAdd => {
+            const nextOffset = currentOffset + idInterval.length
+            const content = str.slice(currentOffset, nextOffset)
+            currentOffset = nextOffset
+            return new LogootSAdd(idInterval.idBegin, content)
+        })
+}
+
 export class RenamableReplicableList {
 
     readonly epochsStore: EpochStore
@@ -82,19 +101,9 @@ export class RenamableReplicableList {
 
     insertRemote (epoch: Epoch, op: LogootSAdd): TextInsert[] {
         if (!epoch.equals(this.currentEpoch)) {
-            const extendedRenamingMap = this.currentExtendedRenamingMap
-            const idsToRename = op.insertedIds
-            const newIds =
-                idsToRename.map((id: Identifier) => extendedRenamingMap.getNewId(id))
-            const newIdIntervals: IdentifierInterval[] = IdentifierInterval.mergeIdsIntoIntervals(newIds)
-            let currentOffset = 0
-            return newIdIntervals
-                .map((idInterval: IdentifierInterval): LogootSAdd => {
-                    const nextOffset = currentOffset + idInterval.length + 1
-                    const str = op.content.slice(currentOffset, nextOffset)
-                    currentOffset = nextOffset
-                    return new LogootSAdd(idInterval.idBegin, str)
-                })
+            const newIdIntervals = computeNewIdIntervals(this.currentExtendedRenamingMap, op.insertedIds)
+            const insertOps = generateInsertOps(newIdIntervals, op.content)
+            return insertOps
                 .map((insertOp: LogootSAdd): TextInsert[] => {
                     return insertOp.execute(this.list)
                 })
