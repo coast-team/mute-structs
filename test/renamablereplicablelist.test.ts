@@ -97,7 +97,7 @@ test("rename-then-concurrent-insert", (t) => {
     t.is(docA.getNbBlocks(), expectedNbBlocks, `docA.getNbBlocks() = ${expectedNbBlocks}`)
 })
 
-test.failing("insert-then-concurrent-rename", (t) => {
+test("insert-then-concurrent-rename", (t) => {
     const replicaNumberA = 1
     const docA = new RenamableReplicableList(replicaNumberA)
     const replicaNumberB = 2
@@ -117,8 +117,8 @@ test.failing("insert-then-concurrent-rename", (t) => {
 
     const expectedStr = "hello world"
     const expectedNbBlocks = 3
-    t.is(docA.str, expectedStr, `docA.str = ${expectedStr}`)
-    t.is(docA.getNbBlocks(), expectedNbBlocks, `docA.getNbBlocks() = ${expectedNbBlocks}`)
+    t.is(docB.str, expectedStr, `docB.str = ${expectedStr}`)
+    t.is(docB.getNbBlocks(), expectedNbBlocks, `docB.getNbBlocks() = ${expectedNbBlocks}`)
 })
 
 test("rename-then-concurrent-delete", (t) => {
@@ -145,7 +145,7 @@ test("rename-then-concurrent-delete", (t) => {
     t.is(docA.getNbBlocks(), expectedNbBlocks, `docA.getNbBlocks() = ${expectedNbBlocks}`)
 })
 
-test.failing("delete-then-concurrent-rename", (t) => {
+test("delete-then-concurrent-rename", (t) => {
     const replicaNumberA = 1
     const docA = new RenamableReplicableList(replicaNumberA)
     const replicaNumberB = 2
@@ -165,6 +165,6 @@ test.failing("delete-then-concurrent-rename", (t) => {
 
     const expectedStr = "hello world"
     const expectedNbBlocks = 2
-    t.is(docA.str, expectedStr, `docA.str = ${expectedStr}`)
-    t.is(docA.getNbBlocks(), expectedNbBlocks, `docA.getNbBlocks() = ${expectedNbBlocks}`)
+    t.is(docB.str, expectedStr, `docB.str = ${expectedStr}`)
+    t.is(docB.getNbBlocks(), expectedNbBlocks, `docB.getNbBlocks() = ${expectedNbBlocks}`)
 })

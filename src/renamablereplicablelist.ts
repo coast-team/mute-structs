@@ -162,10 +162,17 @@ export class RenamableReplicableList {
         this.currentEpoch = newEpoch
 
         // TODO: Determine the "path" between the previous currentEpoch and the new one
-        // TODO: Rename all identifiers from current state using the corresponding renamingMaps
-        const baseId = createAtPosition(replicaNumber, clock, 0, 0)
-        const newRoot = mkNodeAt(baseId, this.str.length)
-        this.list = new LogootSRopes(this.replicaNumber, clock, newRoot, this.str)
+        const idsToRename: Identifier[] = this.list.toList()
+            .map((idInterval: IdentifierInterval): Identifier[] => idInterval.toIds())
+            .reduce(flatten)
+        const newIdIntervals = computeNewIdIntervals(this.currentExtendedRenamingMap, idsToRename)
+
+        const newList = new LogootSRopes(this.replicaNumber, this.clock)
+        const insertOps = generateInsertOps(newIdIntervals, this.str)
+        insertOps.forEach((insertOp: LogootSAdd) => {
+            insertOp.execute(newList)
+        })
+        this.list = newList
     }
 
     getNbBlocks (): number {
