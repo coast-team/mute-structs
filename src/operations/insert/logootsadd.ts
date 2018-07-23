@@ -19,6 +19,7 @@
 
 import {isObject} from "../../data-validation"
 import {Identifier} from "../../identifier"
+import {IdentifierInterval} from "../../identifierinterval"
 import {LogootSRopes} from "../../logootsropes"
 import {LogootSOperation} from "../logootsoperation"
 import {TextInsert} from "./textinsert"
@@ -77,6 +78,11 @@ export class LogootSAdd extends LogootSOperation {
         super()
         this.id = id
         this.content = content
+    }
+
+    get insertedIds (): Identifier[] {
+        const insertedIdInterval = new IdentifierInterval(this.id, this.id.lastOffset + this.content.length - 1)
+        return insertedIdInterval.toIds()
     }
 
     equals (aOther: LogootSAdd): boolean {
