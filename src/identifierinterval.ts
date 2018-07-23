@@ -19,6 +19,7 @@
 
 import {isObject} from "./data-validation"
 import {Dot} from "./dot"
+import {isSorted} from "./helpers"
 import {Identifier} from "./identifier"
 import {isInt32} from "./int32"
 import {Ordering} from "./ordering"
@@ -36,6 +37,35 @@ export class IdentifierInterval {
             }
         }
         return null
+    }
+
+    /**
+     * Merge as much as possible Identifiers contained into an array into IdentifierIntervals
+     *
+     * @param {Identifier[]} ids The array of Identifiers
+     * @return {IdentifierInterval[]} The corresponding array of IdentifierIntervals
+     */
+    static mergeIdsIntoIntervals (ids: Identifier[]): IdentifierInterval[] {
+        const compareIdsFn = (id: Identifier, other: Identifier): Ordering => id.compareTo(other)
+        console.assert(isSorted(ids, compareIdsFn), "The array should be sorted")
+
+        const res = []
+        if (ids.length > 0) {
+            let idBegin: Identifier = ids[0]
+            for (let i = 1; i < ids.length; i++) {
+                const prevId = ids[i - 1]
+                const id = ids[i]
+                if (!prevId.equalsBase(id) || prevId.lastOffset + 1 !== id.lastOffset) {
+                    const idInterval = new IdentifierInterval(idBegin, prevId.lastOffset)
+                    res.push(idInterval)
+                    idBegin = id
+                }
+            }
+            const lastId = ids[ids.length - 1]
+            const lastIdInterval = new IdentifierInterval(idBegin, lastId.lastOffset)
+            res.push(lastIdInterval)
+        }
+        return res
     }
 
 // Access
