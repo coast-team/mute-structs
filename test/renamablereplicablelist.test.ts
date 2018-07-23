@@ -129,18 +129,18 @@ test.failing("rename-then-concurrent-delete", (t) => {
 
     const event1 = docA.insertLocal(0, "helllo")
     event1.execute(docB)
-    const event2 = docB.insertLocal(4, " wor")
+    const event2 = docB.insertLocal(6, " wor")
     event2.execute(docA)
-    const event3 = docA.insertLocal(8, "ld")
+    const event3 = docA.insertLocal(10, "ld")
     event3.execute(docB)
 
     docA.renameLocal()
-    const concurrentDelete = docB.delLocal(2, 3)
+    const concurrentDelete = docB.delLocal(2, 2)
 
     concurrentDelete.execute(docA)
 
     const expectedStr = "hello world"
-    const expectedNbBlocks = 3
+    const expectedNbBlocks = 2
     t.is(docA.str, expectedStr, `docA.str = ${expectedStr}`)
     t.is(docA.getNbBlocks(), expectedNbBlocks, `docA.getNbBlocks() = ${expectedNbBlocks}`)
 })
@@ -153,18 +153,18 @@ test.failing("delete-then-concurrent-rename", (t) => {
 
     const event1 = docA.insertLocal(0, "helllo")
     event1.execute(docB)
-    const event2 = docB.insertLocal(4, " wor")
+    const event2 = docB.insertLocal(6, " wor")
     event2.execute(docA)
-    const event3 = docA.insertLocal(8, "ld")
+    const event3 = docA.insertLocal(10, "ld")
     event3.execute(docB)
 
     const concurrentRename = docA.renameLocal()
-    docB.delLocal(2, 3)
+    docB.delLocal(2, 2)
 
     concurrentRename.execute(docB)
 
     const expectedStr = "hello world"
-    const expectedNbBlocks = 3
+    const expectedNbBlocks = 2
     t.is(docA.str, expectedStr, `docA.str = ${expectedStr}`)
     t.is(docA.getNbBlocks(), expectedNbBlocks, `docA.getNbBlocks() = ${expectedNbBlocks}`)
 })
