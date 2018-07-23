@@ -34,4 +34,22 @@ export class Epoch {
         this.id = id
         this.parentId = parentId
     }
+
+    /**
+     * Check if two instances of epochs are equal
+     *
+     * @param {Epoch} other The other epoch to which to compare
+     * @return {boolean} Are the two epochs equal
+     */
+    equals (other: Epoch): boolean {
+        const areParentsEqual =
+            (this.parentId === undefined && other.parentId === undefined) ||
+            (this.parentId !== undefined && other.parentId !== undefined &&
+            this.parentId.replicaNumber === other.parentId.replicaNumber &&
+            this.parentId.epochNumber === other.parentId.epochNumber)
+
+        return areParentsEqual &&
+            this.id.replicaNumber === other.id.replicaNumber &&
+            this.id.epochNumber === other.id.epochNumber
+    }
 }
