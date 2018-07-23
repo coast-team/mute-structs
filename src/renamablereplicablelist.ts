@@ -108,6 +108,17 @@ export class RenamableReplicableList {
     }
 
     delRemote (epoch: Epoch, op: LogootSDel): TextDelete[] {
+        if (!epoch.equals(this.currentEpoch)) {
+            const extendedRenamingMap = this.currentExtendedRenamingMap
+            const idsToRename = op.lid
+                .map((idInterval: IdentifierInterval): Identifier[] => idInterval.toIds())
+                .reduce(flatten)
+            const newIds =
+                idsToRename.map((id: Identifier) => extendedRenamingMap.getNewId(id))
+            const newIdIntervals: IdentifierInterval[] = IdentifierInterval.mergeIdsIntoIntervals(newIds)
+            const newOp = new LogootSDel(newIdIntervals, op.author)
+            return newOp.execute(this.list)
+        }
         return op.execute(this.list)
     }
 

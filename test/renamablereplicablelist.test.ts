@@ -121,7 +121,7 @@ test.failing("insert-then-concurrent-rename", (t) => {
     t.is(docA.getNbBlocks(), expectedNbBlocks, `docA.getNbBlocks() = ${expectedNbBlocks}`)
 })
 
-test.failing("rename-then-concurrent-delete", (t) => {
+test("rename-then-concurrent-delete", (t) => {
     const replicaNumberA = 1
     const docA = new RenamableReplicableList(replicaNumberA)
     const replicaNumberB = 2
