@@ -18,12 +18,18 @@
 */
 
 import {Epoch} from "../../epoch/epoch"
+import {RenamableReplicableList} from "../../renamablereplicablelist"
 import {RenamableLogootSOperation} from "../renamablelogootsoperation"
+import {TextOperation} from "../textoperation"
 import {LogootSAdd} from "./logootsadd"
 
 export class RenamableLogootSAdd extends RenamableLogootSOperation<LogootSAdd> {
 
     constructor (op: LogootSAdd, epoch: Epoch) {
         super(op, epoch)
+    }
+
+    execute (renamableList: RenamableReplicableList): TextOperation[] {
+        return renamableList.insertRemote(this.epoch, this.op)
     }
 }

@@ -73,7 +73,7 @@ test("basic-rename", (t) => {
     t.is(docA.digest(), docB.digest(), "docA.digest() = docB.digest()")
 })
 
-test.failing("rename-then-concurrent-insert", (t) => {
+test("rename-then-concurrent-insert", (t) => {
     const replicaNumberA = 1
     const docA = new RenamableReplicableList(replicaNumberA)
     const replicaNumberB = 2

@@ -20,12 +20,19 @@
 import {Epoch} from "./epoch/epoch"
 import {EpochId} from "./epoch/epochid"
 import {EpochStore} from "./epoch/epochstore"
+import {flatten} from "./helpers"
+import {Identifier} from "./identifier"
 import {IdentifierInterval} from "./identifierinterval"
 import {createAtPosition} from "./idfactory"
 import {LogootSRopes} from "./logootsropes"
+import {LogootSDel} from "./operations/delete/logootsdel"
 import {RenamableLogootSDel} from "./operations/delete/renamablelogootsdel"
+import {TextDelete} from "./operations/delete/textdelete"
+import {LogootSAdd} from "./operations/insert/logootsadd"
 import {RenamableLogootSAdd} from "./operations/insert/renamablelogootsadd"
+import {TextInsert} from "./operations/insert/textinsert"
 import {LogootSRename} from "./operations/rename/logootsrename"
+import {ExtendedRenamingMap} from "./renamingmap/extendedrenamingmap"
 import {RenamingMap} from "./renamingmap/renamingmap"
 import {RenamingMapStore} from "./renamingmap/renamingmapstore"
 import {mkNodeAt, RopesNodes} from "./ropesnodes"
@@ -53,8 +60,16 @@ export class RenamableReplicableList {
         return this.list.clock
     }
 
+    get currentExtendedRenamingMap (): ExtendedRenamingMap {
+        return this.renamingMapStore.getExtendedRenamingMap(this.currentEpoch.id) as ExtendedRenamingMap
+    }
+
     getList (): LogootSRopes {
         return this.list
+    }
+
+    getCurrentEpoch (): Epoch {
+        return this.currentEpoch
     }
 
     get str (): string {
@@ -65,8 +80,35 @@ export class RenamableReplicableList {
         return new RenamableLogootSAdd(this.list.insertLocal(pos, l), this.currentEpoch)
     }
 
+    insertRemote (epoch: Epoch, op: LogootSAdd): TextInsert[] {
+        if (!epoch.equals(this.currentEpoch)) {
+            const extendedRenamingMap = this.currentExtendedRenamingMap
+            const idsToRename = op.insertedIds
+            const newIds =
+                idsToRename.map((id: Identifier) => extendedRenamingMap.getNewId(id))
+            const newIdIntervals: IdentifierInterval[] = IdentifierInterval.mergeIdsIntoIntervals(newIds)
+            let currentOffset = 0
+            return newIdIntervals
+                .map((idInterval: IdentifierInterval): LogootSAdd => {
+                    const nextOffset = currentOffset + idInterval.length + 1
+                    const str = op.content.slice(currentOffset, nextOffset)
+                    currentOffset = nextOffset
+                    return new LogootSAdd(idInterval.idBegin, str)
+                })
+                .map((insertOp: LogootSAdd): TextInsert[] => {
+                    return insertOp.execute(this.list)
+                })
+                .reduce(flatten)
+        }
+        return op.execute(this.list)
+    }
+
     delLocal (begin: number, end: number): RenamableLogootSDel {
         return new RenamableLogootSDel(this.list.delLocal(begin, end), this.currentEpoch)
+    }
+
+    delRemote (epoch: Epoch, op: LogootSDel): TextDelete[] {
+        return op.execute(this.list)
     }
 
     renameLocal (): LogootSRename {

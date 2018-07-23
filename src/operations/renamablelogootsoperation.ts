@@ -37,7 +37,5 @@ export abstract class RenamableLogootSOperation<T extends LogootSOperation> exte
         return this.op.author
     }
 
-    execute (renamableList: RenamableReplicableList): TextOperation[] {
-        return this.op.execute(renamableList.getList())
-    }
+    abstract execute (renamableList: RenamableReplicableList): TextOperation[]
 }
