@@ -19,6 +19,9 @@
 
 import test from "ava"
 
+import {flatten} from "../src/helpers"
+import {Identifier} from "../src/identifier"
+import {IdentifierInterval} from "../src/identifierinterval"
 import {ExtendedRenamingMap} from "../src/renamingmap/extendedrenamingmap"
 import {generateIdIntervalFactory, idFactory} from "./helpers"
 
@@ -108,4 +111,64 @@ test("renameId-of-concurrently-generated-id-after", (t) => {
     const actualNewId = renamingMap.renameId(idToRename)
 
     t.deepEqual(actualNewId, expectedNewId, "actualId = expectedNewId")
+})
+
+test.failing("renameId-then-reverseRenameId-of-renamed-id", (t) => {
+    const renamedIdIntervals = [
+        generateIdIntervalFactory(0, 0, 0, 0)(3),
+        generateIdIntervalFactory(42, 1, 5, 6)(9),
+        generateIdIntervalFactory(53, 2, 1, 0)(5),
+    ]
+    const renamingMap = new ExtendedRenamingMap(3, 0, renamedIdIntervals)
+
+    const idsToRename = renamedIdIntervals
+        .map((idInterval: IdentifierInterval): Identifier[] => idInterval.toIds())
+        .reduce(flatten)
+
+    idsToRename.forEach((expectedId: Identifier) => {
+        const actualId = renamingMap.reverseRenameId(renamingMap.renameId(expectedId))
+        t.deepEqual(actualId, expectedId, "reverseRenameId(renameId(id)) = id")
+    })
+})
+
+test.failing("renameId-then-reverseRenameId-of-concurrently-generated-id-before", (t) => {
+    const renamedIdIntervals = [
+        generateIdIntervalFactory(0, 0, 0, 0)(3),
+        generateIdIntervalFactory(42, 1, 5, 6)(9),
+        generateIdIntervalFactory(53, 2, 1, 0)(5),
+    ]
+    const renamingMap = new ExtendedRenamingMap(3, 0, renamedIdIntervals)
+
+    const expectedId = idFactory(-70, 0, 1, 0)
+
+    const actualId = renamingMap.reverseRenameId(renamingMap.renameId(expectedId))
+    t.deepEqual(actualId, expectedId, "reverseRenameId(renameId(id)) = id")
+})
+
+test.failing("renameId-then-reverseRenameId-of-concurrently-generated-id-splitting", (t) => {
+    const renamedIdIntervals = [
+        generateIdIntervalFactory(0, 0, 0, 0)(3),
+        generateIdIntervalFactory(42, 1, 5, 6)(9),
+        generateIdIntervalFactory(53, 2, 1, 0)(5),
+    ]
+    const renamingMap = new ExtendedRenamingMap(3, 0, renamedIdIntervals)
+
+    const expectedId = idFactory(42, 1, 5, 8, 7, 0, 1, 0)
+
+    const actualId = renamingMap.reverseRenameId(renamingMap.renameId(expectedId))
+    t.deepEqual(actualId, expectedId, "reverseRenameId(renameId(id)) = id")
+})
+
+test.failing("renameId-then-reverseRenameId-of-concurrently-generated-id-after", (t) => {
+    const renamedIdIntervals = [
+        generateIdIntervalFactory(0, 0, 0, 0)(3),
+        generateIdIntervalFactory(42, 1, 5, 6)(9),
+        generateIdIntervalFactory(53, 2, 1, 0)(5),
+    ]
+    const renamingMap = new ExtendedRenamingMap(3, 0, renamedIdIntervals)
+
+    const expectedId = idFactory(70, 0, 1, 0)
+
+    const actualId = renamingMap.reverseRenameId(renamingMap.renameId(expectedId))
+    t.deepEqual(actualId, expectedId, "reverseRenameId(renameId(id)) = id")
 })

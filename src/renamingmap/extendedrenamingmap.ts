@@ -91,4 +91,8 @@ export class ExtendedRenamingMap {
 
         return newPredecessorId.concat(id)
     }
+
+    reverseRenameId (id: Identifier): Identifier {
+        return id
+    }
 }
