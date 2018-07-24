@@ -62,50 +62,50 @@ test("constructor-more-complex-case", (t) => {
     t.deepEqual(renamingMap.renamedIds, expectedIds, "renamingMap.renamedIds = expectedIds")
 })
 
-test("getNewId-of-renamed-id", (t) => {
+test("renameId-of-renamed-id", (t) => {
     const renamedIdIntervals = [generateIdIntervalFactory(0, 0, 0, -2)(3)]
     const renamingMap = new ExtendedRenamingMap(1, 1, renamedIdIntervals)
 
     const renamedId = idFactory(0, 0, 0, 1)
     const expectedNewId = idFactory(0, 1, 1, 3)
 
-    const actualNewId = renamingMap.getNewId(renamedId)
+    const actualNewId = renamingMap.renameId(renamedId)
 
     t.deepEqual(actualNewId, expectedNewId, "actualId = expectedNewId")
 })
 
-test("getNewId-of-concurrently-generated-id-before", (t) => {
+test("renameId-of-concurrently-generated-id-before", (t) => {
     const renamedIdIntervals = [generateIdIntervalFactory(0, 0, 0, -2)(3)]
     const renamingMap = new ExtendedRenamingMap(1, 1, renamedIdIntervals)
 
     const idToRename = idFactory(-42, 2, 0, 0)
     const expectedNewId = idFactory(-10, 1, 1, 0, -42, 2, 0, 0)
 
-    const actualNewId = renamingMap.getNewId(idToRename)
+    const actualNewId = renamingMap.renameId(idToRename)
 
     t.deepEqual(actualNewId, expectedNewId, "actualId = expectedNewId")
 })
 
-test("getNewId-of-concurrently-generated-id-splitting", (t) => {
+test("renameId-of-concurrently-generated-id-splitting", (t) => {
     const renamedIdIntervals = [generateIdIntervalFactory(0, 0, 0, -2)(3)]
     const renamingMap = new ExtendedRenamingMap(1, 1, renamedIdIntervals)
 
     const idToRename = idFactory(0, 0, 0, 1, 42, 2, 0, 0)
     const expectedNewId = idFactory(0, 1, 1, 3, 0, 0, 0, 1, 42, 2, 0, 0)
 
-    const actualNewId = renamingMap.getNewId(idToRename)
+    const actualNewId = renamingMap.renameId(idToRename)
 
     t.deepEqual(actualNewId, expectedNewId, "actualId = expectedNewId")
 })
 
-test("getNewId-of-concurrently-generated-id-after", (t) => {
+test("renameId-of-concurrently-generated-id-after", (t) => {
     const renamedIdIntervals = [generateIdIntervalFactory(0, 0, 0, -2)(3)]
     const renamingMap = new ExtendedRenamingMap(1, 1, renamedIdIntervals)
 
     const idToRename = idFactory(42, 2, 0, 0)
     const expectedNewId = idFactory(0, 1, 1, 5, 42, 2, 0, 0)
 
-    const actualNewId = renamingMap.getNewId(idToRename)
+    const actualNewId = renamingMap.renameId(idToRename)
 
     t.deepEqual(actualNewId, expectedNewId, "actualId = expectedNewId")
 })

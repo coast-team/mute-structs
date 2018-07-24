@@ -41,7 +41,7 @@ function computeNewIdIntervals (
     extendedRenamingMap: ExtendedRenamingMap,
     idsToRename: Identifier[]): IdentifierInterval[] {
 
-    const newIds = idsToRename.map((id: Identifier) => extendedRenamingMap.getNewId(id))
+    const newIds = idsToRename.map((id: Identifier) => extendedRenamingMap.renameId(id))
     return IdentifierInterval.mergeIdsIntoIntervals(newIds)
 }
 
@@ -123,7 +123,7 @@ export class RenamableReplicableList {
                 .map((idInterval: IdentifierInterval): Identifier[] => idInterval.toIds())
                 .reduce(flatten)
             const newIds =
-                idsToRename.map((id: Identifier) => extendedRenamingMap.getNewId(id))
+                idsToRename.map((id: Identifier) => extendedRenamingMap.renameId(id))
             const newIdIntervals: IdentifierInterval[] = IdentifierInterval.mergeIdsIntoIntervals(newIds)
             const newOp = new LogootSDel(newIdIntervals, op.author)
             return newOp.execute(this.list)

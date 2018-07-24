@@ -68,7 +68,7 @@ export class ExtendedRenamingMap {
             })
     }
 
-    getNewId (id: Identifier): Identifier {
+    renameId (id: Identifier): Identifier {
         const replicaNumber = id.replicaNumber
         const clock = id.clock
         const offset = id.lastOffset
@@ -87,7 +87,7 @@ export class ExtendedRenamingMap {
         const compareIds = (a: Identifier, b: Identifier) => a.compareTo(b)
         const predecessorId: Identifier | undefined = findPredecessor(this.renamedIds, id, compareIds)
         const newPredecessorId = predecessorId !== undefined ?
-            this.getNewId(predecessorId) : createAtPosition(this.replicaNumber, this.clock, -10, 0)
+            this.renameId(predecessorId) : createAtPosition(this.replicaNumber, this.clock, -10, 0)
 
         return newPredecessorId.concat(id)
     }
