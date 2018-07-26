@@ -351,6 +351,16 @@ export class Identifier {
         return new Identifier(tuples)
     }
 
+    truncate (length: number): [Identifier, Identifier] {
+        console.assert(0 < length && length < this.length, "length should belong to [0, this.length[")
+        const headTuples = this.tuples.slice(0, length)
+        const tailTuples = this.tuples.slice(length, this.length)
+        return [
+            new Identifier(headTuples),
+            new Identifier(tailTuples),
+        ]
+    }
+
     digest (): number {
         return this.tuples.reduce((prev: number, tuple: IdentifierTuple) => {
             return (prev * 17 + tuple.digest()) | 0

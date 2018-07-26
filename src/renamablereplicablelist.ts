@@ -140,11 +140,12 @@ export class RenamableReplicableList {
 
         this.epochsStore.addEpoch(this.currentEpoch)
 
+        const newRandom = renamedIdIntervals[0].idBegin.tuples[0].random
         const newClock = this.clock + 1
         const renamingMap = new RenamingMap(this.replicaNumber, newClock, renamedIdIntervals)
         this.renamingMapStore.add(this.currentEpoch, renamingMap)
 
-        const baseId = createAtPosition(this.replicaNumber, newClock, 0, 0)
+        const baseId = createAtPosition(this.replicaNumber, newClock, newRandom, 0)
         const newRoot = mkNodeAt(baseId, this.str.length)
         this.list = new LogootSRopes(this.replicaNumber, newClock, newRoot, this.str)
 

@@ -21,6 +21,8 @@ import {findPredecessor, flatten} from "../helpers"
 import {Identifier} from "../identifier"
 import {IdentifierInterval} from "../identifierinterval"
 import {createAtPosition} from "../idfactory"
+import {INT32_TOP} from "../int32"
+import {Ordering} from "../ordering"
 import {RenamingMap} from "./renamingmap"
 
 export class ExtendedRenamingMap {
@@ -36,12 +38,15 @@ export class ExtendedRenamingMap {
     readonly clock: number
     readonly renamedIds: Identifier[]
     readonly map: Map<number, Map<number, Map<number, number>>>
+    readonly newOffsetToOldIdMap: Map<number, Identifier>
+    readonly maxOffset: number
 
     constructor (replicaNumber: number, clock: number, renamedIdIntervals: IdentifierInterval[]) {
         this.replicaNumber = replicaNumber
         this.clock = clock
         this.renamedIds = []
         this.map = new Map()
+        this.newOffsetToOldIdMap = new Map()
 
         let newOffset = 0
         renamedIdIntervals
@@ -64,35 +69,103 @@ export class ExtendedRenamingMap {
                     clockMap.get(id.clock) as Map<number, number>
 
                 offsetMap.set(id.lastOffset, newOffset)
+                this.newOffsetToOldIdMap.set(newOffset, id)
                 newOffset++
             })
+
+        this.maxOffset = newOffset - 1
+    }
+
+    get firstId (): Identifier {
+        return this.renamedIds[0]
+    }
+
+    get lastId (): Identifier {
+        return this.renamedIds[this.renamedIds.length - 1]
+    }
+
+    get newFirstId (): Identifier {
+        return createAtPosition(this.replicaNumber, this.clock, this.newRandom, 0)
+    }
+
+    get newLastId (): Identifier {
+        return createAtPosition(this.replicaNumber, this.clock, this.newRandom, this.maxOffset)
+    }
+
+    get newRandom (): number {
+        return this.firstId.tuples[0].random
     }
 
     renameId (id: Identifier): Identifier {
         const replicaNumber = id.replicaNumber
         const clock = id.clock
         const offset = id.lastOffset
+
+        const firstId = this.renamedIds[0]
+        const lastId = this.renamedIds[this.renamedIds.length - 1]
+
+        if (id.compareTo(firstId) === Ordering.Less || lastId.compareTo(id) === Ordering.Less) {
+            return id
+        }
+
         if (this.map.has(replicaNumber)) {
             const clockMap = this.map.get(replicaNumber) as Map<number, Map<number, number>>
             if (clockMap.has(clock)) {
                 const offsetMap = clockMap.get(clock) as Map<number, number>
                 if (offsetMap.has(offset)) {
                     const newOffset = offsetMap.get(offset) as number
-                    return createAtPosition(this.replicaNumber, this.clock, 0, newOffset)
+                    return createAtPosition(this.replicaNumber, this.clock, this.newRandom, newOffset)
                 }
             }
         }
 
         // The submitted id was not part of the renaming, need to compute a new one
         const compareIds = (a: Identifier, b: Identifier) => a.compareTo(b)
-        const predecessorId: Identifier | undefined = findPredecessor(this.renamedIds, id, compareIds)
-        const newPredecessorId = predecessorId !== undefined ?
-            this.renameId(predecessorId) : createAtPosition(this.replicaNumber, this.clock, -10, 0)
+        const predecessorId: Identifier = findPredecessor(this.renamedIds, id, compareIds) as Identifier
+        const newPredecessorId = this.renameId(predecessorId)
 
         return newPredecessorId.concat(id)
     }
 
     reverseRenameId (id: Identifier): Identifier {
-        return id
+        if (this.hasBeenRenamed(id)) {
+            // id ∈ renamedIds
+            return this.newOffsetToOldIdMap.get(id.lastOffset) as Identifier
+        }
+
+        if (id.compareTo(this.firstId) === Ordering.Less || this.lastId.compareTo(id) === Ordering.Less) {
+            // id < firstId < newFirstId || newLastId < lastId < id
+            return id
+        }
+
+        if (this.newLastId.compareTo(id) === Ordering.Less && id.compareTo(this.lastId) === Ordering.Less) {
+            // newLastId < id < lastId < lastId + id
+            return this.lastId.concat(id)
+        }
+
+        // newFirstId < id < newLastId
+        const [head, tail] = id.truncate(1)
+        const predecessorId = this.newOffsetToOldIdMap.get(head.lastOffset) as Identifier
+        const successorId = this.newOffsetToOldIdMap.get(head.lastOffset + 1) as Identifier
+
+        if (tail.compareTo(predecessorId) === Ordering.Less) {
+            // tail < predecessorId < predecessorId + tail < successorId
+            return predecessorId.concat(tail)
+        }
+        if (successorId.compareTo(tail) === Ordering.Less) {
+            // predecessorId < closestPredecessorOfSuccessorId + tail < successorId < tail
+            const closestPredecessorOfSuccessorId: Identifier =
+                Identifier.fromBase(successorId, successorId.lastOffset - 1)
+            return closestPredecessorOfSuccessorId.concat(tail)
+
+        }
+        // predecessorId < tail < successorId
+        return tail
+
+    }
+
+    hasBeenRenamed (id: Identifier): boolean {
+        return id.equalsBase(this.newFirstId)
+            && 0 <= id.lastOffset && id.lastOffset <= this.maxOffset
     }
 }
