@@ -241,6 +241,7 @@ test("renameId() retains order between ids", (t) => {
 
     const ids = [
         idFactory(6, 6, 0, 0),
+        idFactory(10, 0, 0, -1),
         idFactory(10, 0, 0, 0),
         idFactory(10, 42, 0, 0),
         idFactory(23, 23, 0, 0),
@@ -253,6 +254,7 @@ test("renameId() retains order between ids", (t) => {
         idFactory(53, 2, 1, 0),
         idFactory(53, 2, 1, 1),
         idFactory(53, 2, 1, 2),
+        idFactory(53, 2, 1, 6),
         idFactory(57, 57, 0, 0),
     ]
     const renamedIds =
@@ -273,6 +275,7 @@ test("reverseRenameId() retains order between ids", (t) => {
 
     const ids = [
         idFactory(6, 6, 0, 0),
+        idFactory(10, 0, 0, -1),
         idFactory(10, 3, 0, 0),
         idFactory(10, 3, 0, 0, 10, 42, 0, 0),
         idFactory(10, 3, 0, 3, 23, 23, 0, 0),
@@ -288,6 +291,9 @@ test("reverseRenameId() retains order between ids", (t) => {
         idFactory(10, 3, 0, 8),
         idFactory(10, 3, 0, 8, 53, 2, 1, 1),
         idFactory(10, 3, 0, 8, 60, 4, 0, 0),
+        idFactory(10, 3, 0, 9),
+        idFactory(53, 2, 1, 6),
+        idFactory(57, 57, 0, 0),
     ]
     const renamedIds =
         ids.map((idToRename: Identifier): Identifier => renamingMap.reverseRenameId(idToRename))
@@ -307,6 +313,7 @@ test("reverseRenameId(renameId(id)) returns id", (t) => {
 
     const ids = [
         idFactory(6, 6, 0, 0),
+        idFactory(10, 0, 0, -1),
         idFactory(10, 0, 0, 0),
         idFactory(10, 42, 0, 0),
         idFactory(23, 23, 0, 0),
@@ -319,6 +326,7 @@ test("reverseRenameId(renameId(id)) returns id", (t) => {
         idFactory(53, 2, 1, 0),
         idFactory(53, 2, 1, 1),
         idFactory(53, 2, 1, 2),
+        idFactory(53, 2, 1, 6),
         idFactory(57, 57, 0, 0),
     ]
 
