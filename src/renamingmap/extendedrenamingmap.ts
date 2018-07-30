@@ -21,7 +21,6 @@ import {findPredecessor, flatten} from "../helpers"
 import {Identifier} from "../identifier"
 import {IdentifierInterval} from "../identifierinterval"
 import {createAtPosition} from "../idfactory"
-import {INT32_TOP} from "../int32"
 import {Ordering} from "../ordering"
 import {RenamingMap} from "./renamingmap"
 
@@ -85,11 +84,11 @@ export class ExtendedRenamingMap {
     }
 
     get newFirstId (): Identifier {
-        return createAtPosition(this.replicaNumber, this.clock, this.newRandom, 0)
+        return createAtPosition(0, this.clock, this.newRandom, 0)
     }
 
     get newLastId (): Identifier {
-        return createAtPosition(this.replicaNumber, this.clock, this.newRandom, this.maxOffset)
+        return createAtPosition(0, this.clock, this.newRandom, this.maxOffset)
     }
 
     get newRandom (): number {
@@ -101,11 +100,26 @@ export class ExtendedRenamingMap {
         const clock = id.clock
         const offset = id.lastOffset
 
-        const firstId = this.renamedIds[0]
-        const lastId = this.renamedIds[this.renamedIds.length - 1]
+        const minFirstId = this.firstId.compareTo(this.newFirstId) === Ordering.Less ? this.firstId : this.newFirstId
+        const maxLastId = this.lastId.compareTo(this.newLastId) === Ordering.Greater ? this.lastId : this.newLastId
 
-        if (id.compareTo(firstId) === Ordering.Less || lastId.compareTo(id) === Ordering.Less) {
+        if (id.compareTo(minFirstId) === Ordering.Less || maxLastId.compareTo(id) === Ordering.Less) {
             return id
+        }
+
+        if (id.compareTo(this.firstId) === Ordering.Less) {
+            // newFirstId < id < firstId
+            // Happens if id.random = firstId.random && 0 < id.replicaNumber <= firstId.replicaNumber
+            const closestPredecessorOfNewFirstId: Identifier =
+            Identifier.fromBase(this.newFirstId, this.newFirstId.lastOffset - 1)
+            return closestPredecessorOfNewFirstId.concat(id)
+        }
+
+        if (this.lastId.compareTo(id) === Ordering.Less) {
+            // lastId < id < newLastId
+            // Happens if
+            // firstId.equalsBase(lastId) && id.random = firstId.random && lastId.replicaNumber <= id.replicaNumber < 0
+            return this.newLastId.concat(id)
         }
 
         if (this.map.has(replicaNumber)) {
@@ -114,7 +128,7 @@ export class ExtendedRenamingMap {
                 const offsetMap = clockMap.get(clock) as Map<number, number>
                 if (offsetMap.has(offset)) {
                     const newOffset = offsetMap.get(offset) as number
-                    return createAtPosition(this.replicaNumber, this.clock, this.newRandom, newOffset)
+                    return createAtPosition(0, this.clock, this.newRandom, newOffset)
                 }
             }
         }
@@ -133,9 +147,28 @@ export class ExtendedRenamingMap {
             return this.newOffsetToOldIdMap.get(id.lastOffset) as Identifier
         }
 
-        if (id.compareTo(this.firstId) === Ordering.Less || this.lastId.compareTo(id) === Ordering.Less) {
-            // id < firstId < newFirstId || newLastId < lastId < id
+        const closestPredecessorOfNewFirstId: Identifier =
+                Identifier.fromBase(this.newFirstId, this.newFirstId.lastOffset - 1)
+
+        const minFirstId = this.firstId.compareTo(closestPredecessorOfNewFirstId) === Ordering.Less ?
+            this.firstId : closestPredecessorOfNewFirstId
+        const maxLastId = this.lastId.compareTo(this.newLastId) === Ordering.Greater ? this.lastId : this.newLastId
+
+        if (id.compareTo(minFirstId) === Ordering.Less
+            || maxLastId.compareTo(id) === Ordering.Less) {
+
             return id
+        }
+
+        if (id.compareTo(this.newFirstId) === Ordering.Less) {
+            // closestPredecessorOfNewFirstId <= id < newFirstId
+            const closestPredecessorOfFirstId: Identifier =
+                Identifier.fromBase(this.firstId, this.firstId.lastOffset - 1)
+            if (id.equals(closestPredecessorOfNewFirstId)) {
+                return closestPredecessorOfFirstId
+            }
+            const [_, end] = id.truncate(1)
+            return closestPredecessorOfFirstId.concat(end)
         }
 
         if (this.newLastId.compareTo(id) === Ordering.Less && id.compareTo(this.lastId) === Ordering.Less) {
