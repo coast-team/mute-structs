@@ -145,7 +145,7 @@ export class RenamableReplicableList {
         const renamingMap = new RenamingMap(this.replicaNumber, newClock, renamedIdIntervals)
         this.renamingMapStore.add(this.currentEpoch, renamingMap)
 
-        const baseId = createAtPosition(0, newClock, newRandom, 0)
+        const baseId = createAtPosition(this.replicaNumber, newClock, newRandom, 0)
         const newRoot = mkNodeAt(baseId, this.str.length)
         this.list = new LogootSRopes(this.replicaNumber, newClock, newRoot, this.str)
 

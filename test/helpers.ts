@@ -44,3 +44,14 @@ export function generateIdIntervalFactory (...values: number[]): (end: number) =
     const id = idFactory(...values)
     return (end: number) => new IdentifierInterval(id, end)
 }
+
+export function generateStr (length: number): string {
+    let text = ""
+    const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+
+    for (let i = 0; i < length; i++) {
+        text += possible.charAt(Math.floor(Math.random() * possible.length))
+    }
+
+    return text
+}

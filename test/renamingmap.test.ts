@@ -21,6 +21,7 @@ import test from "ava"
 
 import {isSorted} from "../src/helpers"
 import {Identifier} from "../src/identifier"
+import {INT32_BOTTOM, INT32_TOP} from "../src/int32"
 import {Ordering} from "../src/ordering"
 import {ExtendedRenamingMap} from "../src/renamingmap/extendedrenamingmap"
 import {generateIdIntervalFactory, idFactory} from "./helpers"
@@ -32,7 +33,7 @@ function generateRenamingMap (firstIdReplicaNumber = -6): ExtendedRenamingMap {
         generateIdIntervalFactory(53, 2, 1, 0)(0),
         generateIdIntervalFactory(53, 2, 1, 2)(5),
     ]
-    return new ExtendedRenamingMap(3, 0, renamedIdIntervals)
+    return new ExtendedRenamingMap(0, 0, renamedIdIntervals)
 }
 
 test("constructor", (t) => {
@@ -169,7 +170,7 @@ test("renameId() of concurrently inserted id such as lastId < id < newLastId", (
         generateIdIntervalFactory(10, -6, 0, 0)(3),
         generateIdIntervalFactory(10, -6, 0, 5)(5),
     ]
-    const renamingMap = new ExtendedRenamingMap(3, 0, renamedIdIntervals)
+    const renamingMap = new ExtendedRenamingMap(0, 0, renamedIdIntervals)
 
     const id = idFactory(10, -6, 0, 6)
     const expectedNewId = idFactory(10, 0, 0, 4, 10, -6, 0, 6)
@@ -345,6 +346,8 @@ test("reverseRenameId() retains order between ids", (t) => {
         idFactory(10, -6, 0, -1),
         idFactory(10, 0, 0, 0),
         idFactory(10, 0, 0, 0, 10, 42, 0, 0),
+        idFactory(10, 0, 0, 1, -60, 4, 0, 0),
+        idFactory(10, 0, 0, 1, 60, 4, 0, 0),
         idFactory(10, 0, 0, 3, 23, 23, 0, 0),
         idFactory(10, 0, 0, 6),
         idFactory(10, 0, 0, 6, -60, 4, 0, 0),
@@ -369,6 +372,64 @@ test("reverseRenameId() retains order between ids", (t) => {
 
     const compareFn = (a: Identifier, b: Identifier): Ordering => a.compareTo(b)
     t.true(isSorted(renamedIds, compareFn), "reverseRenameId() should retain the order between ids")
+})
+
+test("reverseRename(id) retains order between ids with tail < predecessorId", (t) => {
+    /*
+        < -146, 1, 0>[5..5] -> < -146, 0, 92>[0..0],
+        < -146, 1, 0, 5, -185, 2, 48>[0..0] -> < -146, 0, 92>[1, 1]
+    */
+    const renamedIdIntervals = [
+        generateIdIntervalFactory(-146, 1, 0, 5)(5),
+        generateIdIntervalFactory(-146, 1, 0, 5, -185, 2, 48, 0)(0),
+    ]
+    const renamingMap = new ExtendedRenamingMap(0, 92, renamedIdIntervals)
+
+    const ids = [
+        idFactory(-146, 0, 92, 0),
+        idFactory(-146, 0, 92, 0, -154, 1, 556, 0),
+        idFactory(-146, 0, 92, 1),
+    ]
+    const expectedNewIds = [
+        idFactory(-146, 1, 0, 5),
+        idFactory(-146, 1, 0, 5, INT32_BOTTOM, 0, 0, 0, -154, 1, 556, 0),
+        idFactory(-146, 1, 0, 5, -185, 2, 48, 0),
+    ]
+    const actualIds = ids.map((id: Identifier): Identifier => renamingMap.reverseRenameId(id))
+
+    actualIds.forEach((actualNewId: Identifier, index: number) => {
+        const expectedNewId = expectedNewIds[index]
+        t.deepEqual(actualNewId, expectedNewId, "actualNewId = expectedNewId")
+    })
+})
+
+test("reverseRename(id) retains order between ids with closestPredecessorOfSuccessorId < predecessorId", (t) => {
+    /*
+        < -208, 2, 41, -5, 195, 1, 45>[4..4] -> < -208, 0, 0>[0..0],
+        < -208, 2, 41>[-4..0] -> < -208, 0, 0>[1, 5]
+    */
+    const renamedIdIntervals = [
+        generateIdIntervalFactory(-208, 2, 41, -5, 195, 1, 45, 4)(4),
+        generateIdIntervalFactory(-208, 2, 41, -4)(0),
+    ]
+    const renamingMap = new ExtendedRenamingMap(0, 0, renamedIdIntervals)
+
+    const ids = [
+        idFactory(-208, 0, 0, 0),
+        idFactory(-208, 0, 0, 0, -197, 2, 223, 0),
+        idFactory(-208, 0, 0, 1),
+    ]
+    const expectedNewIds = [
+        idFactory(-208, 2, 41, -5, 195, 1, 45, 4),
+        idFactory(-208, 2, 41, -5, INT32_TOP, 0, 0, 0, -197, 2, 223, 0),
+        idFactory(-208, 2, 41, -4),
+    ]
+    const actualIds = ids.map((id: Identifier): Identifier => renamingMap.reverseRenameId(id))
+
+    actualIds.forEach((actualNewId: Identifier, index: number) => {
+        const expectedNewId = expectedNewIds[index]
+        t.deepEqual(actualNewId, expectedNewId, "actualNewId = expectedNewId")
+    })
 })
 
 test("reverseRenameId(renameId(id)) returns id", (t) => {

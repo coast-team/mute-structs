@@ -27,8 +27,8 @@ import {
 } from "./int32"
 import {Ordering} from "./ordering"
 
-const MIN_TUPLE: IdentifierTuple = new IdentifierTuple(INT32_BOTTOM, 0, 0, 0)
-const MAX_TUPLE: IdentifierTuple = new IdentifierTuple(INT32_TOP, 0, 0, 0)
+export const MIN_TUPLE: IdentifierTuple = new IdentifierTuple(INT32_BOTTOM, 0, 0, 0)
+export const MAX_TUPLE: IdentifierTuple = new IdentifierTuple(INT32_TOP, 0, 0, 0)
 
 export function createBetweenPosition (
     id1: Identifier | null, id2: Identifier | null,
