@@ -162,10 +162,20 @@ export class ExtendedRenamingMap {
 
         if (id.compareTo(this.newFirstId) === Ordering.Less) {
             // closestPredecessorOfNewFirstId < id < newFirstId
+            console.assert(this.newFirstId.compareTo(this.firstId) === Ordering.Less,
+                "Reaching this case should imply that newFirstId < firstId")
+
             const closestPredecessorOfFirstId: Identifier =
                 Identifier.fromBase(this.firstId, this.firstId.lastOffset - 1)
             const [_, end] = id.truncate(1)
-            return closestPredecessorOfFirstId.concat(end)
+
+            if (end.tuples[0].random === this.newRandom) {
+                return end
+            }
+            if (closestPredecessorOfFirstId.compareTo(end) === Ordering.Less) {
+                return closestPredecessorOfFirstId.concat(end)
+            }
+            return id
         }
 
         if (this.newLastId.compareTo(id) === Ordering.Less && id.compareTo(this.lastId) === Ordering.Less) {
