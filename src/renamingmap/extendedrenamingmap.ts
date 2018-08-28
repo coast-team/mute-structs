@@ -129,7 +129,7 @@ export class ExtendedRenamingMap {
         if (this.lastId.compareTo(id) === Ordering.Less) {
             // lastId < id < newLastId
             // Happens if
-            // firstId.equalsBase(lastId) && id.random = firstId.random && lastId.replicaNumber <= id.replicaNumber < 0
+            // firstId.equalsBase(lastId) && id.random = firstId.random && lastId.replicaNumber <= id.replicaNumber
             return this.newLastId.concat(id)
         }
 
@@ -161,7 +161,7 @@ export class ExtendedRenamingMap {
         }
 
         if (id.compareTo(this.newFirstId) === Ordering.Less) {
-            // closestPredecessorOfNewFirstId <= id < newFirstId
+            // closestPredecessorOfNewFirstId < id < newFirstId
             const closestPredecessorOfFirstId: Identifier =
                 Identifier.fromBase(this.firstId, this.firstId.lastOffset - 1)
             const [_, end] = id.truncate(1)

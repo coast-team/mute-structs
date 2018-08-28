@@ -114,10 +114,15 @@ test("renameId() of concurrently inserted id such as newFirstId < id < firstId",
     */
     const renamingMap = generateRenamingMap(6)
 
-    const id = idFactory(10, 6, 0, -1)
-    const expectedNewId = idFactory(10, 0, 0, -1, 10, 6, 0, -1)
-    const actualNewId = renamingMap.renameId(id)
-    t.deepEqual(actualNewId, expectedNewId, "actualId = expectedNewId")
+    const id1 = idFactory(10, 6, 0, -1)
+    const expectedNewId1 = idFactory(10, 0, 0, -1, 10, 6, 0, -1)
+    const actualNewId1 = renamingMap.renameId(id1)
+    t.deepEqual(actualNewId1, expectedNewId1, "actualId = expectedNewId")
+
+    const id2 = idFactory(10, 3, 0, 0)
+    const expectedNewId2 = idFactory(10, 0, 0, -1, 10, 3, 0, 0)
+    const actualNewId2 = renamingMap.renameId(id2)
+    t.deepEqual(actualNewId2, expectedNewId2, "actualId = expectedNewId")
 })
 
 test("renameId() of concurrently inserted id such as firstId < id < lastId", (t) => {
@@ -223,7 +228,7 @@ test("reverseRenameId() of id such as id < firstId < newFirstId", (t) => {
     t.deepEqual(actualNewId2, expectedNewId2, "actualId = expectedNewId")
 })
 
-test("reverseRenameId() of concurrently inserted id such as newFirstId < id < firstId", (t) => {
+test.failing("reverseRenameId() of concurrently inserted id such as newFirstId < id < firstId", (t) => {
     /*
         <10, 6, 0>[0..3] -> <10, 0, 0>[0..3],
         <42, 1, 5>[6..9] -> <10, 0, 0>[4..7],
@@ -232,10 +237,15 @@ test("reverseRenameId() of concurrently inserted id such as newFirstId < id < fi
     */
     const renamingMap = generateRenamingMap(6)
 
-    const id = idFactory(10, 6, 0, -1)
-    const expectedNewId = idFactory(10, 0, 0, -1, 10, 6, 0, -1)
-    const actualNewId = renamingMap.renameId(id)
-    t.deepEqual(actualNewId, expectedNewId, "actualId = expectedNewId")
+    const id1 = idFactory(10, 0, 0, -1, 10, 6, 0, -1)
+    const expectedNewId1 = idFactory(10, 6, 0, -1)
+    const actualNewId1 = renamingMap.reverseRenameId(id1)
+    t.deepEqual(actualNewId1, expectedNewId1, "actualId = expectedNewId")
+
+    const id2 = idFactory(10, 0, 0, -1, 10, 3, 0, 0)
+    const expectedNewId2 = idFactory(10, 3, 0, 0)
+    const actualNewId2 = renamingMap.renameId(id2)
+    t.deepEqual(actualNewId2, expectedNewId2, "actualId = expectedNewId")
 })
 
 test("reverseRenameId() of id such as firstId < predecessorId < id < successorId < lastId", (t) => {
