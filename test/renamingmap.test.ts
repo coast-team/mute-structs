@@ -352,7 +352,7 @@ test("renameId() retains order between ids", (t) => {
     t.true(isSorted(renamedIds, compareFn), "renameId() should retain the order between ids")
 })
 
-test("reverseRenameId() retains order between ids", (t) => {
+test.failing("reverseRenameId() retains order between ids", (t) => {
     /*
         <10, -6, 0>[0..3] -> <10, 0, 0>[0..3],
         <42, 1, 5>[6..9] -> <10, 0, 0>[4..7],
@@ -384,6 +384,7 @@ test("reverseRenameId() retains order between ids", (t) => {
         idFactory(10, 0, 0, 9),
         idFactory(33, 33, 0, 0),
         idFactory(42, 42, 0, 0),
+        idFactory(53, 2, 1, 5, -60, 4, 0, 0),
         idFactory(53, 2, 1, 6),
         idFactory(57, 57, 0, 0),
     ]
