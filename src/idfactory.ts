@@ -27,7 +27,12 @@ import {
 } from "./int32"
 import {Ordering} from "./ordering"
 
+export const INT32_BOTTOM_USER = INT32_BOTTOM + 1
+export const INT32_TOP_USER = INT32_TOP - 1
+
 export const MIN_TUPLE: IdentifierTuple = new IdentifierTuple(INT32_BOTTOM, 0, 0, 0)
+export const MIN_TUPLE_USER: IdentifierTuple = new IdentifierTuple(INT32_BOTTOM_USER, 0, 0, 0)
+export const MAX_TUPLE_USER: IdentifierTuple = new IdentifierTuple(INT32_TOP_USER, 0, 0, 0)
 export const MAX_TUPLE: IdentifierTuple = new IdentifierTuple(INT32_TOP, 0, 0, 0)
 
 export function createBetweenPosition (
@@ -39,8 +44,8 @@ export function createBetweenPosition (
     console.assert(isInt32(replicaNumber), "replicaNumber is an int32")
     console.assert(isInt32(clock), "clock is an int32")
 
-    const seq1 = infiniteSequence(tuplesOf(id1), MIN_TUPLE)
-    const seq2 = infiniteSequence(tuplesOf(id2), MAX_TUPLE)
+    const seq1 = infiniteSequence(tuplesOf(id1), MIN_TUPLE_USER)
+    const seq2 = infiniteSequence(tuplesOf(id2), MAX_TUPLE_USER)
     const tuples: IdentifierTuple[] = []
 
     let tuple1 = seq1.next().value
