@@ -21,6 +21,7 @@ import test from "ava"
 
 import {isSorted} from "../src/helpers"
 import {Identifier} from "../src/identifier"
+import {INT32_BOTTOM_USER} from "../src/idfactory"
 import {INT32_BOTTOM, INT32_TOP} from "../src/int32"
 import {Ordering} from "../src/ordering"
 import {ExtendedRenamingMap} from "../src/renamingmap/extendedrenamingmap"
@@ -308,12 +309,12 @@ test("reverseRenameId() of concurrently inserted id such as  newLastId < id < la
     const renamingMap = generateRenamingMap()
 
     const id1 = idFactory(33, 33, 0, 0)
-    const expectedNewId1 = idFactory(53, 2, 1, 5, 33, 33, 0, 0)
+    const expectedNewId1 = idFactory(53, 2, 1, 5, INT32_BOTTOM, 0, 0, 0, 33, 33, 0, 0)
     const actualNewId1 = renamingMap.reverseRenameId(id1)
     t.deepEqual(actualNewId1, expectedNewId1, "actualId = expectedNewId")
 
     const id2 = idFactory(42, 42, 0, 0)
-    const expectedNewId2 = idFactory(53, 2, 1, 5, 42, 42, 0, 0)
+    const expectedNewId2 = idFactory(53, 2, 1, 5, INT32_BOTTOM, 0, 0, 0, 42, 42, 0, 0)
     const actualNewId2 = renamingMap.reverseRenameId(id2)
     t.deepEqual(actualNewId2, expectedNewId2, "actualId = expectedNewId")
 })
@@ -352,7 +353,7 @@ test("renameId() retains order between ids", (t) => {
     t.true(isSorted(renamedIds, compareFn), "renameId() should retain the order between ids")
 })
 
-test.failing("reverseRenameId() retains order between ids", (t) => {
+test("reverseRenameId() retains order between ids", (t) => {
     /*
         <10, -6, 0>[0..3] -> <10, 0, 0>[0..3],
         <42, 1, 5>[6..9] -> <10, 0, 0>[4..7],
@@ -384,6 +385,7 @@ test.failing("reverseRenameId() retains order between ids", (t) => {
         idFactory(10, 0, 0, 9),
         idFactory(33, 33, 0, 0),
         idFactory(42, 42, 0, 0),
+        idFactory(53, 2, 1, 5, INT32_BOTTOM_USER, 0, 0, 0, -60, 4, 0, 0),
         idFactory(53, 2, 1, 5, -60, 4, 0, 0),
         idFactory(53, 2, 1, 6),
         idFactory(57, 57, 0, 0),

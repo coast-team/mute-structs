@@ -180,7 +180,11 @@ export class ExtendedRenamingMap {
 
         if (this.newLastId.compareTo(id) === Ordering.Less && id.compareTo(this.lastId) === Ordering.Less) {
             // newLastId < id < lastId < lastId + id
-            return this.lastId.concat(id)
+            return new Identifier([
+                ...this.lastId.tuples,
+                MIN_TUPLE,
+                ...id.tuples,
+            ])
         }
 
         // newFirstId < id < newLastId
