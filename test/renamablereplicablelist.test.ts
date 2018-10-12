@@ -200,6 +200,31 @@ test.failing("concurrent-renames", (t) => {
     t.is(docA.getCurrentEpoch(), docB.getCurrentEpoch(), "docA.getCurrentEpoch() = docB.getCurrentEpoch()")
 })
 
+test.failing("concurrent-renames-with-causally-dependent-insert-on-losing-side", (t) => {
+    const replicaNumberA = 1
+    const docA = new RenamableReplicableList(replicaNumberA)
+    const replicaNumberB = 2
+    const docB = new RenamableReplicableList(replicaNumberB)
+
+    const event1 = docA.insertLocal(0, "helo")
+    event1.execute(docB)
+    const event2 = docB.insertLocal(4, " wor")
+    event2.execute(docA)
+    const event3 = docA.insertLocal(8, "ld")
+    event3.execute(docB)
+
+    const event4 = docA.renameLocal()
+    const event5 = docB.renameLocal()
+    const event6 = docB.insertLocal(2, "l")
+
+    event4.execute(docB)
+    event5.execute(docA)
+    event6.execute(docA)
+
+    t.is(docA.digest(), docB.digest(), "docA.digest() = docB.digest()")
+    t.is(docA.getCurrentEpoch(), docB.getCurrentEpoch(), "docA.getCurrentEpoch() = docB.getCurrentEpoch()")
+})
+
 test("sanity-check", (t) => {
     // Looking for bugs in renameId() and reverseRenameId()
     // Try to generate a counter-example here
