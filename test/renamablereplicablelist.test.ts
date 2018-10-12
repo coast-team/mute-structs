@@ -225,6 +225,44 @@ test.failing("concurrent-renames-with-causally-dependent-insert-on-losing-side",
     t.is(docA.getCurrentEpoch(), docB.getCurrentEpoch(), "docA.getCurrentEpoch() = docB.getCurrentEpoch()")
 })
 
+test.failing("concurrent-renames-on-different-states-with-causally-dependent-insert-delete", (t) => {
+    const replicaNumberA = 1
+    const docA = new RenamableReplicableList(replicaNumberA)
+    const replicaNumberB = 2
+    const docB = new RenamableReplicableList(replicaNumberB)
+
+    const event1 = docA.insertLocal(0, "heelo")
+    event1.execute(docB)
+    const event2 = docB.insertLocal(5, " wwr")
+    event2.execute(docA)
+    const event3 = docA.insertLocal(9, "ld")
+    event3.execute(docB)
+
+    // Concurrent operations from A
+    const event4 = docA.delLocal(1, 1)
+    const event5 = docA.insertLocal(7, "o")
+    const event6 = docA.renameLocal()
+
+    // Concurrent operations from B
+    const event7 = docB.renameLocal()
+    const event8 = docB.insertLocal(4, "l")
+    const event9 = docB.delLocal(8, 8)
+
+    event4.execute(docB)
+    event5.execute(docB)
+    event6.execute(docB)
+    event7.execute(docA)
+    event8.execute(docA)
+    event9.execute(docA)
+
+    const expectedStr = "hello world"
+
+    t.is(docA.digest(), docB.digest(), "docA.digest() = docB.digest()")
+    t.is(docA.getCurrentEpoch(), docB.getCurrentEpoch(), "docA.getCurrentEpoch() = docB.getCurrentEpoch()")
+    t.is(docA.str, expectedStr, `docA.str = ${expectedStr}`)
+    t.is(docB.str, expectedStr, `docB.str = ${expectedStr}`)
+})
+
 test("sanity-check", (t) => {
     // Looking for bugs in renameId() and reverseRenameId()
     // Try to generate a counter-example here
