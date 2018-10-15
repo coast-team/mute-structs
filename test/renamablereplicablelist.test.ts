@@ -177,7 +177,7 @@ test("delete-then-concurrent-rename", (t) => {
     t.is(docB.getNbBlocks(), expectedNbBlocks, `docB.getNbBlocks() = ${expectedNbBlocks}`)
 })
 
-test.failing("concurrent-renames", (t) => {
+test("concurrent-renames", (t) => {
     const replicaNumberA = 1
     const docA = new RenamableReplicableList(replicaNumberA)
     const replicaNumberB = 2
@@ -200,7 +200,7 @@ test.failing("concurrent-renames", (t) => {
     t.is(docA.getCurrentEpoch(), docB.getCurrentEpoch(), "docA.getCurrentEpoch() = docB.getCurrentEpoch()")
 })
 
-test.failing("concurrent-renames-with-causally-dependent-insert-on-losing-side", (t) => {
+test("concurrent-renames-with-causally-dependent-insert-on-losing-side", (t) => {
     const replicaNumberA = 1
     const docA = new RenamableReplicableList(replicaNumberA)
     const replicaNumberB = 2
@@ -225,7 +225,7 @@ test.failing("concurrent-renames-with-causally-dependent-insert-on-losing-side",
     t.is(docA.getCurrentEpoch(), docB.getCurrentEpoch(), "docA.getCurrentEpoch() = docB.getCurrentEpoch()")
 })
 
-test.failing("concurrent-renames-on-different-states-with-causally-dependent-insert-delete", (t) => {
+test("concurrent-renames-on-different-states-with-causally-dependent-insert-delete", (t) => {
     const replicaNumberA = 1
     const docA = new RenamableReplicableList(replicaNumberA)
     const replicaNumberB = 2
