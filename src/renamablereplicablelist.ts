@@ -159,14 +159,39 @@ export class RenamableReplicableList {
         this.epochsStore.addEpoch(newEpoch)
         this.renamingMapStore.add(newEpoch, renamingMap)
 
-        // TODO: Compare currentEpoch and newEpoch to determine if currentEpoch should change
-        this.currentEpoch = newEpoch
+        const newEpochFullId = this.epochsStore.getEpochFullId(newEpoch)
+        const currentEpochFullId = this.epochsStore.getEpochFullId(this.currentEpoch)
 
-        // TODO: Determine the "path" between the previous currentEpoch and the new one
+        const previousEpoch = this.currentEpoch
+
+        if (currentEpochFullId < newEpochFullId) {
+            this.currentEpoch = newEpoch
+        }
+
+        const [epochsToRevert, epochsToApply] = this.epochsStore.getPathBetweenEpochs(previousEpoch, this.currentEpoch)
+
         const idsToRename: Identifier[] = this.list.toList()
             .map((idInterval: IdentifierInterval): Identifier[] => idInterval.toIds())
             .reduce(flatten)
-        const newIdIntervals = computeNewIdIntervals(this.currentExtendedRenamingMap, idsToRename)
+
+        const revertFns: Array<(id: Identifier) =>  Identifier> =
+            epochsToRevert.map((epoch: Epoch) => {
+                const rmap = this.renamingMapStore.getExtendedRenamingMap(epoch.id) as ExtendedRenamingMap
+                return (id: Identifier) => rmap.reverseRenameId(id)
+            })
+
+        const applyFns: Array<(id: Identifier) =>  Identifier> =
+            epochsToApply.map((epoch: Epoch) => {
+                const rmap = this.renamingMapStore.getExtendedRenamingMap(epoch.id) as ExtendedRenamingMap
+                return (id: Identifier) => rmap.renameId(id)
+            })
+
+        const transformationFns = revertFns.concat(applyFns)
+
+        const renamedIds =
+            transformationFns.reduce((ids, transformationFn) => ids.map((id) => transformationFn(id)), idsToRename)
+
+        const newIdIntervals = IdentifierInterval.mergeIdsIntoIntervals(renamedIds)
 
         const newList = new LogootSRopes(this.replicaNumber, this.clock)
         const insertOps = generateInsertOps(newIdIntervals, this.str)
