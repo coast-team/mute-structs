@@ -64,4 +64,15 @@ export class EpochStore {
         }
         return pathEpoch.reverse()
     }
+
+    getPathBetweenEpochs (from: Epoch, to: Epoch): [Epoch[], Epoch[]] {
+        const fromPath = this.getEpochPath(from)
+        const toPath = this.getEpochPath(to)
+
+        let i = 0
+        while (i < fromPath.length && i < toPath.length && fromPath[i] === toPath[i]) {
+            i++
+        }
+        return [fromPath.slice(i).reverse(), toPath.slice(i)]
+    }
 }
