@@ -54,4 +54,14 @@ export class EpochStore {
         }
         return parentEpochFullId.concat(epoch.id.replicaNumber, epoch.id.epochNumber)
     }
+
+    getEpochPath (epoch: Epoch): Epoch[] {
+        const pathEpoch: Epoch[] = []
+        let currentEpoch: Epoch | undefined = epoch
+        while (currentEpoch !== undefined) {
+            pathEpoch.push(currentEpoch)
+            currentEpoch = currentEpoch.parentId !== undefined ? this.getEpoch(currentEpoch.parentId) : undefined
+        }
+        return pathEpoch.reverse()
+    }
 }
