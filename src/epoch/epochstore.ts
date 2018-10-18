@@ -70,7 +70,7 @@ export class EpochStore {
         const toPath = this.getEpochPath(to)
 
         let i = 0
-        while (i < fromPath.length && i < toPath.length && fromPath[i] === toPath[i]) {
+        while (i < fromPath.length && i < toPath.length && fromPath[i].equals(toPath[i])) {
             i++
         }
         return [fromPath.slice(i).reverse(), toPath.slice(i)]
