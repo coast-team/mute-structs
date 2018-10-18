@@ -162,17 +162,29 @@ export class RenamableReplicableList {
         const newEpochFullId = this.epochsStore.getEpochFullId(newEpoch)
         const currentEpochFullId = this.epochsStore.getEpochFullId(this.currentEpoch)
 
-        const previousEpoch = this.currentEpoch
-
         if (currentEpochFullId < newEpochFullId) {
+            const previousEpoch = this.currentEpoch
             this.currentEpoch = newEpoch
+
+            const idsToRename: Identifier[] = this.list.toList()
+                .map((idInterval: IdentifierInterval): Identifier[] => idInterval.toIds())
+                .reduce(flatten)
+
+            const newIds = this.renameIdsFromEpochToCurrent(idsToRename, previousEpoch)
+            const newIdIntervals = IdentifierInterval.mergeIdsIntoIntervals(newIds)
+
+            const newList = new LogootSRopes(this.replicaNumber, this.clock)
+            const insertOps = generateInsertOps(newIdIntervals, this.str)
+            insertOps.forEach((insertOp: LogootSAdd) => {
+                insertOp.execute(newList)
+            })
+            this.list = newList
         }
+    }
 
-        const [epochsToRevert, epochsToApply] = this.epochsStore.getPathBetweenEpochs(previousEpoch, this.currentEpoch)
-
-        const idsToRename: Identifier[] = this.list.toList()
-            .map((idInterval: IdentifierInterval): Identifier[] => idInterval.toIds())
-            .reduce(flatten)
+    renameIdsFromEpochToCurrent (idsToRename: Identifier[], fromEpoch: Epoch): Identifier[] {
+        const [epochsToRevert, epochsToApply] =
+            this.epochsStore.getPathBetweenEpochs(fromEpoch, this.currentEpoch)
 
         const revertFns: Array<(id: Identifier) =>  Identifier> =
             epochsToRevert.map((epoch: Epoch) => {
@@ -189,16 +201,9 @@ export class RenamableReplicableList {
         const transformationFns = revertFns.concat(applyFns)
 
         const renamedIds =
-            transformationFns.reduce((ids, transformationFn) => ids.map((id) => transformationFn(id)), idsToRename)
+            transformationFns.reduce((ids, transformationFn) => ids.map(transformationFn), idsToRename)
 
-        const newIdIntervals = IdentifierInterval.mergeIdsIntoIntervals(renamedIds)
-
-        const newList = new LogootSRopes(this.replicaNumber, this.clock)
-        const insertOps = generateInsertOps(newIdIntervals, this.str)
-        insertOps.forEach((insertOp: LogootSAdd) => {
-            insertOp.execute(newList)
-        })
-        this.list = newList
+        return renamedIds
     }
 
     getNbBlocks (): number {
