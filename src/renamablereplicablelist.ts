@@ -101,7 +101,9 @@ export class RenamableReplicableList {
 
     insertRemote (epoch: Epoch, op: LogootSAdd): TextInsert[] {
         if (!epoch.equals(this.currentEpoch)) {
-            const newIdIntervals = computeNewIdIntervals(this.currentExtendedRenamingMap, op.insertedIds)
+            const newIds = this.renameIdsFromEpochToCurrent(op.insertedIds, epoch)
+            const newIdIntervals = IdentifierInterval.mergeIdsIntoIntervals(newIds)
+
             const insertOps = generateInsertOps(newIdIntervals, op.content)
             return insertOps
                 .map((insertOp: LogootSAdd): TextInsert[] => {
