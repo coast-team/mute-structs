@@ -16,20 +16,22 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-export {Dot, isDot} from "./dot"
-export {IdentifierTuple} from "./identifiertuple"
-export {Identifier} from "./identifier"
-export {IdentifierInterval} from "./identifierinterval"
+export { Dot, isDot } from "./dot"
+export { IdentifierTuple } from "./identifiertuple"
+export { Identifier } from "./identifier"
+export { IdentifierInterval } from "./identifierinterval"
 
-export {LogootSBlock} from "./logootsblock"
-export {LogootSRopes} from "./logootsropes"
-export {RopesNodes} from "./ropesnodes"
+export { LogootSBlock } from "./logootsblock"
+export { LogootSRopes } from "./logootsropes"
+export { RopesNodes } from "./ropesnodes"
 
-export {LogootSDel} from "./operations/delete/logootsdel"
-export {TextDelete} from "./operations/delete/textdelete"
-export {LogootSAdd} from "./operations/insert/logootsadd"
-export {TextInsert} from "./operations/insert/textinsert"
-export {LogootSOperation} from "./operations/logootsoperation"
-export {TextOperation} from "./operations/textoperation"
+export { LogootSDel } from "./operations/delete/logootsdel"
+export { TextDelete } from "./operations/delete/textdelete"
+export { LogootSAdd } from "./operations/insert/logootsadd"
+export { TextInsert } from "./operations/insert/textinsert"
+export { LogootSOperation } from "./operations/logootsoperation"
+export { TextOperation } from "./operations/textoperation"
 
-export {insert, del, occurrences} from "./textutils"
+export { BasicStats, Stats } from "./stats"
+
+export { insert, del, occurrences } from "./textutils"
