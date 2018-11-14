@@ -17,33 +17,67 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import {SafeAny} from "safe-any"
+import { SafeAny } from "safe-any"
 
-import {IdentifierInterval} from "../../identifierinterval"
-import {isInt32} from "../../int32"
-import {LogootSRopes} from "../../logootsropes"
-import {LogootSOperation} from "../logootsoperation"
-import {TextDelete} from "./textdelete"
+import { IdentifierInterval } from "../../identifierinterval"
+import { isInt32 } from "../../int32"
+import { LogootSRopes } from "../../logootsropes"
+import { LogootSOperation } from "../logootsoperation"
+import { TextDelete } from "./textdelete"
 
 const arrayConcat = Array.prototype.concat
+
+class LogootSDelV1 {
+    static fromPlain (o: SafeAny<LogootSDelV1>): LogootSDel | null {
+        if (typeof o === "object" && o !== null) {
+            const plainLid: SafeAny<IdentifierInterval[]> = o.lid
+            if (plainLid instanceof Array && plainLid.length > 0) {
+                let isOk = true
+                let i = 0
+                const lid: IdentifierInterval[] = []
+                while (isOk && i < plainLid.length) {
+                    const idi: IdentifierInterval | null = IdentifierInterval.fromPlain(
+                        plainLid[i],
+                    )
+                    if (idi !== null) {
+                        lid.push(idi)
+                    } else {
+                        isOk = false
+                    }
+                    i++
+                }
+                if (isOk) {
+                    return new LogootSDel(lid, -1)
+                }
+            }
+        }
+        return null
+    }
+
+    readonly lid?: IdentifierInterval[]
+}
 
 /**
  * Represents a LogootSplit delete operation.
  */
 export class LogootSDel extends LogootSOperation {
-
     static fromPlain (o: SafeAny<LogootSDel>): LogootSDel | null {
         if (typeof o === "object" && o !== null) {
             const plainLid: SafeAny<IdentifierInterval[]> = o.lid
             const author = o.author
-            if (plainLid instanceof Array && plainLid.length > 0 &&
-                typeof author === "number" && isInt32(author)) {
-
+            if (
+                plainLid instanceof Array &&
+                plainLid.length > 0 &&
+                typeof author === "number" &&
+                isInt32(author)
+            ) {
                 let isOk = true
                 let i = 0
                 const lid: IdentifierInterval[] = []
                 while (isOk && i < plainLid.length) {
-                    const idi: IdentifierInterval | null = IdentifierInterval.fromPlain(plainLid[i])
+                    const idi: IdentifierInterval | null = IdentifierInterval.fromPlain(
+                        plainLid[i],
+                    )
                     if (idi !== null) {
                         lid.push(idi)
                     } else {
@@ -54,6 +88,10 @@ export class LogootSDel extends LogootSOperation {
                 if (isOk) {
                     return new LogootSDel(lid, author)
                 }
+            } else {
+                // For backward compatibility
+                // Allow to replay and update previous log of operations
+                return LogootSDelV1.fromPlain(o as SafeAny<LogootSDelV1>)
             }
         }
         return null
@@ -77,11 +115,15 @@ export class LogootSDel extends LogootSOperation {
     }
 
     equals (aOther: LogootSDel): boolean {
-        return this.lid.length === aOther.lid.length &&
-            this.lid.every((idInterval: IdentifierInterval, index: number): boolean => {
-                const otherIdInterval: IdentifierInterval = aOther.lid[index]
-                return idInterval.equals(otherIdInterval)
-            })
+        return (
+            this.lid.length === aOther.lid.length &&
+            this.lid.every(
+                (idInterval: IdentifierInterval, index: number): boolean => {
+                    const otherIdInterval: IdentifierInterval = aOther.lid[index]
+                    return idInterval.equals(otherIdInterval)
+                },
+            )
+        )
     }
 
     /**
@@ -90,8 +132,12 @@ export class LogootSDel extends LogootSOperation {
      * @return {TextDelete[]} the list of deletions to be applied on the sequence representing the document content.
      */
     execute (doc: LogootSRopes): TextDelete[] {
-        return arrayConcat.apply([], this.lid.map(
-            (aId: IdentifierInterval): TextDelete[] => doc.delBlock(aId, this.author)))
+        return arrayConcat.apply(
+            [],
+            this.lid.map(
+                (aId: IdentifierInterval): TextDelete[] =>
+                    doc.delBlock(aId, this.author),
+            ),
+        )
     }
-
 }
