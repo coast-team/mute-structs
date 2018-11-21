@@ -11,4 +11,4 @@ deploy:
   on:
     tags: true
     repo: coast-team/mute-structs
-    skip_cleanup: true
+  skip_cleanup: true
