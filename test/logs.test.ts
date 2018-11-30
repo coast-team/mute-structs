@@ -20,7 +20,6 @@
 import test from "ava"
 import {AssertContext} from "ava"
 import * as fs from "fs"
-import {SafeAny} from "safe-any"
 
 import {LogootSRopes} from "../src/logootsropes.js"
 import {LogootSDel} from "../src/operations/delete/logootsdel.js"
@@ -54,7 +53,7 @@ function everyLogsConvergeMacro (t: AssertContext, logFiles: string[], expected:
 
         // Has to set explicitly the type of richLogootSOps
         // so that TypeScript does its job and infers the return type of richLogootSOps.map(...)
-        const richLogootSOps: SafeAny<{richLogootSOps: Array<SafeAny<LogootSOperation>>}> = log.richLogootSOps
+        const richLogootSOps: unknown = log.richLogootSOps
 
         if (richLogootSOps instanceof Array && richLogootSOps.length > 0) {
             let isOk = true
@@ -63,7 +62,7 @@ function everyLogsConvergeMacro (t: AssertContext, logFiles: string[], expected:
             const logootSOps: LogootSOperation[] = []
 
             while (isOk && i < richLogootSOps.length) {
-                const plainLogootSOp: SafeAny<LogootSOperation> = {
+                const plainLogootSOp: unknown = {
                     ...richLogootSOps[i].logootSOp,
                     author: richLogootSOps[i].id,
                 }

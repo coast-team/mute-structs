@@ -19,7 +19,6 @@
 
 import {Identifier} from "./identifier"
 import {IdentifierInterval} from "./identifierinterval"
-import {IdentifierTuple} from "./identifiertuple"
 import {Ordering} from "./ordering"
 
 export const enum IdentifierIteratorResults {

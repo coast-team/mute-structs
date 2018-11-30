@@ -17,15 +17,15 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { SafeAny } from "safe-any"
+import {isObject} from "./data-validation"
+import {isInt32} from "./int32"
 
 export interface Dot {
     readonly replicaNumber: number
     readonly clock: number
 }
 
-export function isDot (dot: SafeAny<Dot>): dot is Dot {
-    return typeof dot === "object" && dot !== null &&
-        typeof dot.replicaNumber === "number" && Number.isInteger(dot.replicaNumber) &&
-        typeof dot.clock === "number" && Number.isInteger(dot.clock)
+export function isDot (dot: unknown): dot is Dot {
+    return isObject<Dot>(dot) &&
+        isInt32(dot.replicaNumber) && isInt32(dot.clock)
 }

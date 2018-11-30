@@ -17,19 +17,16 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import {SafeAny} from "safe-any"
-
+import {isObject} from "./data-validation"
 import {isInt32} from "./int32"
 import {Ordering} from "./ordering"
 
 export class IdentifierTuple {
 
-    static fromPlain (o: SafeAny<IdentifierTuple>): IdentifierTuple | null {
-        if (typeof o === "object" && o !== null
-            && typeof o.random === "number" && isInt32(o.random)
-            && typeof o.replicaNumber === "number" && isInt32(o.replicaNumber)
-            && typeof o.clock === "number" && isInt32(o.clock)
-            && typeof o.offset === "number" && isInt32(o.offset)) {
+    static fromPlain (o: unknown): IdentifierTuple | null {
+        if (isObject<IdentifierTuple>(o) &&
+            isInt32(o.random) && isInt32(o.replicaNumber) &&
+            isInt32(o.clock) && isInt32(o.offset)) {
 
             return new IdentifierTuple(o.random, o.replicaNumber, o.clock, o.offset)
         }

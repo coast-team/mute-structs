@@ -17,8 +17,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import {SafeAny} from "safe-any"
-
+import {isObject} from "./data-validation"
 import {Dot} from "./dot"
 import {Identifier} from "./identifier"
 import {isInt32} from "./int32"
@@ -29,12 +28,10 @@ import {Ordering} from "./ordering"
  */
 export class IdentifierInterval {
 
-    static fromPlain (o: SafeAny<IdentifierInterval>): IdentifierInterval | null {
-        if (typeof o === "object" && o !== null) {
-            const idBegin: Identifier | null = Identifier.fromPlain(o.idBegin)
-            if (idBegin !== null && typeof o.end === "number" &&
-                isInt32(o.end) && idBegin.lastOffset <= o.end) {
-
+    static fromPlain (o: unknown): IdentifierInterval | null {
+        if (isObject<IdentifierInterval>(o) && isInt32(o.end)) {
+            const idBegin = Identifier.fromPlain(o.idBegin)
+            if (idBegin !== null && idBegin.lastOffset <= o.end) {
                 return new IdentifierInterval(idBegin, o.end)
             }
         }

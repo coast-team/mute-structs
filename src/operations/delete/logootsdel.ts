@@ -17,8 +17,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { SafeAny } from "safe-any"
-
+import {isObject} from "../../data-validation"
 import { IdentifierInterval } from "../../identifierinterval"
 import { isInt32 } from "../../int32"
 import { LogootSRopes } from "../../logootsropes"
@@ -28,27 +27,24 @@ import { TextDelete } from "./textdelete"
 const arrayConcat = Array.prototype.concat
 
 class LogootSDelV1 {
-    static fromPlain (o: SafeAny<LogootSDelV1>): LogootSDel | null {
-        if (typeof o === "object" && o !== null) {
-            const plainLid: SafeAny<IdentifierInterval[]> = o.lid
-            if (plainLid instanceof Array && plainLid.length > 0) {
-                let isOk = true
-                let i = 0
-                const lid: IdentifierInterval[] = []
-                while (isOk && i < plainLid.length) {
-                    const idi: IdentifierInterval | null = IdentifierInterval.fromPlain(
-                        plainLid[i],
-                    )
-                    if (idi !== null) {
-                        lid.push(idi)
-                    } else {
-                        isOk = false
-                    }
-                    i++
+    static fromPlain (o: unknown): LogootSDel | null {
+        if (isObject<LogootSDelV1>(o) &&
+            Array.isArray(o.lid) && o.lid.length > 0) {
+
+            let isOk = true
+            let i = 0
+            const lid: IdentifierInterval[] = []
+            while (isOk && i < o.lid.length) {
+                const idi = IdentifierInterval.fromPlain( o.lid[i])
+                if (idi !== null) {
+                    lid.push(idi)
+                } else {
+                    isOk = false
                 }
-                if (isOk) {
-                    return new LogootSDel(lid, -1)
-                }
+                i++
+            }
+            if (isOk) {
+                return new LogootSDel(lid, -1)
             }
         }
         return null
@@ -61,40 +57,29 @@ class LogootSDelV1 {
  * Represents a LogootSplit delete operation.
  */
 export class LogootSDel extends LogootSOperation {
-    static fromPlain (o: SafeAny<LogootSDel>): LogootSDel | null {
-        if (typeof o === "object" && o !== null) {
-            const plainLid: SafeAny<IdentifierInterval[]> = o.lid
-            const author = o.author
-            if (
-                plainLid instanceof Array &&
-                plainLid.length > 0 &&
-                typeof author === "number" &&
-                isInt32(author)
-            ) {
-                let isOk = true
-                let i = 0
-                const lid: IdentifierInterval[] = []
-                while (isOk && i < plainLid.length) {
-                    const idi: IdentifierInterval | null = IdentifierInterval.fromPlain(
-                        plainLid[i],
-                    )
-                    if (idi !== null) {
-                        lid.push(idi)
-                    } else {
-                        isOk = false
-                    }
-                    i++
+    static fromPlain (o: unknown): LogootSDel | null {
+        if (isObject<LogootSDel>(o) &&
+            Array.isArray(o.lid) && o.lid.length > 0 && isInt32(o.author)) {
+
+            let isOk = true
+            let i = 0
+            const lid: IdentifierInterval[] = []
+            while (isOk && i < o.lid.length) {
+                const idi = IdentifierInterval.fromPlain(o.lid[i])
+                if (idi !== null) {
+                    lid.push(idi)
+                } else {
+                    isOk = false
                 }
-                if (isOk) {
-                    return new LogootSDel(lid, author)
-                }
-            } else {
-                // For backward compatibility
-                // Allow to replay and update previous log of operations
-                return LogootSDelV1.fromPlain(o as SafeAny<LogootSDelV1>)
+                i++
+            }
+            if (isOk) {
+                return new LogootSDel(lid, o.author)
             }
         }
-        return null
+        // For backward compatibility
+        // Allow to replay and update previous log of operations
+        return LogootSDelV1.fromPlain(o)
     }
 
     readonly lid: IdentifierInterval[]

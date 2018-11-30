@@ -17,8 +17,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import {SafeAny} from "safe-any"
-
+import {isObject} from "./data-validation"
 import {Dot} from "./dot"
 import {IdentifierTuple} from "./identifiertuple"
 import {INT32_BOTTOM, INT32_TOP, isInt32} from "./int32"
@@ -26,16 +25,15 @@ import {Ordering} from "./ordering"
 
 export class Identifier {
 
-    static fromPlain (o: SafeAny<Identifier>): Identifier | null {
-        if (typeof o === "object" && o !== null) {
-            const plainTuples = o.tuples
-            if (plainTuples instanceof Array && plainTuples.length > 0) {
-                const tuples = plainTuples.map(IdentifierTuple.fromPlain)
-                    .filter((v): v is IdentifierTuple => v !== null)
+    static fromPlain (o: unknown): Identifier | null {
+        if (isObject<Identifier>(o) &&
+            Array.isArray(o.tuples) && o.tuples.length > 0) {
 
-                if (plainTuples.length === tuples.length) {
-                    return new Identifier(tuples)
-                }
+            const tuples = o.tuples.map(IdentifierTuple.fromPlain)
+                .filter((v): v is IdentifierTuple => v !== null)
+
+            if (o.tuples.length === tuples.length) {
+                return new Identifier(tuples)
             }
         }
         return null

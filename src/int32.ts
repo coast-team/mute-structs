@@ -24,8 +24,9 @@ export const INT32_TOP = 0x7fffffff
  * @param n
  * @return Is `n' an int32?
  */
-export function isInt32 (n: number): boolean {
-    return Number.isSafeInteger(n) && INT32_BOTTOM <= n && n <= INT32_TOP
+export function isInt32 (n: unknown): n is number {
+    return typeof n === "number" &&
+        Number.isSafeInteger(n) && INT32_BOTTOM <= n && n <= INT32_TOP
 }
 
 /**
