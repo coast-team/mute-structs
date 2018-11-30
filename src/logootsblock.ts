@@ -17,25 +17,20 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import {SafeAny} from "safe-any"
-
+import {isObject} from "./data-validation"
 import {IdentifierInterval} from "./identifierinterval"
 import {isInt32} from "./int32"
 
 export class LogootSBlock {
 
-    static fromPlain (o: SafeAny<LogootSBlock>): LogootSBlock | null {
-        if (typeof o === "object" && o !== null) {
-            const plainId: SafeAny<IdentifierInterval> = o.idInterval
-            const nbElt: SafeAny<number> = o.nbElement
-            if (plainId instanceof Object && typeof nbElt === "number" &&
-                isInt32(nbElt) && nbElt >= 0) {
+    static fromPlain (o: unknown): LogootSBlock | null {
+        if (isObject<LogootSBlock>(o) &&
+            isInt32(o.nbElement) && o.nbElement >= 0) {
 
-                const id = IdentifierInterval.fromPlain(plainId)
-                if (id !== null) {
-                    return new LogootSBlock(id, nbElt)
-                        // FIXME: Always not mine?
-                }
+            const id = IdentifierInterval.fromPlain(o.idInterval)
+            if (id !== null) {
+                return new LogootSBlock(id, o.nbElement)
+                    // FIXME: Always not mine?
             }
         }
         return null

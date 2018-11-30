@@ -17,23 +17,20 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import {SafeAny} from "safe-any"
-
+import {isObject} from "../../data-validation"
 import {Identifier} from "../../identifier"
 import {LogootSRopes} from "../../logootsropes"
 import {LogootSOperation} from "../logootsoperation"
 import {TextInsert} from "./textinsert"
 
 class LogootSAddV1 {
-    static fromPlain (o: SafeAny<LogootSAddV1>): LogootSAdd | null {
-        if (typeof o === "object" && o !== null) {
-            const l: SafeAny<string> = o.l
-            if (typeof l === "string" && l.length > 0) {
-                const plainId: SafeAny<Identifier> = o.id
-                const id: Identifier | null = Identifier.fromPlain(plainId)
-                if (id !== null) {
-                    return new LogootSAdd(id, l)
-                }
+    static fromPlain (o: unknown): LogootSAdd | null {
+        if (isObject<LogootSAddV1>(o) &&
+            typeof o.l === "string" && o.l.length > 0) {
+
+            const id = Identifier.fromPlain(o.id)
+            if (id !== null) {
+                return new LogootSAdd(id, o.l)
             }
         }
         return null
@@ -48,22 +45,18 @@ class LogootSAddV1 {
  */
 export class LogootSAdd extends LogootSOperation {
 
-    static fromPlain (o: SafeAny<LogootSAdd>): LogootSAdd | null {
-        if (typeof o === "object" && o !== null) {
-            const content: SafeAny<string> = o.content
-            if (typeof content === "string" && content.length > 0) {
-                const plainId: SafeAny<Identifier> = o.id
-                const id: Identifier | null = Identifier.fromPlain(plainId)
-                if (id !== null) {
-                    return new LogootSAdd(id, content)
-                }
-            } else {
-                // For backward compatibility
-                // Allow to replay and update previous log of operations
-                return LogootSAddV1.fromPlain(o as SafeAny<LogootSAddV1>)
+    static fromPlain (o: unknown): LogootSAdd | null {
+        if (isObject<LogootSAdd>(o) &&
+            typeof o.content === "string" && o.content.length > 0) {
+
+            const id = Identifier.fromPlain(o.id)
+            if (id !== null) {
+                return new LogootSAdd(id, o.content)
             }
         }
-        return null
+        // For backward compatibility
+        // Allow to replay and update previous log of operations
+        return LogootSAddV1.fromPlain(o)
     }
 
     readonly id: Identifier

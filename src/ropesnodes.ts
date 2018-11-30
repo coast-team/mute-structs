@@ -17,8 +17,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import {SafeAny} from "safe-any"
-
+import {isObject} from "./data-validation"
 import {Identifier} from "./identifier"
 import {IdentifierInterval} from "./identifierinterval"
 import {isInt32} from "./int32"
@@ -50,29 +49,18 @@ function subtreeSizeOf (aNode: RopesNodes | null): number {
 
 export class RopesNodes {
 
-    static fromPlain (o: SafeAny<RopesNodes>): RopesNodes | null {
-        if (typeof o === "object" && o !== null) {
-            const plainBlock: SafeAny<LogootSBlock> = o.block
-            const actualBegin: SafeAny<number> = o.actualBegin
-            const length: SafeAny<number> = o.length
-            const plainLeft: SafeAny<RopesNodes> = o.left
-            const plainRight: SafeAny<RopesNodes> = o.right
+    static fromPlain (o: unknown): RopesNodes | null {
+        if (isObject<RopesNodes>(o) &&
+            isInt32(o.actualBegin) && isInt32(o.length) && o.length >= 0) {
 
-            if (plainBlock instanceof Object &&
-                typeof actualBegin === "number" && isInt32(actualBegin) &&
-                typeof length === "number" && isInt32(length) &&
-                length >= 0) {
+            const block = LogootSBlock.fromPlain(o.block)
+            if (block !== null &&
+                block.idInterval.begin <= o.actualBegin &&
+                (block.idInterval.end - block.idInterval.begin) >= o.length - 1) {
 
-                const block: LogootSBlock | null = LogootSBlock.fromPlain(plainBlock)
-                const right: RopesNodes | null = RopesNodes.fromPlain(plainRight)
-                const left: RopesNodes | null = RopesNodes.fromPlain(plainLeft)
-
-                if (block !== null &&
-                    block.idInterval.begin <= actualBegin &&
-                    (block.idInterval.end - block.idInterval.begin) >= length - 1) {
-
-                    return new RopesNodes(block, actualBegin, length, left, right)
-                }
+                const right = RopesNodes.fromPlain(o.right)
+                const left = RopesNodes.fromPlain(o.left)
+                return new RopesNodes(block, o.actualBegin, o.length, left, right)
             }
         }
         return null

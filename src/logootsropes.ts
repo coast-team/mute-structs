@@ -17,8 +17,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { SafeAny } from "safe-any"
-
+import {isObject} from "./data-validation"
 import { Identifier } from "./identifier"
 import { IdentifierInterval } from "./identifierinterval"
 import * as IDFactory from "./idfactory"
@@ -50,19 +49,16 @@ export class LogootSRopes {
         return new LogootSRopes(0, 0)
     }
 
-    static fromPlain (replica: number, clock: number, o: SafeAny<LogootSRopes>): LogootSRopes | null {
+    static fromPlain (replica: number, clock: number, o: unknown): LogootSRopes | null {
         console.assert(isInt32(replica), "replica ∈ int32")
         console.assert(isInt32(clock), "clock ∈ int32")
 
-        if (typeof o === "object" && o !== null) {
-            const str = o.str
-            const plainRoot = o.root
+        if (isObject<LogootSRopes>(o) &&
+            typeof o.str === "string") {
 
-            if (typeof str === "string") {
-                const root: RopesNodes | null = RopesNodes.fromPlain(plainRoot)
-                if (root !== null && str.length === root.sizeNodeAndChildren) {
-                    return new LogootSRopes(replica, clock, root, str)
-                }
+            const root = RopesNodes.fromPlain(o.root)
+            if (root !== null && o.str.length === root.sizeNodeAndChildren) {
+                return new LogootSRopes(replica, clock, root, o.str)
             }
         }
         return null

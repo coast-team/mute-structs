@@ -18,9 +18,7 @@
 */
 
 import test from "ava"
-import {AssertContext} from "ava"
 import * as fs from "fs"
-import {SafeAny} from "safe-any"
 
 import {LogootSRopes} from "../src/logootsropes.js"
 
