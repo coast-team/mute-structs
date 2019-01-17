@@ -57,7 +57,9 @@ export class LogootSRopes {
             typeof o.str === "string") {
 
             const root = RopesNodes.fromPlain(o.root)
-            if (root !== null && o.str.length === root.sizeNodeAndChildren) {
+            if ((root !== null && o.str.length === root.sizeNodeAndChildren) ||
+                (root === null && o.str.length === 0)) {
+
                 return new LogootSRopes(replica, clock, root, o.str)
             }
         }
