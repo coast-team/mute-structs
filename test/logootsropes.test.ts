@@ -19,7 +19,29 @@
 
 import test from "ava"
 import {LogootSRopes} from "../src/logootsropes.js"
-import * as TextUtils from "../src/textutils.js"
+
+test("fromPlain-empty-doc", (t) => {
+    const replicaNumber = 1
+    const clock = 42
+
+    const plainEmptyDoc = {
+        replicaNumber,
+        clock,
+        root: null,
+        str: "",
+    }
+
+    const doc = LogootSRopes.fromPlain(replicaNumber, clock, plainEmptyDoc)
+
+    if (doc === null) {
+        t.fail("The doc should have been correctly instantiated")
+    } else {
+        t.is(doc.replicaNumber, replicaNumber)
+        t.is(doc.clock, clock)
+        t.is(doc.root, null)
+        t.is(doc.str, "")
+    }
+})
 
 test("basic-insert-del-string", (t) => {
     const replicaNumberA = 1
