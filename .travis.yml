@@ -8,9 +8,6 @@ node_js:
   - 'node'
   - '9'
   - '8'
-branches:
-  except:
-    - /^v\d+\.\d+\.\d+$/
 script:
   - npm test
 jobs:
