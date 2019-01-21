@@ -6,6 +6,10 @@
   "module": "dist/module/index.js",
   "es2015": "dist/es2015/index.js",
   "types": "dist/types/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/coast-team/mute-structs"
@@ -50,5 +54,5 @@
     "Victorien Elvinger <victorien.elvinger@loria.fr>",
     "Gerald Oster <gerald.oster@loria.fr>"
   ],
-  "license": "GPL-3.0"
+  "license": "AGPL-3.0"
 }
