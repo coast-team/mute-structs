@@ -1,14 +1,13 @@
 {
   "compilerOptions": {
-    "allowJs": false,
-    "declaration": true,
-    "lib": ["es6"],
-    "module": "commonjs",
-    "noEmitHelpers": false,
-    "sourceMap": true,
+    "lib": ["es2017"],
+    "downlevelIteration": true,
     "target": "ES5",
+    "sourceMap": true,
+    "stripInternal": true,
+    "resolveJsonModule": true,
 
-    "outDir": "./dist",
+    "outDir": "./.tested",
 
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
@@ -16,5 +15,6 @@
     "strict": true,
 
     "pretty": true
-  }
+  },
+  "include": ["src/**/*.ts", "test/**/*.ts"]
 }

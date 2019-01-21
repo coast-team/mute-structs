@@ -19,9 +19,12 @@ pids
 tslint.json
 
 # Dev artifacts
-/src
+.tested
+commitlint.config.js
+plantuml
 test
-tsconfig.json
+trees
+tsconfig.*
 *.map
 
 # Pack artifacts
