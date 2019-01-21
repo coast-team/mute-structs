@@ -13,7 +13,7 @@ script:
 jobs:
   include:
     - stage: release
-      if: tag = true
+      if: tag IS present
       node_js: 'node'
       script: npm run build
       deploy:
