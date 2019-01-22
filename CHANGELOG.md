@@ -2,6 +2,61 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.0.0-0"></a>
+# [2.0.0-0](https://github.com/coast-team/mute-structs/compare/v1.0.0...v2.0.0-0) (2019-01-22)
+
+
+### Bug Fixes
+
+* **epoch:** Fix assertion on parentId ([d5fa2d0](https://github.com/coast-team/mute-structs/commit/d5fa2d0))
+* **epoch:** Remove import of SafeAny ([ae59b6b](https://github.com/coast-team/mute-structs/commit/ae59b6b))
+* **epochstore:** Use equals() instead of === to compare epochs ([3099e11](https://github.com/coast-team/mute-structs/commit/3099e11))
+* **extendedrenamingmap:** Support new cases and add corresponding tests ([3025e06](https://github.com/coast-team/mute-structs/commit/3025e06))
+* **helpers:** Fix findPredecessor() ([14bd97d](https://github.com/coast-team/mute-structs/commit/14bd97d))
+* **renamingmap:** Fix reverseRenameId() in the scenario highlighted in 461e0eb ([fa859b7](https://github.com/coast-team/mute-structs/commit/fa859b7))
+* **renamingmap:** Fix reverseRenameId() of concurrently inserted id such as newFirstId < id < firstId ([c734de0](https://github.com/coast-team/mute-structs/commit/c734de0))
+
+
+### Features
+
+* **epoch:** Add equals() ([cd9f8c6](https://github.com/coast-team/mute-structs/commit/cd9f8c6))
+* **epochstore:** Add getEpochPath() to retrieve the full path of an epoch ([e722283](https://github.com/coast-team/mute-structs/commit/e722283))
+* **epochstore:** Add getPathBetweenEpochs() to retrieve the path between two given epochs ([e74c589](https://github.com/coast-team/mute-structs/commit/e74c589))
+* **extendedrenamingmap:** Handle additional tricky cases in renameId() and reverseRenameId() ([1a7b53d](https://github.com/coast-team/mute-structs/commit/1a7b53d))
+* **extendedrenamingmap:** Implement reverseRenameId() ([20888cc](https://github.com/coast-team/mute-structs/commit/20888cc))
+* **helpers:** Add findPredecessor() ([445ead5](https://github.com/coast-team/mute-structs/commit/445ead5))
+* **helpers:** Add flatten() ([ef11bad](https://github.com/coast-team/mute-structs/commit/ef11bad))
+* **helpers:** Add isSorted() ([04f4e94](https://github.com/coast-team/mute-structs/commit/04f4e94))
+* **identifier:** Add concat() ([12bb1e0](https://github.com/coast-team/mute-structs/commit/12bb1e0))
+* **identifierinterval:** Add mergeIdsIntoIntervals() ([90e3138](https://github.com/coast-team/mute-structs/commit/90e3138))
+* **identifierinterval:** Add toIds() ([5ae27dd](https://github.com/coast-team/mute-structs/commit/5ae27dd))
+* **idfactory:** Add createAtPosition() ([9c4a61a](https://github.com/coast-team/mute-structs/commit/9c4a61a))
+* **idfactory:** Retain INT32_BOTTOM/TOP for renaming purpose, introduce INT32_BOTTOM/TOP_USER ([492328c](https://github.com/coast-team/mute-structs/commit/492328c))
+* **logootsadd:** Add insertedIds() ([31cc63f](https://github.com/coast-team/mute-structs/commit/31cc63f))
+* **logootsropes:** Remove ability to prepend using insertLocal() ([979170b](https://github.com/coast-team/mute-structs/commit/979170b))
+* **renamablereplicablelist:** Add delLocal() and corresponding RenamableLogootSDel ([7584deb](https://github.com/coast-team/mute-structs/commit/7584deb))
+* **renamablereplicablelist:** Add insertLocal() and corresponding RenamableLogootSAdd ([e52521c](https://github.com/coast-team/mute-structs/commit/e52521c))
+* **renamablereplicablelist:** Add insertRemote() ([fc6b9d8](https://github.com/coast-team/mute-structs/commit/fc6b9d8))
+* **renamablereplicablelist:** Implement delRemote() ([a7acacc](https://github.com/coast-team/mute-structs/commit/a7acacc))
+* **renamablereplicablelist:** Implement renameRemote() ([0d0c537](https://github.com/coast-team/mute-structs/commit/0d0c537))
+* **renamablereplicablelist:** Implement renameRemote() to revert and apply correct renaming operations ([6ddf0ae](https://github.com/coast-team/mute-structs/commit/6ddf0ae))
+* **renamablereplicablelist:** Store observed renamingMaps ([ed217d6](https://github.com/coast-team/mute-structs/commit/ed217d6))
+* **renamablereplicablelist:** Use renameIdsFromEpochToCurrent() to properly rename deleted ids if needed ([73ce5b3](https://github.com/coast-team/mute-structs/commit/73ce5b3))
+* **renamablereplicablelist:** Use renameIdsFromEpochToCurrent() to properly rename new ids if needed ([747ffef](https://github.com/coast-team/mute-structs/commit/747ffef))
+* Add Epoch ([9523bbc](https://github.com/coast-team/mute-structs/commit/9523bbc))
+* Add EpochId ([3a4757d](https://github.com/coast-team/mute-structs/commit/3a4757d))
+* Add EpochStore ([63dd210](https://github.com/coast-team/mute-structs/commit/63dd210))
+* Add RenamableListOperation ([58e78fd](https://github.com/coast-team/mute-structs/commit/58e78fd))
+* Add RenamableLogootSOperation ([44c8b7e](https://github.com/coast-team/mute-structs/commit/44c8b7e))
+* Add RenamableReplicableList ([33c71cb](https://github.com/coast-team/mute-structs/commit/33c71cb))
+* Add renaming operation LogootSRename ([30eb882](https://github.com/coast-team/mute-structs/commit/30eb882))
+* Add RenamingMap ([14ef3c8](https://github.com/coast-team/mute-structs/commit/14ef3c8))
+* Add RenamingMap ([8ea767d](https://github.com/coast-team/mute-structs/commit/8ea767d))
+* Add RenamingMapStore ([6b72596](https://github.com/coast-team/mute-structs/commit/6b72596))
+* **ropesnodes:** Add mkNodeAt() ([fb203a4](https://github.com/coast-team/mute-structs/commit/fb203a4))
+
+
+
 <a name="1.0.0"></a>
 # [1.0.0](https://github.com/coast-team/mute-structs/compare/v0.5.8...v1.0.0) (2019-01-21)
 
