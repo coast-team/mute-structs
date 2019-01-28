@@ -32,6 +32,16 @@ export { TextInsert } from "./operations/insert/textinsert"
 export { LogootSOperation } from "./operations/logootsoperation"
 export { TextOperation } from "./operations/textoperation"
 
+export { Epoch } from "./epoch/epoch"
+export { EpochId } from "./epoch/epochid"
+export { RenamableReplicableList } from "./renamablereplicablelist"
+
+export { RenamableLogootSDel } from "./operations/delete/renamablelogootsdel"
+export { RenamableLogootSAdd } from "./operations/insert/renamablelogootsadd"
+export { LogootSRename } from "./operations/rename/logootsrename"
+export { RenamableListOperation } from "./operations/renamablelistoperation"
+export { RenamableLogootSOperation } from "./operations/renamablelogootsoperation"
+
 export { BasicStats, Stats } from "./stats"
 
 export { insert, del, occurrences } from "./textutils"
