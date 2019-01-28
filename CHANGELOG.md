@@ -2,6 +2,35 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.0.0-1"></a>
+# [2.0.0-1](https://github.com/coast-team/mute-structs/compare/v2.0.0-0...v2.0.0-1) (2019-01-28)
+
+
+### Code Refactoring
+
+* **renamablereplicablelist:** impose usage of a factory ([04ab821](https://github.com/coast-team/mute-structs/commit/04ab821))
+
+
+### Features
+
+* export several new types ([593c96e](https://github.com/coast-team/mute-structs/commit/593c96e))
+* **data-validation:** add isArrayFromMap() ([50b5345](https://github.com/coast-team/mute-structs/commit/50b5345))
+* **epoch:** add fromPlain() ([1afa238](https://github.com/coast-team/mute-structs/commit/1afa238))
+* **epochid:** add fromPlain() ([f038ff9](https://github.com/coast-team/mute-structs/commit/f038ff9))
+* **epochstore:** add fromPlain() ([00aa21c](https://github.com/coast-team/mute-structs/commit/00aa21c))
+* **logootsropes:** change signature of fromPlain() ([391becf](https://github.com/coast-team/mute-structs/commit/391becf))
+* **renamablereplicablelist:** add fromPlain() ([ce47db0](https://github.com/coast-team/mute-structs/commit/ce47db0))
+* **renamingmap:** add fromPlain() ([4b7b961](https://github.com/coast-team/mute-structs/commit/4b7b961))
+* **renamingmapstore:** add fromPlain() ([b3ca2df](https://github.com/coast-team/mute-structs/commit/b3ca2df))
+
+
+### BREAKING CHANGES
+
+* **renamablereplicablelist:** the constructor is now private
+* **logootsropes:** remove parameters replicaNumber and clock
+
+
+
 <a name="2.0.0-0"></a>
 # [2.0.0-0](https://github.com/coast-team/mute-structs/compare/v1.0.0...v2.0.0-0) (2019-01-22)
 
