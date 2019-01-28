@@ -17,9 +17,28 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import {IdentifierInterval} from "../identifierinterval"
+import { isObject } from "../data-validation"
+import { IdentifierInterval } from "../identifierinterval"
+import { isInt32 } from "../int32"
 
 export class RenamingMap {
+
+    static fromPlain (o: unknown): RenamingMap | null {
+        if (isObject<RenamingMap>(o) &&
+            isInt32(o.replicaNumber) && isInt32(o.clock) &&
+            Array.isArray(o.renamedIdIntervals) &&
+            o.renamedIdIntervals.length > 0) {
+
+            const renamedIdIntervals = o.renamedIdIntervals
+                .map(IdentifierInterval.fromPlain)
+                .filter((v): v is IdentifierInterval => v !== null)
+
+            if (o.renamedIdIntervals.length === renamedIdIntervals.length) {
+                return new RenamingMap(o.replicaNumber, o.clock, renamedIdIntervals)
+            }
+        }
+        return null
+    }
 
     readonly replicaNumber: number
     readonly clock: number
