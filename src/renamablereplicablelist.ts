@@ -17,6 +17,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+import { isObject } from "./data-validation"
 import { Epoch} from "./epoch/epoch"
 import { EpochId } from "./epoch/epochid"
 import { EpochStore } from "./epoch/epochstore"
@@ -56,6 +57,13 @@ function generateInsertOps (idIntervals: IdentifierInterval[], str: string): Log
         })
 }
 
+export interface RenamableReplicableListJSON {
+    readonly epochsStore: EpochStore
+    readonly renamingMapStore: RenamingMapStore
+    readonly list: LogootSRopes
+    readonly currentEpoch: Epoch
+}
+
 export class RenamableReplicableList {
 
     static create (replicaNumber = 0, clock = 0): RenamableReplicableList {
@@ -66,6 +74,23 @@ export class RenamableReplicableList {
         const renamingMapStore = new RenamingMapStore()
 
         return new RenamableReplicableList(list, currentEpoch, epochsStore, renamingMapStore)
+    }
+
+    static fromPlain (o: unknown): RenamableReplicableList | null {
+        if (isObject<RenamableReplicableListJSON>(o)) {
+
+            const list = LogootSRopes.fromPlain(o.list)
+            const epochsStore = EpochStore.fromPlain(o.epochsStore)
+            const renamingMapStore = RenamingMapStore.fromPlain(o.renamingMapStore)
+            const currentEpoch = Epoch.fromPlain(o.currentEpoch)
+
+            if (list !== null && epochsStore !== null &&
+                renamingMapStore !== null && currentEpoch !== null) {
+
+                return new RenamableReplicableList(list, currentEpoch, epochsStore, renamingMapStore)
+            }
+        }
+        return null
     }
 
     readonly epochsStore: EpochStore
