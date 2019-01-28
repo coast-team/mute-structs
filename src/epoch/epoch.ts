@@ -16,9 +16,25 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-import {EpochId} from "./epochid"
+
+import { isObject } from "../data-validation"
+import { EpochId } from "./epochid"
 
 export class Epoch {
+
+    static fromPlain (o: unknown): Epoch | null {
+        if (isObject<Epoch>(o)) {
+            const id = EpochId.fromPlain(o.id)
+            const parentId = EpochId.fromPlain(o.parentId)
+
+            if (id !== null && id.epochNumber === 0 && parentId === null) {
+                return new Epoch(id)
+            } else if (id !== null && id.epochNumber !== 0 && parentId !== null) {
+                return new Epoch(id, parentId)
+            }
+        }
+        return null
+    }
 
     readonly id: EpochId
     readonly parentId?: EpochId
