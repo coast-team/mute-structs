@@ -18,6 +18,7 @@
 */
 
 import test from "ava"
+import { AssertContext } from "ava"
 
 import {flatten, isSorted} from "../src/helpers.js"
 import {Identifier} from "../src/identifier"
@@ -50,6 +51,20 @@ export function generateRenamableReplicableList (): RenamableReplicableList {
     }
     return doc
 }
+
+test("renamableReplicableList-from-plain-factory", (t: AssertContext) => {
+    const expectedRenamableReplicableList = generateRenamableReplicableList()
+
+    const serialisation = JSON.stringify(expectedRenamableReplicableList)
+    const deserialisation = JSON.parse(serialisation)
+
+    const actualRenamableReplicableList = RenamableReplicableList.fromPlain(deserialisation)
+    if (actualRenamableReplicableList === null) {
+        t.fail("The RenamableReplicableList should have been correctly instantiated")
+    } else {
+        t.deepEqual(actualRenamableReplicableList, expectedRenamableReplicableList)
+    }
+})
 
 test("basic-insert-del-string", (t) => {
     const replicaNumberA = 1
