@@ -31,7 +31,7 @@ test("fromPlain-empty-doc", (t) => {
         str: "",
     }
 
-    const doc = LogootSRopes.fromPlain(replicaNumber, clock, plainEmptyDoc)
+    const doc = LogootSRopes.fromPlain(plainEmptyDoc)
 
     if (doc === null) {
         t.fail("The doc should have been correctly instantiated")

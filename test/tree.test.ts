@@ -27,7 +27,7 @@ function getLogootSRopesFromTree (file: string): LogootSRopes | null {
     const tree = JSON.parse(data)
 
     if (tree !== null && typeof tree === "object") {
-        return LogootSRopes.fromPlain(0, 0, tree)
+        return LogootSRopes.fromPlain(tree)
     }
     return null
 }
@@ -41,9 +41,6 @@ test.failing("non-convergent-balanced-trees-different-digests", (t) => {
     ]
 
     files.forEach((file) => {
-        const data = fs.readFileSync(file, "utf8")
-        const tree = JSON.parse(data)
-
         const doc: LogootSRopes | null = getLogootSRopesFromTree(file)
 
         if (doc !== null) {

@@ -49,18 +49,18 @@ export class LogootSRopes {
         return new LogootSRopes(0, 0)
     }
 
-    static fromPlain (replica: number, clock: number, o: unknown): LogootSRopes | null {
-        console.assert(isInt32(replica), "replica ∈ int32")
-        console.assert(isInt32(clock), "clock ∈ int32")
+    static fromPlain (o: unknown): LogootSRopes | null {
 
         if (isObject<LogootSRopes>(o) &&
+            isInt32(o.replicaNumber) &&
+            isInt32(o.clock) &&
             typeof o.str === "string") {
 
             const root = RopesNodes.fromPlain(o.root)
             if ((root !== null && o.str.length === root.sizeNodeAndChildren) ||
                 (root === null && o.str.length === 0)) {
 
-                return new LogootSRopes(replica, clock, root, o.str)
+                return new LogootSRopes(o.replicaNumber, o.clock, root, o.str)
             }
         }
         return null
