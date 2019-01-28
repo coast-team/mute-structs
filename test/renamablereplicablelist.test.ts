@@ -31,7 +31,7 @@ import {generateStr} from "./helpers.js"
 export function generateRenamableReplicableList (): RenamableReplicableList {
     const replicaNumber = 1
     const clock = 0
-    const doc = new RenamableReplicableList(replicaNumber, clock)
+    const doc = RenamableReplicableList.create(replicaNumber, clock)
 
     const performRandomInsertsFn = (n: number) => {
         for (let i = 0; i < n; i ++) {
@@ -53,9 +53,9 @@ export function generateRenamableReplicableList (): RenamableReplicableList {
 
 test("basic-insert-del-string", (t) => {
     const replicaNumberA = 1
-    const docA = new RenamableReplicableList(replicaNumberA)
+    const docA = RenamableReplicableList.create(replicaNumberA)
     const replicaNumberB = 2
-    const docB = new RenamableReplicableList(replicaNumberB)
+    const docB = RenamableReplicableList.create(replicaNumberB)
 
     const event1 = docA.insertLocal(0, "hello world")
     const event2 = docA.delLocal(6, 9)
@@ -70,7 +70,7 @@ test("basic-insert-del-string", (t) => {
 test("local-rename", (t) => {
     const expectedStr = "hello world"
     const replicaNumberA = 1
-    const docA = new RenamableReplicableList(replicaNumberA)
+    const docA = RenamableReplicableList.create(replicaNumberA)
 
     docA.insertLocal(0, "helod")
     docA.delLocal(4, 5)
@@ -85,9 +85,9 @@ test("local-rename", (t) => {
 
 test("basic-rename", (t) => {
     const replicaNumberA = 1
-    const docA = new RenamableReplicableList(replicaNumberA)
+    const docA = RenamableReplicableList.create(replicaNumberA)
     const replicaNumberB = 2
-    const docB = new RenamableReplicableList(replicaNumberB)
+    const docB = RenamableReplicableList.create(replicaNumberB)
 
     const event1 = docA.insertLocal(0, "helo")
     event1.execute(docB)
@@ -106,9 +106,9 @@ test("basic-rename", (t) => {
 
 test("rename-then-concurrent-insert", (t) => {
     const replicaNumberA = 1
-    const docA = new RenamableReplicableList(replicaNumberA)
+    const docA = RenamableReplicableList.create(replicaNumberA)
     const replicaNumberB = 2
-    const docB = new RenamableReplicableList(replicaNumberB)
+    const docB = RenamableReplicableList.create(replicaNumberB)
 
     const event1 = docA.insertLocal(0, "helo")
     event1.execute(docB)
@@ -130,9 +130,9 @@ test("rename-then-concurrent-insert", (t) => {
 
 test("insert-then-concurrent-rename", (t) => {
     const replicaNumberA = 1
-    const docA = new RenamableReplicableList(replicaNumberA)
+    const docA = RenamableReplicableList.create(replicaNumberA)
     const replicaNumberB = 2
-    const docB = new RenamableReplicableList(replicaNumberB)
+    const docB = RenamableReplicableList.create(replicaNumberB)
 
     const event1 = docA.insertLocal(0, "helo")
     event1.execute(docB)
@@ -154,9 +154,9 @@ test("insert-then-concurrent-rename", (t) => {
 
 test("rename-then-concurrent-delete", (t) => {
     const replicaNumberA = 1
-    const docA = new RenamableReplicableList(replicaNumberA)
+    const docA = RenamableReplicableList.create(replicaNumberA)
     const replicaNumberB = 2
-    const docB = new RenamableReplicableList(replicaNumberB)
+    const docB = RenamableReplicableList.create(replicaNumberB)
 
     const event1 = docA.insertLocal(0, "helllo")
     event1.execute(docB)
@@ -178,9 +178,9 @@ test("rename-then-concurrent-delete", (t) => {
 
 test("delete-then-concurrent-rename", (t) => {
     const replicaNumberA = 1
-    const docA = new RenamableReplicableList(replicaNumberA)
+    const docA = RenamableReplicableList.create(replicaNumberA)
     const replicaNumberB = 2
-    const docB = new RenamableReplicableList(replicaNumberB)
+    const docB = RenamableReplicableList.create(replicaNumberB)
 
     const event1 = docA.insertLocal(0, "helllo")
     event1.execute(docB)
@@ -202,9 +202,9 @@ test("delete-then-concurrent-rename", (t) => {
 
 test("concurrent-renames", (t) => {
     const replicaNumberA = 1
-    const docA = new RenamableReplicableList(replicaNumberA)
+    const docA = RenamableReplicableList.create(replicaNumberA)
     const replicaNumberB = 2
-    const docB = new RenamableReplicableList(replicaNumberB)
+    const docB = RenamableReplicableList.create(replicaNumberB)
 
     const event1 = docA.insertLocal(0, "hello")
     event1.execute(docB)
@@ -225,9 +225,9 @@ test("concurrent-renames", (t) => {
 
 test("concurrent-renames-with-causally-dependent-insert-on-losing-side", (t) => {
     const replicaNumberA = 1
-    const docA = new RenamableReplicableList(replicaNumberA)
+    const docA = RenamableReplicableList.create(replicaNumberA)
     const replicaNumberB = 2
-    const docB = new RenamableReplicableList(replicaNumberB)
+    const docB = RenamableReplicableList.create(replicaNumberB)
 
     const event1 = docA.insertLocal(0, "helo")
     event1.execute(docB)
@@ -250,9 +250,9 @@ test("concurrent-renames-with-causally-dependent-insert-on-losing-side", (t) => 
 
 test("concurrent-renames-on-different-states-with-causally-dependent-insert-delete", (t) => {
     const replicaNumberA = 1
-    const docA = new RenamableReplicableList(replicaNumberA)
+    const docA = RenamableReplicableList.create(replicaNumberA)
     const replicaNumberB = 2
-    const docB = new RenamableReplicableList(replicaNumberB)
+    const docB = RenamableReplicableList.create(replicaNumberB)
 
     const event1 = docA.insertLocal(0, "heelo")
     event1.execute(docB)
@@ -290,9 +290,9 @@ test("sanity-check", (t) => {
     // Looking for bugs in renameId() and reverseRenameId()
     // Try to generate a counter-example here
     const replicaNumberA = 1
-    const docA = new RenamableReplicableList(replicaNumberA)
+    const docA = RenamableReplicableList.create(replicaNumberA)
     const replicaNumberB = 2
-    const docB = new RenamableReplicableList(replicaNumberB)
+    const docB = RenamableReplicableList.create(replicaNumberB)
 
     const compareFn = (id1: Identifier, id2: Identifier): Ordering => id1.compareTo(id2)
 

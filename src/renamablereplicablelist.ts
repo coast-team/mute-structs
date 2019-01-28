@@ -17,25 +17,25 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import {Epoch} from "./epoch/epoch"
-import {EpochId} from "./epoch/epochid"
-import {EpochStore} from "./epoch/epochstore"
-import {flatten} from "./helpers"
-import {Identifier} from "./identifier"
-import {IdentifierInterval} from "./identifierinterval"
-import {createAtPosition} from "./idfactory"
-import {LogootSRopes} from "./logootsropes"
-import {LogootSDel} from "./operations/delete/logootsdel"
-import {RenamableLogootSDel} from "./operations/delete/renamablelogootsdel"
-import {TextDelete} from "./operations/delete/textdelete"
-import {LogootSAdd} from "./operations/insert/logootsadd"
-import {RenamableLogootSAdd} from "./operations/insert/renamablelogootsadd"
-import {TextInsert} from "./operations/insert/textinsert"
-import {LogootSRename} from "./operations/rename/logootsrename"
-import {ExtendedRenamingMap} from "./renamingmap/extendedrenamingmap"
-import {RenamingMap} from "./renamingmap/renamingmap"
-import {RenamingMapStore} from "./renamingmap/renamingmapstore"
-import {mkNodeAt, RopesNodes} from "./ropesnodes"
+import { Epoch} from "./epoch/epoch"
+import { EpochId } from "./epoch/epochid"
+import { EpochStore } from "./epoch/epochstore"
+import { flatten } from "./helpers"
+import { Identifier } from "./identifier"
+import { IdentifierInterval } from "./identifierinterval"
+import { createAtPosition } from "./idfactory"
+import { LogootSRopes } from "./logootsropes"
+import { LogootSDel } from "./operations/delete/logootsdel"
+import { RenamableLogootSDel } from "./operations/delete/renamablelogootsdel"
+import { TextDelete } from "./operations/delete/textdelete"
+import { LogootSAdd } from "./operations/insert/logootsadd"
+import { RenamableLogootSAdd } from "./operations/insert/renamablelogootsadd"
+import { TextInsert } from "./operations/insert/textinsert"
+import { LogootSRename } from "./operations/rename/logootsrename"
+import { ExtendedRenamingMap } from "./renamingmap/extendedrenamingmap"
+import { RenamingMap } from "./renamingmap/renamingmap"
+import { RenamingMapStore } from "./renamingmap/renamingmapstore"
+import { mkNodeAt, RopesNodes } from "./ropesnodes"
 
 function computeNewIdIntervals (
     extendedRenamingMap: ExtendedRenamingMap,
@@ -58,17 +58,29 @@ function generateInsertOps (idIntervals: IdentifierInterval[], str: string): Log
 
 export class RenamableReplicableList {
 
+    static create (replicaNumber = 0, clock = 0): RenamableReplicableList {
+        const list = new LogootSRopes(replicaNumber, clock)
+
+        const currentEpoch = new Epoch(new EpochId(0, 0))
+        const epochsStore = new EpochStore(currentEpoch)
+        const renamingMapStore = new RenamingMapStore()
+
+        return new RenamableReplicableList(list, currentEpoch, epochsStore, renamingMapStore)
+    }
+
     readonly epochsStore: EpochStore
     readonly renamingMapStore: RenamingMapStore
     private list: LogootSRopes
     private currentEpoch: Epoch
 
-    constructor (replicaNumber = 0, clock = 0, root: RopesNodes | null = null, str = "") {
-        this.list = new LogootSRopes(replicaNumber, clock, root, str)
+    private constructor (
+        list: LogootSRopes, currentEpoch: Epoch,
+        epochsStore: EpochStore, renamingMapStore: RenamingMapStore) {
 
-        this.currentEpoch = new Epoch(new EpochId(0, 0))
-        this.epochsStore = new EpochStore(this.currentEpoch)
-        this.renamingMapStore = new RenamingMapStore()
+        this.list = list
+        this.currentEpoch = currentEpoch
+        this.epochsStore = epochsStore
+        this.renamingMapStore = renamingMapStore
     }
 
     get replicaNumber (): number {
