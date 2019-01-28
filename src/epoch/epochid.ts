@@ -17,7 +17,19 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+import { isObject } from "../data-validation"
+import { isInt32 } from "../int32"
+
 export class EpochId {
+
+    static fromPlain (o: unknown): EpochId | null {
+        if (isObject<EpochId>(o) && isInt32(o.replicaNumber) &&
+            isInt32(o.epochNumber)) {
+
+            return new EpochId(o.replicaNumber, o.epochNumber)
+        }
+        return null
+    }
 
     readonly replicaNumber: number
     readonly epochNumber: number
