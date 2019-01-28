@@ -28,6 +28,29 @@ import {Ordering} from "../src/ordering.js"
 import {RenamableReplicableList} from "../src/renamablereplicablelist.js"
 import {generateStr} from "./helpers.js"
 
+export function generateRenamableReplicableList (): RenamableReplicableList {
+    const replicaNumber = 1
+    const clock = 0
+    const doc = new RenamableReplicableList(replicaNumber, clock)
+
+    const performRandomInsertsFn = (n: number) => {
+        for (let i = 0; i < n; i ++) {
+            const str = generateStr(randomInt32(1, 10))
+            const pos = randomInt32(0, doc.str.length)
+
+            doc.insertLocal(pos, str)
+        }
+    }
+
+    doc.insertLocal(0, "Hello world")
+
+    for (let i = 0; i < 10; i++) {
+        performRandomInsertsFn(100)
+        doc.renameLocal()
+    }
+    return doc
+}
+
 test("basic-insert-del-string", (t) => {
     const replicaNumberA = 1
     const docA = new RenamableReplicableList(replicaNumberA)
