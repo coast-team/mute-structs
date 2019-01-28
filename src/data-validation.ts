@@ -23,3 +23,7 @@ export type Unknown <T> = { [k in NonFunctionNames<T>]?: unknown }
  */
 export const isObject = <T> (x: unknown): x is Unknown<T> =>
     typeof x === "object" && x !== null
+
+export function isArrayFromMap (o: unknown): o is [unknown, unknown] {
+    return Array.isArray(o) && o.length === 2
+}
