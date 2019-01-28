@@ -17,10 +17,37 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import {Epoch} from "./epoch"
-import {EpochId} from "./epochid"
+import { isArrayFromMap, isObject } from "../data-validation"
+import { Epoch } from "./epoch"
+import { EpochId } from "./epochid"
+
+export interface EpochStoreJSON {
+    readonly epochs: Array<[string, Epoch]>
+}
 
 export class EpochStore {
+
+    static fromPlain (o: unknown): EpochStore | null {
+        if (isObject<EpochStoreJSON>(o) && Array.isArray(o.epochs) && o.epochs.length > 0) {
+
+            const epochs = o.epochs
+                .filter(isArrayFromMap)
+                .map(([_, v]) => {
+                    return Epoch.fromPlain(v)
+                })
+                .filter((epoch): epoch is Epoch => epoch !== null)
+
+            if (o.epochs.length === epochs.length) {
+                const [origin, ...rest] = epochs
+                const epochStore = new EpochStore(origin)
+                rest.forEach((epoch) => {
+                    epochStore.addEpoch(epoch)
+                })
+                return epochStore
+            }
+        }
+        return null
+    }
 
     private epochs: Map<string, Epoch>
 
@@ -74,5 +101,9 @@ export class EpochStore {
             i++
         }
         return [fromPath.slice(i).reverse(), toPath.slice(i)]
+    }
+
+    toJSON (): EpochStoreJSON {
+        return { epochs: Array.from(this.epochs) }
     }
 }
