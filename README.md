@@ -1,6 +1,6 @@
 # MUTE-structs
 
-[![Build Status](https://travis-ci.org/coast-team/mute-structs.svg?branch=master)](https://travis-ci.org/coast-team/mute-structs)
+[![Build Status](https://travis-ci.org/coast-team/mute-structs.svg?branch=master)](https://travis-ci.org/coast-team/mute-structs) [![Greenkeeper badge](https://badges.greenkeeper.io/coast-team/mute-structs.svg)](https://greenkeeper.io/)
 
 MUTE-structs is a Typescript library that provides an implementation of the
 LogootSplit CRDT algorithm [[André et al., 2013]](#ref-1). It is an optimistic replication
