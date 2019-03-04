@@ -226,7 +226,7 @@ export class LogootSRopes {
                 // node to insert concat the node
                 if (from.left !== null) {
                     const split = from.getIdBegin().minOffsetAfterPrev(
-                        from.left.getIdEnd(), idi.begin)
+                        from.left.max, idi.begin)
                     const l = str.substr(split - idi.begin, str.length)
                     if (l.length > 0) {
                         from.appendBegin(l.length)
@@ -256,7 +256,7 @@ export class LogootSRopes {
                 // concat at end
                 if (from.right !== null) {
                     const split = from.getIdEnd().maxOffsetBeforeNext(
-                        from.right.getIdBegin(), idi.end)
+                        from.right.min, idi.end)
                     const l = str.substr(0, split + 1 - idi.begin)
                     i = i + from.leftSubtreeSize() + from.length
                     if (l.length > 0) {

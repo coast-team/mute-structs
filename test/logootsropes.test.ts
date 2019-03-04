@@ -376,7 +376,7 @@ test("commutative-insert-append-split-5", (t) => {
     t.is(docA.digest(), docB.digest(), "docA.digest() = docB.digest()")
 })
 
-test.failing("commutative-insert-append-split-6", (t) => {
+test("commutative-insert-append-split-6", (t) => {
     const replicaNumberA = 1
     const replicaNumberB = 2
     const replicaNumberC = 3
