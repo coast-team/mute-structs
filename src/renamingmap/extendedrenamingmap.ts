@@ -47,32 +47,31 @@ export class ExtendedRenamingMap {
         this.map = new Map()
         this.newOffsetToOldIdMap = new Map()
 
-        let newOffset = 0
-        renamedIdIntervals
+        const renamedIds = renamedIdIntervals
             .map((idInterval: IdentifierInterval) => idInterval.toIds())
             .reduce(flatten)
-            .forEach((id: Identifier) => {
-                this.renamedIds.push(id)
 
-                if (!this.map.has(id.replicaNumber)) {
-                    this.map.set(id.replicaNumber, new Map())
-                }
-                const clockMap: Map<number, Map<number, number>> =
-                    this.map.get(id.replicaNumber) as Map<number, Map<number, number>>
+        renamedIds.forEach((id: Identifier, index) => {
+            this.renamedIds.push(id)
 
-                if (!clockMap.has(id.clock)) {
-                    clockMap.set(id.clock, new Map())
-                }
+            if (!this.map.has(id.replicaNumber)) {
+                this.map.set(id.replicaNumber, new Map())
+            }
+            const clockMap: Map<number, Map<number, number>> =
+                this.map.get(id.replicaNumber) as Map<number, Map<number, number>>
 
-                const offsetMap: Map<number, number> =
-                    clockMap.get(id.clock) as Map<number, number>
+            if (!clockMap.has(id.clock)) {
+                clockMap.set(id.clock, new Map())
+            }
 
-                offsetMap.set(id.lastOffset, newOffset)
-                this.newOffsetToOldIdMap.set(newOffset, id)
-                newOffset++
-            })
+            const offsetMap: Map<number, number> =
+                clockMap.get(id.clock) as Map<number, number>
 
-        this.maxOffset = newOffset - 1
+            offsetMap.set(id.lastOffset, index)
+            this.newOffsetToOldIdMap.set(index, id)
+        })
+
+        this.maxOffset = this.renamedIds.length - 1
     }
 
     get firstId (): Identifier {
