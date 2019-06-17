@@ -125,13 +125,6 @@ export class ExtendedRenamingMap {
             return closestPredecessorOfNewFirstId.concat(id)
         }
 
-        if (this.lastId.compareTo(id) === Ordering.Less) {
-            // lastId < id < newLastId
-            // Happens if
-            // firstId.equalsBase(lastId) && id.random = firstId.random && lastId.replicaNumber <= id.replicaNumber
-            return this.newLastId.concat(id)
-        }
-
         // The submitted id was not part of the renaming, need to compute a new one
         const compareIds = (a: Identifier, b: Identifier) => a.compareTo(b)
         const predecessorId: Identifier = findPredecessor(this.renamedIds, id, compareIds) as Identifier
