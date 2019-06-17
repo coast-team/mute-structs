@@ -162,6 +162,15 @@ export class ExtendedRenamingMap {
             const [_, end] = id.truncate(1)
 
             if (end.tuples[0].random === this.newRandom) {
+                // This case corresponds to the following scenario:
+                // - end was inserted concurrently to the renaming operation with
+                //      newFirstId < end < firstId
+                // - so with
+                //      newFirst.random = end.random = firstId.random
+                //   and
+                //      newFirst.author < end.author < firstId.author
+                // - id was thus obtained by concatenating closestPredecessorOfNewFirstId + end
+                // To revert the renaming, just need to return end
                 return end
             }
             if (closestPredecessorOfFirstId.compareTo(end) === Ordering.Less) {
@@ -171,7 +180,7 @@ export class ExtendedRenamingMap {
         }
 
         if (this.newLastId.compareTo(id) === Ordering.Less && id.compareTo(this.lastId) === Ordering.Less) {
-            // newLastId < id < lastId < lastId + id
+            // newLastId < id < lastId < lastId + MIN_TUPLE + id
             return new Identifier([
                 ...this.lastId.tuples,
                 MIN_TUPLE,
