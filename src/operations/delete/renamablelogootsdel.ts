@@ -17,6 +17,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+import {isObject} from "../../data-validation"
 import {Epoch} from "../../epoch/epoch"
 import {RenamableReplicableList} from "../../renamablereplicablelist"
 import {RenamableLogootSOperation} from "../renamablelogootsoperation"
@@ -24,6 +25,18 @@ import {TextOperation} from "../textoperation"
 import {LogootSDel} from "./logootsdel"
 
 export class RenamableLogootSDel extends RenamableLogootSOperation<LogootSDel> {
+
+    static fromPlain (o: unknown): RenamableLogootSDel | null {
+        if (isObject<RenamableLogootSDel>(o)) {
+            const op = LogootSDel.fromPlain(o.op)
+            const epoch = Epoch.fromPlain(o.epoch)
+
+            if (op !== null && epoch !== null) {
+                return new RenamableLogootSDel(op, epoch)
+            }
+        }
+        return null
+    }
 
     constructor (op: LogootSDel, epoch: Epoch) {
         super(op, epoch)
