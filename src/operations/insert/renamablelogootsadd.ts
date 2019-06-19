@@ -17,6 +17,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+import {isObject} from "../../data-validation"
 import {Epoch} from "../../epoch/epoch"
 import {RenamableReplicableList} from "../../renamablereplicablelist"
 import {RenamableLogootSOperation} from "../renamablelogootsoperation"
@@ -24,6 +25,18 @@ import {TextOperation} from "../textoperation"
 import {LogootSAdd} from "./logootsadd"
 
 export class RenamableLogootSAdd extends RenamableLogootSOperation<LogootSAdd> {
+
+    static fromPlain (o: unknown): RenamableLogootSAdd | null {
+        if (isObject<RenamableLogootSAdd>(o)) {
+            const op = LogootSAdd.fromPlain(o.op)
+            const epoch = Epoch.fromPlain(o.epoch)
+
+            if (op !== null && epoch !== null) {
+                return new RenamableLogootSAdd(op, epoch)
+            }
+        }
+        return null
+    }
 
     constructor (op: LogootSAdd, epoch: Epoch) {
         super(op, epoch)
