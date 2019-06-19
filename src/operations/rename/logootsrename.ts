@@ -17,8 +17,10 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+import {isObject} from "../../data-validation"
 import {Epoch} from "../../epoch/epoch"
 import {IdentifierInterval} from "../../identifierinterval"
+import {isInt32} from "../../int32"
 import {RenamableReplicableList} from "../../renamablereplicablelist"
 import {RenamableListOperation} from "../renamablelistoperation"
 import {TextOperation} from "../textoperation"
@@ -27,6 +29,23 @@ import {TextOperation} from "../textoperation"
  * Represents a LogootSplit rename operation.
  */
 export class LogootSRename extends RenamableListOperation {
+
+    static fromPlain (o: unknown) {
+        if (isObject<LogootSRename>(o) &&
+            isInt32(o.replicaNumber) && isInt32(o.clock) &&
+            Array.isArray(o.renamedIdIntervals) && o.renamedIdIntervals.length > 0) {
+
+            const renamedIdIntervals = o.renamedIdIntervals.map(IdentifierInterval.fromPlain)
+                .filter((v): v is IdentifierInterval => v !== null)
+            const epoch = Epoch.fromPlain(o.epoch)
+
+            if (epoch !== null &&
+                o.renamedIdIntervals.length === renamedIdIntervals.length) {
+                return new LogootSRename(o.replicaNumber, o.clock, epoch, renamedIdIntervals)
+            }
+        }
+        return null
+    }
 
     readonly replicaNumber: number
     readonly clock: number
