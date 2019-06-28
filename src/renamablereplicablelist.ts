@@ -172,6 +172,7 @@ export class RenamableReplicableList {
 
     renameLocal (): LogootSRename {
         const renamedIdIntervals = this.list.toList()
+        const clock = this.clock
 
         const newEpochNumber = this.currentEpoch.id.epochNumber + 1
         const newEpochId = new EpochId(this.replicaNumber, newEpochNumber)
@@ -180,15 +181,15 @@ export class RenamableReplicableList {
         this.epochsStore.addEpoch(this.currentEpoch)
 
         const newRandom = renamedIdIntervals[0].idBegin.tuples[0].random
-        const newClock = this.clock + 1
-        const renamingMap = new RenamingMap(this.replicaNumber, newClock, renamedIdIntervals)
+        const renamingMap = new RenamingMap(this.replicaNumber, clock, renamedIdIntervals)
         this.renamingMapStore.add(this.currentEpoch, renamingMap)
 
-        const baseId = createAtPosition(this.replicaNumber, newClock, newRandom, 0)
+        const baseId = createAtPosition(this.replicaNumber, clock, newRandom, 0)
         const newRoot = mkNodeAt(baseId, this.str.length)
-        this.list = new LogootSRopes(this.replicaNumber, newClock, newRoot, this.str)
 
-        return new LogootSRename(this.replicaNumber, newClock, this.currentEpoch, renamedIdIntervals)
+        this.list = new LogootSRopes(this.replicaNumber, clock + 1, newRoot, this.str)
+
+        return new LogootSRename(this.replicaNumber, clock, this.currentEpoch, renamedIdIntervals)
     }
 
     renameRemote (replicaNumber: number, clock: number, newEpoch: Epoch,
