@@ -402,3 +402,30 @@ test("sanity-check", (t) => {
     }
 
 })
+
+test("concurrent-renames-on-same-state-twice", (t) => {
+    const replicaNumberA = 1
+    const docA = RenamableReplicableList.create(replicaNumberA)
+    const replicaNumberB = 2
+    const docB = RenamableReplicableList.create(replicaNumberB)
+
+    const firstInsert = docA.insertLocal(0, "Hello world")
+    firstInsert.execute(docB)
+
+    for (let i = 0; i < 2; i++) {
+        for (let j = 0; j < 5; j++) {
+            const insertA = docA.insertLocal(randomInt32(0, docA.str.length), "A")
+            insertA.execute(docB)
+            const insertB = docB.insertLocal(randomInt32(0, docA.str.length), "B")
+            insertB.execute(docA)
+        }
+
+        const renameA = docA.renameLocal()
+        const renameB = docB.renameLocal()
+        renameA.execute(docB)
+        renameB.execute(docA)
+
+        t.is(docA.digest(), docB.digest())
+        t.is(docA.getCurrentEpoch(), docB.getCurrentEpoch(), "docA.getCurrentEpoch() = docB.getCurrentEpoch()")
+    }
+})
