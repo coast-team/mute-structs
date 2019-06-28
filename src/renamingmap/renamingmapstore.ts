@@ -31,7 +31,7 @@ export class RenamingMapStore {
 
     static fromPlain (o: unknown): RenamingMapStore | null {
         if (isObject<RenamingMapStoreJSON>(o) &&
-            Array.isArray(o.renamingMaps) && o.renamingMaps.length > 0) {
+            Array.isArray(o.renamingMaps)) {
 
             const renamingMaps = o.renamingMaps
                 .filter(isArrayFromMap)
