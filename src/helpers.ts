@@ -1,19 +1,18 @@
 import {Ordering} from "./ordering"
 
 export function findPredecessor<T> (list: T[], element: T, compareFn: (a: T, b: T) => Ordering): T | undefined {
-    let predecessor
-    let isOk = true
-    let i = 0
-    while (isOk && i < list.length) {
-        const other = list[i]
+    let l = 0
+    let r = list.length
+    while (l < r) {
+        const m = Math.floor((l + r) / 2)
+        const other = list[m]
         if (compareFn(other, element) === Ordering.Less) {
-            predecessor = other
-            i++
+            l = m + 1
         } else {
-            isOk = false
+            r = m
         }
     }
-    return predecessor
+    return list[l - 1]
 }
 
 export function flatten<T> (acc: T[], current: T[]): T[] {
