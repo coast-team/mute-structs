@@ -38,27 +38,16 @@ function generateRenamingMap (firstIdReplicaNumber = -6): ExtendedRenamingMap {
 }
 
 test("constructor", (t) => {
-    const renamedIdIntervals = [
+    const expectedRenamedIdIntervals = [
         generateIdIntervalFactory(10, -6, 0, -2)(1),
         generateIdIntervalFactory(10, -6, 0, 1, 42, 2, 0, 0)(3),
         generateIdIntervalFactory(10, -6, 0, 2)(3),
     ]
-    const expectedIds = [
-        idFactory(10, -6, 0, -2),
-        idFactory(10, -6, 0, -1),
-        idFactory(10, -6, 0, 0),
-        idFactory(10, -6, 0, 1),
-        idFactory(10, -6, 0, 1, 42, 2, 0, 0),
-        idFactory(10, -6, 0, 1, 42, 2, 0, 1),
-        idFactory(10, -6, 0, 1, 42, 2, 0, 2),
-        idFactory(10, -6, 0, 1, 42, 2, 0, 3),
-        idFactory(10, -6, 0, 2),
-        idFactory(10, -6, 0, 3),
-    ]
 
-    const renamingMap = new ExtendedRenamingMap(1, 1, renamedIdIntervals)
+    const renamingMap = new ExtendedRenamingMap(1, 1, expectedRenamedIdIntervals)
 
-    t.deepEqual(renamingMap.renamedIds, expectedIds, "renamingMap.renamedIds = expectedIds")
+    t.deepEqual(renamingMap.renamedIdIntervals, expectedRenamedIdIntervals,
+        "renamingMap.renamedIdIntervals = expectedRenamedIdIntervals")
 })
 
 test("renameId() of renamed id", (t) => {
