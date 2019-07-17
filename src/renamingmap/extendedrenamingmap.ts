@@ -23,29 +23,6 @@ import {createAtPosition, MAX_TUPLE, MIN_TUPLE} from "../idfactory"
 import {Ordering} from "../ordering"
 import {RenamingMap} from "./renamingmap"
 
-const findPredecessor = (renamedIdIntervals: IdentifierInterval[], id: Identifier): Identifier => {
-    let l = 0
-    let r = renamedIdIntervals.length
-    while (l < r) {
-        const m = Math.floor((l + r) / 2)
-        const other = renamedIdIntervals[m]
-        if (other.idEnd.compareTo(id) === Ordering.Less) {
-            l = m + 1
-        } else if (id.compareTo(other.idBegin) === Ordering.Less) {
-            r = m
-        } else {
-            const offset = id.tuples[other.idBegin.length - 1].offset
-            return Identifier.fromBase(other.idBegin, offset)
-        }
-    }
-    return renamedIdIntervals[l - 1].idEnd
-}
-
-interface BaseAndOffset {
-    base: Identifier
-    offset: number
-}
-
 export class ExtendedRenamingMap {
 
     static fromRenamingMap (renamingMap: RenamingMap): ExtendedRenamingMap {
@@ -58,38 +35,19 @@ export class ExtendedRenamingMap {
     readonly replicaNumber: number
     readonly clock: number
     readonly renamedIdIntervals: IdentifierInterval[]
-    readonly map: Map<number, Map<number, Map<number, number>>>
-    readonly newOffsetToOldIdMap: Map<number, BaseAndOffset>
+    readonly indexes: number[]
     readonly maxOffset: number
 
     constructor (replicaNumber: number, clock: number, renamedIdIntervals: IdentifierInterval[]) {
         this.replicaNumber = replicaNumber
         this.clock = clock
         this.renamedIdIntervals = renamedIdIntervals
-        this.map = new Map()
-        this.newOffsetToOldIdMap = new Map()
+        this.indexes = []
 
         let index = 0
         renamedIdIntervals.forEach((idInterval) => {
-            const id = idInterval.idBegin
-            if (!this.map.has(id.replicaNumber)) {
-                this.map.set(id.replicaNumber, new Map())
-            }
-            const clockMap: Map<number, Map<number, number>> =
-                this.map.get(id.replicaNumber) as Map<number, Map<number, number>>
-
-            if (!clockMap.has(id.clock)) {
-                clockMap.set(id.clock, new Map())
-            }
-
-            const offsetMap: Map<number, number> =
-                clockMap.get(id.clock) as Map<number, number>
-
-            for (let i = idInterval.begin; i <= idInterval.end; i++) {
-                offsetMap.set(i, index)
-                this.newOffsetToOldIdMap.set(index, {base: id, offset: i})
-                index++
-            }
+            this.indexes.push(index)
+            index += idInterval.length
         })
         this.maxOffset = index - 1
     }
@@ -115,23 +73,10 @@ export class ExtendedRenamingMap {
     }
 
     renameId (id: Identifier): Identifier {
-        const replicaNumber = id.replicaNumber
-        const clock = id.clock
-        const offset = id.lastOffset
-
-        if (this.map.has(replicaNumber)) {
-            const clockMap = this.map.get(replicaNumber) as Map<number, Map<number, number>>
-            if (clockMap.has(clock)) {
-                const offsetMap = clockMap.get(clock) as Map<number, number>
-                if (offsetMap.has(offset)) {
-                    const newOffset = offsetMap.get(offset) as number
-                    return createAtPosition(this.replicaNumber, this.clock, this.newRandom, newOffset)
-                }
-            }
-        }
-
-        const minFirstId = this.firstId.compareTo(this.newFirstId) === Ordering.Less ? this.firstId : this.newFirstId
-        const maxLastId = this.lastId.compareTo(this.newLastId) === Ordering.Greater ? this.lastId : this.newLastId
+        const minFirstId = this.firstId.compareTo(this.newFirstId) === Ordering.Less ?
+            this.firstId : this.newFirstId
+        const maxLastId = this.lastId.compareTo(this.newLastId) === Ordering.Greater ?
+            this.lastId : this.newLastId
 
         if (id.compareTo(minFirstId) === Ordering.Less || maxLastId.compareTo(id) === Ordering.Less) {
             return id
@@ -139,23 +84,26 @@ export class ExtendedRenamingMap {
 
         if (id.compareTo(this.firstId) === Ordering.Less) {
             // newFirstId < id < firstId
-            // Happens if id.random = firstId.random && 0 < id.replicaNumber <= firstId.replicaNumber
+            // Happens if id.random = firstId.random && id.replicaNumber < firstId.replicaNumber
             const closestPredecessorOfNewFirstId: Identifier =
                 Identifier.fromBase(this.newFirstId, this.newFirstId.lastOffset - 1)
             return closestPredecessorOfNewFirstId.concat(id)
         }
 
-        // The submitted id was not part of the renaming, need to compute a new one
-        const predecessorId: Identifier = findPredecessor(this.renamedIdIntervals, id)
-        const newPredecessorId = this.renameId(predecessorId)
-
-        return newPredecessorId.concat(id)
+        const [found, index] = this.findIndexOfIdOrPredecessor(id)
+        if (found) {
+            return createAtPosition(this.replicaNumber, this.clock, this.newRandom, index)
+        } else {
+            const newPredecessorId =
+                createAtPosition(this.replicaNumber, this.clock, this.newRandom, index)
+            return newPredecessorId.concat(id)
+        }
     }
 
     reverseRenameId (id: Identifier): Identifier {
         if (this.hasBeenRenamed(id)) {
             // id ∈ renamedIds
-            return this.getOldIdFromIndex(id.lastOffset)
+            return this.findIdFromIndex(id.lastOffset)
         }
 
         const closestPredecessorOfNewFirstId: Identifier =
@@ -163,7 +111,8 @@ export class ExtendedRenamingMap {
 
         const minFirstId = this.firstId.compareTo(closestPredecessorOfNewFirstId) === Ordering.Less ?
             this.firstId : closestPredecessorOfNewFirstId
-        const maxLastId = this.lastId.compareTo(this.newLastId) === Ordering.Greater ? this.lastId : this.newLastId
+        const maxLastId = this.lastId.compareTo(this.newLastId) === Ordering.Greater ?
+            this.lastId : this.newLastId
 
         if (id.compareTo(minFirstId) === Ordering.Less
             || maxLastId.compareTo(id) === Ordering.Less) {
@@ -198,7 +147,9 @@ export class ExtendedRenamingMap {
             return id
         }
 
-        if (this.newLastId.compareTo(id) === Ordering.Less && id.compareTo(this.lastId) === Ordering.Less) {
+        if (this.newLastId.compareTo(id) === Ordering.Less &&
+            id.compareTo(this.lastId) === Ordering.Less) {
+
             // newLastId < id < lastId < lastId + MIN_TUPLE + id
             return new Identifier([
                 ...this.lastId.tuples,
@@ -209,8 +160,8 @@ export class ExtendedRenamingMap {
 
         // newFirstId < id < newLastId
         const [head, tail] = id.truncate(1)
-        const predecessorId = this.getOldIdFromIndex(head.lastOffset)
-        const successorId = this.getOldIdFromIndex(head.lastOffset + 1)
+        const [predecessorId, successorId] =
+            this.findPredecessorAndSuccessorFromIndex(head.lastOffset)
 
         if (tail.compareTo(predecessorId) === Ordering.Less) {
             // tail < predecessorId < predecessorId + MIN_TUPLE + tail < successorId
@@ -233,18 +184,70 @@ export class ExtendedRenamingMap {
         return tail
     }
 
-    getOldIdFromIndex (index: number): Identifier {
-        const baseAndOffset = this.newOffsetToOldIdMap.get(index)
-        if (baseAndOffset === undefined) {
-            throw Error("should not be undefined")
-        } else {
-            const {base, offset} = baseAndOffset
-            return Identifier.fromBase(base, offset)
-        }
-    }
-
     hasBeenRenamed (id: Identifier): boolean {
         return id.equalsBase(this.newFirstId)
             && 0 <= id.lastOffset && id.lastOffset <= this.maxOffset
+    }
+
+    findIndexOfIdOrPredecessor (id: Identifier): [boolean, number] {
+        let l = 0
+        let r = this.renamedIdIntervals.length
+        while (l < r) {
+            const m = Math.floor((l + r) / 2)
+            const other = this.renamedIdIntervals[m]
+            if (other.idEnd.compareTo(id) === Ordering.Less) {
+                l = m + 1
+            } else if (id.compareTo(other.idBegin) === Ordering.Less) {
+                r = m
+            } else {
+                // other.idBegin <= id <= other.idEnd
+                // But could also means that id splits other
+                const offset = id.tuples[other.idBegin.length - 1].offset
+                const diff = offset - other.begin
+                return [other.idBegin.length === id.length, this.indexes[m] + diff]
+            }
+        }
+        // Could not find id in the renamedIdIntervals
+        // Return the predecessor's index in this case
+        if (this.indexes.length <= l) {
+            // lastId < id
+            return [false, this.maxOffset]
+        }
+        return [false, this.indexes[l] - 1]
+    }
+
+    findIdFromIndex (index: number): Identifier {
+        const [idIntervalIndex, offset] = this.findPositionFromIndex(index)
+        const idBegin = this.renamedIdIntervals[idIntervalIndex].idBegin
+        return Identifier.fromBase(idBegin, offset)
+    }
+
+    findPredecessorAndSuccessorFromIndex (index: number): [Identifier, Identifier] {
+        const [predecessorIndex, predecessorOffset] = this.findPositionFromIndex(index)
+        const predecessorIdInterval = this.renamedIdIntervals[predecessorIndex]
+        const predecessorId = Identifier.fromBase(predecessorIdInterval.idBegin, predecessorOffset)
+        const successorId = predecessorOffset !== predecessorIdInterval.end ?
+            Identifier.fromBase(predecessorId, predecessorOffset + 1) :
+            this.renamedIdIntervals[predecessorIndex + 1].idBegin
+        return [predecessorId, successorId]
+    }
+
+    findPositionFromIndex (index: number): [number, number] {
+        let l = 0
+        let r = this.renamedIdIntervals.length
+        while (l <= r) {
+            const m = Math.floor((l + r) / 2)
+            const otherIndex = this.indexes[m]
+            const otherIdInterval = this.renamedIdIntervals[m]
+            if (otherIndex + otherIdInterval.length <= index) {
+                l = m + 1
+            } else if (index < otherIndex) {
+                r = m
+            } else {
+                const offset = index - otherIndex + otherIdInterval.begin
+                return [m, offset]
+            }
+        }
+        throw Error("Should have found the id in the renamedIdIntervals")
     }
 }
