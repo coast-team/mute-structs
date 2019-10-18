@@ -36,15 +36,7 @@ import { LogootSRename } from "./operations/rename/logootsrename"
 import { ExtendedRenamingMap } from "./renamingmap/extendedrenamingmap"
 import { RenamingMap } from "./renamingmap/renamingmap"
 import { RenamingMapStore } from "./renamingmap/renamingmapstore"
-import { mkNodeAt, RopesNodes } from "./ropesnodes"
-
-function computeNewIdIntervals (
-    extendedRenamingMap: ExtendedRenamingMap,
-    idsToRename: Identifier[]): IdentifierInterval[] {
-
-    const newIds = idsToRename.map((id: Identifier) => extendedRenamingMap.renameId(id))
-    return IdentifierInterval.mergeIdsIntoIntervals(newIds)
-}
+import { mkNodeAt } from "./ropesnodes"
 
 function generateInsertOps (idIntervals: IdentifierInterval[], str: string): LogootSAdd[] {
     let currentOffset = 0
@@ -206,12 +198,8 @@ export class RenamableReplicableList {
             const previousEpoch = this.currentEpoch
             this.currentEpoch = newEpoch
 
-            const idsToRename: Identifier[] = this.list.toList()
-                .map((idInterval: IdentifierInterval): Identifier[] => idInterval.toIds())
-                .reduce(flatten)
-
-            const newIds = this.renameIdsFromEpochToCurrent(idsToRename, previousEpoch)
-            const newIdIntervals = IdentifierInterval.mergeIdsIntoIntervals(newIds)
+            const idIntervalsToRename = this.list.toList()
+            const newIdIntervals = this.renameIdIntervalsFromEpochToCurrent(idIntervalsToRename, previousEpoch)
 
             const newList = new LogootSRopes(this.replicaNumber, this.clock)
             const insertOps = generateInsertOps(newIdIntervals, this.str)
@@ -244,6 +232,38 @@ export class RenamableReplicableList {
             transformationFns.reduce((ids, transformationFn) => ids.map(transformationFn), idsToRename)
 
         return renamedIds
+    }
+
+    renameIdIntervalsFromEpochToCurrent (
+        idIntervalsToRename: IdentifierInterval[],
+        fromEpoch: Epoch): IdentifierInterval[] {
+
+        const [epochsToRevert, epochsToApply] =
+            this.epochsStore.getPathBetweenEpochs(fromEpoch, this.currentEpoch)
+
+        const revertFns: Array<(idInterval: IdentifierInterval) =>  IdentifierInterval[]> =
+            epochsToRevert.map((epoch: Epoch) => {
+                const rmap = this.renamingMapStore.getExtendedRenamingMap(epoch.id) as ExtendedRenamingMap
+                return (idInterval: IdentifierInterval) => {
+                    const newIds = idInterval.toIds().map((id: Identifier) => rmap.reverseRenameId(id))
+                    return IdentifierInterval.mergeIdsIntoIntervals(newIds)
+                }
+            })
+
+        const applyFns: Array<(idInterval: IdentifierInterval) =>  IdentifierInterval[]> =
+            epochsToApply.map((epoch: Epoch) => {
+                const rmap = this.renamingMapStore.getExtendedRenamingMap(epoch.id) as ExtendedRenamingMap
+                return (idInterval: IdentifierInterval) => rmap.renameIdInterval(idInterval)
+            })
+
+        const transformationFns = revertFns.concat(applyFns)
+
+        const renamedIdIntervals = transformationFns
+            .reduce((idIntervals, transformationFn) => {
+                return idIntervals.map(transformationFn).reduce(flatten)
+            }, idIntervalsToRename)
+
+        return renamedIdIntervals
     }
 
     getNbBlocks (): number {

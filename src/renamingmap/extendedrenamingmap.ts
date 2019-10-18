@@ -100,6 +100,67 @@ export class ExtendedRenamingMap {
         }
     }
 
+    renameIdInterval (idInterval: IdentifierInterval): IdentifierInterval[] {
+        const idBegin = idInterval.idBegin
+        const idEnd = idInterval.idEnd
+
+        const minFirstId = this.firstId.compareTo(this.newFirstId) === Ordering.Less ?
+            this.firstId : this.newFirstId
+        const maxLastId = this.lastId.compareTo(this.newLastId) === Ordering.Greater ?
+            this.lastId : this.newLastId
+
+        if (idEnd.compareTo(minFirstId) === Ordering.Less || maxLastId.compareTo(idBegin) === Ordering.Less) {
+            return [idInterval]
+        }
+
+        if (idEnd.compareTo(this.firstId) === Ordering.Less) {
+            // newFirstId < idInterval < firstId
+            // Happens if id.random = firstId.random && id.replicaNumber < firstId.replicaNumber
+            const closestPredecessorOfNewFirstId: Identifier =
+                Identifier.fromBase(this.newFirstId, this.newFirstId.lastOffset - 1)
+            const newIdBegin = closestPredecessorOfNewFirstId.concat(idBegin)
+            return [new IdentifierInterval(newIdBegin, idInterval.end)]
+        }
+
+        const idIntervalIndex = this.findIndexOfRelevantIdInterval(idBegin)
+        const relevantIdInterval = this.renamedIdIntervals[idIntervalIndex]
+
+        if (relevantIdInterval.idEnd.compareTo(idBegin) === Ordering.Less) {
+            const newOffset = this.indexes[idIntervalIndex] + relevantIdInterval.length - 1
+            const newPredecessorId =
+                createAtPosition(this.replicaNumber, this.clock, this.newRandom, newOffset)
+            const newIdBegin = newPredecessorId.concat(idBegin)
+            return [new IdentifierInterval(newIdBegin, idInterval.end)]
+        } else {
+            const offset = idBegin.tuples[relevantIdInterval.idBegin.length - 1].offset
+            const diff = offset - relevantIdInterval.begin
+            const newOffset = this.indexes[idIntervalIndex] + diff
+
+            if (idBegin.length === relevantIdInterval.idBegin.length) {
+                const newIdBegin =
+                    createAtPosition(this.replicaNumber, this.clock, this.newRandom, newOffset)
+                if (relevantIdInterval.end < idInterval.end) {
+                    const newEnd = this.indexes[idIntervalIndex + 1] - 1
+                    const newIdInterval = new IdentifierInterval(newIdBegin, newEnd)
+                    const toto = Identifier.fromBase(idBegin, relevantIdInterval.end + 1)
+                    const titi = newIdInterval.idEnd.concat(toto)
+                    const tata = new IdentifierInterval(titi, idInterval.end)
+                    return [newIdInterval, tata]
+                } else {
+                    const newEnd = newOffset + idInterval.length - 1
+                    const newIdInterval = new IdentifierInterval(newIdBegin, newEnd)
+                    return [newIdInterval]
+                }
+            } else {
+                // Split
+                const newPredecessorId =
+                    createAtPosition(this.replicaNumber, this.clock, this.newRandom, newOffset)
+                const newIdBegin = newPredecessorId.concat(idBegin)
+                return [new IdentifierInterval(newIdBegin, idInterval.end)]
+            }
+        }
+    }
+
     reverseRenameId (id: Identifier): Identifier {
         if (this.hasBeenRenamed(id)) {
             // id ∈ renamedIds
@@ -214,6 +275,23 @@ export class ExtendedRenamingMap {
             return [false, this.maxOffset]
         }
         return [false, this.indexes[l] - 1]
+    }
+
+    findIndexOfRelevantIdInterval (id: Identifier): number {
+        let l = 0
+        let r = this.renamedIdIntervals.length
+        while (l < r) {
+            const m = Math.floor((l + r) / 2)
+            const other = this.renamedIdIntervals[m]
+            if (other.idEnd.compareTo(id) === Ordering.Less) {
+                l = m + 1
+            } else if (id.compareTo(other.idBegin) === Ordering.Less) {
+                r = m
+            } else {
+                return m
+            }
+        }
+        return l - 1
     }
 
     findIdFromIndex (index: number): Identifier {
