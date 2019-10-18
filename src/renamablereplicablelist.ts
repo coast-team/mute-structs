@@ -85,6 +85,18 @@ export class RenamableReplicableList {
         return null
     }
 
+    static fromPlainLogootSRopes (o: unknown): RenamableReplicableList | null {
+        const list = LogootSRopes.fromPlain(o)
+        if (list !== null) {
+            const currentEpoch = new Epoch(new EpochId(0, 0))
+            const epochsStore = new EpochStore(currentEpoch)
+            const renamingMapStore = new RenamingMapStore()
+
+            return new RenamableReplicableList(list, currentEpoch, epochsStore, renamingMapStore)
+        }
+        return null
+    }
+
     readonly epochsStore: EpochStore
     readonly renamingMapStore: RenamingMapStore
     private list: LogootSRopes
