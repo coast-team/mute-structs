@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0-3](https://github.com/coast-team/mute-structs/compare/v2.0.0-2...v2.0.0-3) (2019-10-18)
+
+
+### Features
+
+* **renamablereplicablelist:** add fromPlainLogootSRopes() ([48ed1b8](https://github.com/coast-team/mute-structs/commit/48ed1b8))
+
+
+
 ## [2.0.0-2](https://github.com/coast-team/mute-structs/compare/v2.0.0-1...v2.0.0-2) (2019-10-18)
 
 
