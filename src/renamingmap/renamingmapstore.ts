@@ -73,6 +73,10 @@ export class RenamingMapStore {
         return { renamingMaps: Array.from(this.renamingMaps) }
     }
 
+    purge (): void {
+        this.renamingMaps.clear()
+    }
+
     private internalAdd (epochId: string, renamingMap: RenamingMap) {
         this.renamingMaps.set(epochId, renamingMap)
     }
