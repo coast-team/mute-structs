@@ -20,7 +20,6 @@
 import { isArrayFromMap, isObject } from "../data-validation"
 import { Epoch } from "../epoch/epoch"
 import { EpochId } from "../epoch/epochid"
-import { ExtendedRenamingMap } from "./extendedrenamingmap"
 import { RenamingMap } from "./renamingmap"
 
 export interface RenamingMapStoreJSON {
@@ -61,12 +60,8 @@ export class RenamingMapStore {
         this.internalAdd(epoch.id.asStr, renamingMap)
     }
 
-    getExtendedRenamingMap (epochId: EpochId): ExtendedRenamingMap | undefined {
-        const renamingMap: RenamingMap | undefined = this.renamingMaps.get(epochId.asStr)
-        if (renamingMap !== undefined) {
-            return ExtendedRenamingMap.fromRenamingMap(renamingMap)
-        }
-        return undefined
+    getRenamingMap (epochId: EpochId): RenamingMap | undefined {
+        return this.renamingMaps.get(epochId.asStr)
     }
 
     toJSON (): RenamingMapStoreJSON {

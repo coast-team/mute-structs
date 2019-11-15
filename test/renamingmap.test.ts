@@ -24,17 +24,17 @@ import {Identifier} from "../src/identifier"
 import {INT32_BOTTOM_USER} from "../src/idfactory"
 import {INT32_BOTTOM, INT32_TOP} from "../src/int32"
 import {Ordering} from "../src/ordering"
-import {ExtendedRenamingMap} from "../src/renamingmap/extendedrenamingmap"
+import {RenamingMap} from "../src/renamingmap/renamingmap"
 import {generateIdIntervalFactory, idFactory} from "./helpers"
 
-function generateRenamingMap (firstIdReplicaNumber = -6): ExtendedRenamingMap {
+function generateRenamingMap (firstIdReplicaNumber = -6): RenamingMap {
     const renamedIdIntervals = [
         generateIdIntervalFactory(10, firstIdReplicaNumber, 0, 0)(3),
         generateIdIntervalFactory(42, 1, 5, 6)(9),
         generateIdIntervalFactory(53, 2, 1, 0)(0),
         generateIdIntervalFactory(53, 2, 1, 2)(5),
     ]
-    return new ExtendedRenamingMap(0, 0, renamedIdIntervals)
+    return new RenamingMap(0, 0, renamedIdIntervals)
 }
 
 test("constructor", (t) => {
@@ -44,7 +44,7 @@ test("constructor", (t) => {
         generateIdIntervalFactory(10, -6, 0, 2)(3),
     ]
 
-    const renamingMap = new ExtendedRenamingMap(1, 1, expectedRenamedIdIntervals)
+    const renamingMap = new RenamingMap(1, 1, expectedRenamedIdIntervals)
 
     t.deepEqual(renamingMap.renamedIdIntervals, expectedRenamedIdIntervals,
         "renamingMap.renamedIdIntervals = expectedRenamedIdIntervals")
@@ -165,7 +165,7 @@ test("renameId() of concurrently inserted id such as lastId < id < newLastId", (
         generateIdIntervalFactory(10, -6, 0, 0)(3),
         generateIdIntervalFactory(10, -6, 0, 5)(5),
     ]
-    const renamingMap = new ExtendedRenamingMap(0, 0, renamedIdIntervals)
+    const renamingMap = new RenamingMap(0, 0, renamedIdIntervals)
 
     const id = idFactory(10, -6, 0, 6)
     const expectedNewId = idFactory(10, 0, 0, 4, 10, -6, 0, 6)
@@ -395,7 +395,7 @@ test("reverseRename(id) retains order between ids with tail < predecessorId", (t
         generateIdIntervalFactory(-146, 1, 0, 5)(5),
         generateIdIntervalFactory(-146, 1, 0, 5, -185, 2, 48, 0)(0),
     ]
-    const renamingMap = new ExtendedRenamingMap(0, 92, renamedIdIntervals)
+    const renamingMap = new RenamingMap(0, 92, renamedIdIntervals)
 
     const ids = [
         idFactory(-146, 0, 92, 0),
@@ -424,7 +424,7 @@ test("reverseRename(id) retains order between ids with closestPredecessorOfSucce
         generateIdIntervalFactory(-208, 2, 41, -5, 195, 1, 45, 4)(4),
         generateIdIntervalFactory(-208, 2, 41, -4)(0),
     ]
-    const renamingMap = new ExtendedRenamingMap(0, 0, renamedIdIntervals)
+    const renamingMap = new RenamingMap(0, 0, renamedIdIntervals)
 
     const ids = [
         idFactory(-208, 0, 0, 0),

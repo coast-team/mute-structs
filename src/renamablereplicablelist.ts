@@ -33,7 +33,6 @@ import { LogootSAdd } from "./operations/insert/logootsadd"
 import { RenamableLogootSAdd } from "./operations/insert/renamablelogootsadd"
 import { TextInsert } from "./operations/insert/textinsert"
 import { LogootSRename } from "./operations/rename/logootsrename"
-import { ExtendedRenamingMap } from "./renamingmap/extendedrenamingmap"
 import { RenamingMap } from "./renamingmap/renamingmap"
 import { RenamingMapStore } from "./renamingmap/renamingmapstore"
 import { mkNodeAt } from "./ropesnodes"
@@ -120,8 +119,8 @@ export class RenamableReplicableList {
         return this.list.clock
     }
 
-    get currentExtendedRenamingMap (): ExtendedRenamingMap {
-        return this.renamingMapStore.getExtendedRenamingMap(this.currentEpoch.id) as ExtendedRenamingMap
+    get currentRenamingMap (): RenamingMap {
+        return this.renamingMapStore.getRenamingMap(this.currentEpoch.id) as RenamingMap
     }
 
     getList (): LogootSRopes {
@@ -228,13 +227,13 @@ export class RenamableReplicableList {
 
         const revertFns: Array<(id: Identifier) =>  Identifier> =
             epochsToRevert.map((epoch: Epoch) => {
-                const rmap = this.renamingMapStore.getExtendedRenamingMap(epoch.id) as ExtendedRenamingMap
+                const rmap = this.renamingMapStore.getRenamingMap(epoch.id) as RenamingMap
                 return (id: Identifier) => rmap.reverseRenameId(id)
             })
 
         const applyFns: Array<(id: Identifier) =>  Identifier> =
             epochsToApply.map((epoch: Epoch) => {
-                const rmap = this.renamingMapStore.getExtendedRenamingMap(epoch.id) as ExtendedRenamingMap
+                const rmap = this.renamingMapStore.getRenamingMap(epoch.id) as RenamingMap
                 return (id: Identifier) => rmap.renameId(id)
             })
 
@@ -255,7 +254,7 @@ export class RenamableReplicableList {
 
         const revertFns: Array<(idInterval: IdentifierInterval) =>  IdentifierInterval[]> =
             epochsToRevert.map((epoch: Epoch) => {
-                const rmap = this.renamingMapStore.getExtendedRenamingMap(epoch.id) as ExtendedRenamingMap
+                const rmap = this.renamingMapStore.getRenamingMap(epoch.id) as RenamingMap
                 return (idInterval: IdentifierInterval) => {
                     const newIds = idInterval.toIds().map((id: Identifier) => rmap.reverseRenameId(id))
                     return IdentifierInterval.mergeIdsIntoIntervals(newIds)
@@ -264,7 +263,7 @@ export class RenamableReplicableList {
 
         const applyFns: Array<(idInterval: IdentifierInterval) =>  IdentifierInterval[]> =
             epochsToApply.map((epoch: Epoch) => {
-                const rmap = this.renamingMapStore.getExtendedRenamingMap(epoch.id) as ExtendedRenamingMap
+                const rmap = this.renamingMapStore.getRenamingMap(epoch.id) as RenamingMap
                 return (idInterval: IdentifierInterval) => rmap.renameIdInterval(idInterval)
             })
 

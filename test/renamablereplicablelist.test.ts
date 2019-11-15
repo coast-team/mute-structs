@@ -373,7 +373,7 @@ test("sanity-check", (t) => {
     t.is(docA.digest(), docB.digest(), "docA.digest() = docB.digest()")
     t.true(isValidFn(docA), "docA should be a valid document")
 
-    const renamingMap = docA.currentExtendedRenamingMap
+    const renamingMap = docA.currentRenamingMap
     const ids = getIdsFn(docA)
     const revertedIds = ids.map((id: Identifier): Identifier => {
         return renamingMap.reverseRenameId(id)
