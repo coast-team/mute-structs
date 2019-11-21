@@ -6,8 +6,8 @@ notifications:
   email: false
 node_js:
   - 'node'
-  - '9'
-  - '8'
+  - '12'
+  - '11'
 script:
   - npm test
 jobs:
