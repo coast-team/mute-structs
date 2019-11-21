@@ -18,7 +18,7 @@
 */
 
 import test from "ava"
-import {AssertContext} from "ava"
+import {ExecutionContext} from "ava"
 import {IdentifierTuple} from "../src/identifiertuple"
 import {Ordering} from "../src/ordering"
 
@@ -26,7 +26,7 @@ import {Ordering} from "../src/ordering"
  * Macro to check if compareTo() returns the expected result
  */
 function compareTuplesMacro (
-    t: AssertContext,
+    t: ExecutionContext,
     tuple: IdentifierTuple, other: IdentifierTuple,
     expected: Ordering): void {
 
@@ -38,7 +38,7 @@ function compareTuplesMacro (
  * Macro to check if equalsBase() returns the expected result
  */
 function equalsBaseMacro (
-    t: AssertContext,
+    t: ExecutionContext,
     tuple: IdentifierTuple, other: IdentifierTuple,
     expected: boolean): void {
 
@@ -46,7 +46,7 @@ function equalsBaseMacro (
     t.is(actual, expected)
 }
 
-test("fromPlain", (t: AssertContext) => {
+test("fromPlain", (t: ExecutionContext) => {
     const plain = {
         random: 42,
         replicaNumber: 1,
@@ -66,7 +66,7 @@ test("fromPlain", (t: AssertContext) => {
     }
 })
 
-test("fromPlain-missing-property", (t: AssertContext) => {
+test("fromPlain-missing-property", (t: ExecutionContext) => {
     const plain = {
         replicaNumber: 1,
         clock: 10,
@@ -78,7 +78,7 @@ test("fromPlain-missing-property", (t: AssertContext) => {
     t.is(tuple, null)
 })
 
-test("fromPlain-wrong-type", (t: AssertContext) => {
+test("fromPlain-wrong-type", (t: ExecutionContext) => {
     const plain = {
         random: 42.7,
         replicaNumber: 1,
@@ -91,7 +91,7 @@ test("fromPlain-wrong-type", (t: AssertContext) => {
     t.is(tuple, null)
 })
 
-test("generateWithSameBase", (t: AssertContext) => {
+test("generateWithSameBase", (t: ExecutionContext) => {
     const expected = 5
     const tuple1: IdentifierTuple = new IdentifierTuple(42, 7, 8, 26)
     const tuple2: IdentifierTuple = IdentifierTuple.fromBase(tuple1, expected)
@@ -125,7 +125,7 @@ test("equalsBase-tuple-different-other-1", equalsBaseMacro, tuple0000, tuple1000
 test("equalsBase-tuple-different-other-2", equalsBaseMacro, tuple0000, tuple0100, false)
 test("equalsBase-tuple-different-other-3", equalsBaseMacro, tuple0000, tuple0010, false)
 
-test("asArray-properties-order", (t: AssertContext) => {
+test("asArray-properties-order", (t: ExecutionContext) => {
     const random = 42
     const replicaNumber = 1
     const clock = 10

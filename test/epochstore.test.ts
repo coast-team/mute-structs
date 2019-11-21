@@ -18,7 +18,7 @@
 */
 
 import test from "ava"
-import { AssertContext } from "ava"
+import { ExecutionContext } from "ava"
 
 import { Epoch } from "../src/epoch/epoch"
 import { EpochId } from "../src/epoch/epochid"
@@ -49,7 +49,7 @@ function generateEpochStore (): EpochStore {
     return expectedEpochStore
 }
 
-test("epochStore-from-plain-factory", (t: AssertContext) => {
+test("epochStore-from-plain-factory", (t: ExecutionContext) => {
     const expectedEpochStore = generateEpochStore()
 
     const actualEpochStore =

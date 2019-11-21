@@ -18,7 +18,7 @@
 */
 
 import test from "ava"
-import {AssertContext} from "ava"
+import {ExecutionContext} from "ava"
 
 import {Identifier} from "../src/identifier"
 import {IdentifierTuple} from "../src/identifiertuple"
@@ -29,7 +29,7 @@ import {
 import {Ordering} from "../src/ordering"
 
 function equalsMacro (
-    t: AssertContext,
+    t: ExecutionContext,
     id1: Identifier, id2: Identifier, expected: boolean): void {
 
     const actual = id1.equals(id2)
@@ -37,7 +37,7 @@ function equalsMacro (
 }
 
 function equalsBaseMacro (
-    t: AssertContext,
+    t: ExecutionContext,
     id1: Identifier, id2: Identifier, expected: boolean): void {
 
     const actual = id1.equalsBase(id2)

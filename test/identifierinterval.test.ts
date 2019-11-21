@@ -18,7 +18,7 @@
 */
 
 import test from "ava"
-import {AssertContext} from "ava"
+import {ExecutionContext} from "ava"
 import {Identifier} from "../src/identifier.js"
 import {IdentifierInterval} from "../src/identifierinterval.js"
 import {IdentifierTuple} from "../src/identifiertuple.js"
@@ -61,7 +61,7 @@ test("getBaseId", (t) => {
     t.true(actualId.equals(expectedId))
 })
 
-test("union-prepend-only", (t: AssertContext) => {
+test("union-prepend-only", (t: ExecutionContext) => {
     const begin = 0
     const end = 5
     const idInterval = generateIdInterval(begin, end)
@@ -77,7 +77,7 @@ test("union-prepend-only", (t: AssertContext) => {
     t.is(unionInterval.end, expectedEnd)
 })
 
-test("union-append-only", (t: AssertContext) => {
+test("union-append-only", (t: ExecutionContext) => {
     const begin = 0
     const end = 5
     const idInterval = generateIdInterval(begin, end)
@@ -93,7 +93,7 @@ test("union-append-only", (t: AssertContext) => {
     t.is(unionInterval.end, expectedEnd)
 })
 
-test("union-prepend-append", (t: AssertContext) => {
+test("union-prepend-append", (t: ExecutionContext) => {
     const begin = 0
     const end = 5
     const idInterval = generateIdInterval(begin, end)
@@ -109,7 +109,7 @@ test("union-prepend-append", (t: AssertContext) => {
     t.is(unionInterval.end, expectedEnd)
 })
 
-test("union-no-changes", (t: AssertContext) => {
+test("union-no-changes", (t: ExecutionContext) => {
     const begin = 0
     const end = 5
     const idInterval = generateIdInterval(begin, end)

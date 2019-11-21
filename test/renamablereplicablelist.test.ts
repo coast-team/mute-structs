@@ -18,7 +18,7 @@
 */
 
 import test from "ava"
-import { AssertContext } from "ava"
+import { ExecutionContext } from "ava"
 
 import {isSorted} from "../src/helpers.js"
 import {Identifier} from "../src/identifier"
@@ -52,7 +52,7 @@ export function generateRenamableReplicableList (): RenamableReplicableList {
     return doc
 }
 
-test("renamableReplicableList-from-plain-factory", (t: AssertContext) => {
+test("renamableReplicableList-from-plain-factory", (t: ExecutionContext) => {
     const expectedRenamableReplicableList = generateRenamableReplicableList()
 
     const serialisation = JSON.stringify(expectedRenamableReplicableList)

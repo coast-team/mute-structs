@@ -18,7 +18,7 @@
 */
 
 import test from "ava"
-import {AssertContext} from "ava"
+import {ExecutionContext} from "ava"
 import * as fs from "fs"
 
 import {LogootSRopes} from "../src/logootsropes.js"
@@ -39,11 +39,11 @@ function everyEqualsTo<T> (inputs: T[], expected: T): boolean {
 /**
  * Macro to check if all logs from a provided set converge
  *
- * @param {AssertContext} t - The test tool, provided by Ava
+ * @param {ExecutionContext} t - The test tool, provided by Ava
  * @param {string[]} logFiles - The set of files containing the logs to compare
  * @param {boolean} expected - Should the logs converge or not
  */
-function everyLogsConvergeMacro (t: AssertContext, logFiles: string[], expected: boolean): void {
+function everyLogsConvergeMacro (t: ExecutionContext, logFiles: string[], expected: boolean): void {
     const logs: LogootSOperation[][] = []
 
     // Retrieve operation logs from files

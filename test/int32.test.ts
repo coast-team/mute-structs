@@ -18,7 +18,7 @@
 */
 
 import test from "ava"
-import {AssertContext} from "ava"
+import {ExecutionContext} from "ava"
 
 import {
     INT32_BOTTOM,
@@ -27,26 +27,26 @@ import {
     randomInt32,
 } from "../src/int32.js"
 
-test("safe-integers-are-not-int32", (t: AssertContext) => {
+test("safe-integers-are-not-int32", (t: ExecutionContext) => {
     t.false(isInt32(Number.MIN_SAFE_INTEGER))
     t.false(isInt32(INT32_BOTTOM - 1))
     t.false(isInt32(INT32_TOP + 1))
     t.false(isInt32(Number.MAX_SAFE_INTEGER))
 })
 
-test("int32-are-int32", (t: AssertContext) => {
+test("int32-are-int32", (t: ExecutionContext) => {
     t.true(isInt32(INT32_BOTTOM))
     t.true(isInt32(0))
     t.true(isInt32(INT32_TOP))
 })
 
-test("float-are-not-int32", (t: AssertContext) => {
+test("float-are-not-int32", (t: ExecutionContext) => {
     t.false(isInt32(-1.2))
     t.false(isInt32(0.1))
     t.false(isInt32(1.2))
 })
 
-test("randomInt32-upper-bound-is-excluded", (t: AssertContext) => {
+test("randomInt32-upper-bound-is-excluded", (t: ExecutionContext) => {
     // WARNING: No deterministric test (no seeded radom function)
     for (let i = 0; i < 100; i++) {
         t.is(randomInt32(0, 1), 0)
@@ -54,7 +54,7 @@ test("randomInt32-upper-bound-is-excluded", (t: AssertContext) => {
     }
 })
 
-test("randomInt32-in-interval", (t: AssertContext) => {
+test("randomInt32-in-interval", (t: ExecutionContext) => {
     // WARNING: No deterministric test (no seeded radom function)
     for (let i = 0; i < 100; i++) {
         const r = randomInt32(INT32_BOTTOM, INT32_TOP)

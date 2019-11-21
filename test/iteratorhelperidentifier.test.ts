@@ -18,7 +18,7 @@
 */
 
 import test from "ava"
-import {AssertContext} from "ava"
+import {ExecutionContext} from "ava"
 import {Identifier} from "../src/identifier"
 import {IdentifierInterval} from "../src/identifierinterval"
 import {IdentifierTuple} from "../src/identifiertuple"
@@ -28,7 +28,7 @@ import {
 } from "../src/iteratorhelperidentifier"
 
 function compareBaseMacro (
-    t: AssertContext,
+    t: ExecutionContext,
     idInterval1: IdentifierInterval, idInterval2: IdentifierInterval,
     expected: IdentifierIteratorResults): void {
 

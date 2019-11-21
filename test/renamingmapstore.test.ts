@@ -18,7 +18,7 @@
 */
 
 import test from "ava"
-import { AssertContext } from "ava"
+import { ExecutionContext } from "ava"
 
 import { RenamingMapStore } from "../src/renamingmap/renamingmapstore"
 import { generateRenamableReplicableList } from "./renamablereplicablelist.test"
@@ -27,7 +27,7 @@ function generateRenamingMapStore (): RenamingMapStore {
     return generateRenamableReplicableList().renamingMapStore
 }
 
-test("renamingMapStore-from-plain-factory", (t: AssertContext) => {
+test("renamingMapStore-from-plain-factory", (t: ExecutionContext) => {
     const expectedRenamingMapStore = generateRenamingMapStore()
 
     const actualRenamingMapStore =

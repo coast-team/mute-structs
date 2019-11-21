@@ -18,14 +18,14 @@
 */
 
 import test from "ava"
-import {AssertContext} from "ava"
+import {ExecutionContext} from "ava"
 import {Identifier} from "../src/identifier.js"
 import {IdentifierTuple} from "../src/identifiertuple.js"
 import {Ordering} from "../src/ordering.js"
 
 import {createBetweenPosition} from "../src/idfactory.js"
 
-test("two-noncontiguous-bases", (t: AssertContext) => {
+test("two-noncontiguous-bases", (t: ExecutionContext) => {
     const replicaNumber = 0
     const clock = 1
     const id1: Identifier = new Identifier([new IdentifierTuple(0, replicaNumber, clock - 1, 0)])
@@ -37,7 +37,7 @@ test("two-noncontiguous-bases", (t: AssertContext) => {
     t.is(newId.compareTo(id2), Ordering.Less)
 })
 
-test("two-contiguous-bases", (t: AssertContext) => {
+test("two-contiguous-bases", (t: ExecutionContext) => {
     const replicaNumber = 0
     const clock = 1
     const tuple: IdentifierTuple = new IdentifierTuple(0, replicaNumber, clock - 1, 0)
@@ -52,7 +52,7 @@ test("two-contiguous-bases", (t: AssertContext) => {
     t.true(id1.isPrefix(newId))
 })
 
-test("is-mine", (t: AssertContext) => {
+test("is-mine", (t: ExecutionContext) => {
     const replicaNumber = 0
     const clock = 1
     const newId: Identifier = createBetweenPosition(null, null, replicaNumber, clock)
