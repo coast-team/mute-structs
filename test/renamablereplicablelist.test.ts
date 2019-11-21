@@ -20,7 +20,7 @@
 import test from "ava"
 import { AssertContext } from "ava"
 
-import {flatten, isSorted} from "../src/helpers.js"
+import {isSorted} from "../src/helpers.js"
 import {Identifier} from "../src/identifier"
 import {IdentifierInterval} from "../src/identifierinterval"
 import {randomInt32} from "../src/int32.js"
@@ -313,7 +313,7 @@ test("sanity-check", (t) => {
 
     const getIdsFn = (doc: RenamableReplicableList): Identifier[] => {
         const idIntervalToIdsFn = (idInterval: IdentifierInterval) => idInterval.toIds()
-        return doc.getList().toList().map(idIntervalToIdsFn).reduce(flatten)
+        return doc.getList().toList().flatMap(idIntervalToIdsFn)
     }
 
     const isValidFn = (doc: RenamableReplicableList): boolean => {

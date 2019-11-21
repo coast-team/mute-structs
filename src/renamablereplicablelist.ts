@@ -21,7 +21,6 @@ import { isObject } from "./data-validation"
 import { Epoch} from "./epoch/epoch"
 import { EpochId } from "./epoch/epochid"
 import { EpochStore } from "./epoch/epochstore"
-import { flatten } from "./helpers"
 import { Identifier } from "./identifier"
 import { IdentifierInterval } from "./identifierinterval"
 import { createAtPosition } from "./idfactory"
@@ -146,10 +145,7 @@ export class RenamableReplicableList {
 
             const insertOps = generateInsertOps(newIdIntervals, op.content)
             return insertOps
-                .map((insertOp: LogootSAdd): TextInsert[] => {
-                    return insertOp.execute(this.list)
-                })
-                .reduce(flatten)
+                .flatMap((insertOp: LogootSAdd): TextInsert[] => insertOp.execute(this.list))
         }
         return op.execute(this.list)
     }
@@ -161,8 +157,7 @@ export class RenamableReplicableList {
     delRemote (epoch: Epoch, op: LogootSDel): TextDelete[] {
         if (!epoch.equals(this.currentEpoch)) {
             const idsToRename = op.lid
-                .map((idInterval: IdentifierInterval): Identifier[] => idInterval.toIds())
-                .reduce(flatten)
+                .flatMap((idInterval: IdentifierInterval): Identifier[] => idInterval.toIds())
 
             const newIds = this.renameIdsFromEpochToCurrent(idsToRename, epoch)
             const newIdIntervals = IdentifierInterval.mergeIdsIntoIntervals(newIds)
@@ -271,7 +266,7 @@ export class RenamableReplicableList {
 
         const renamedIdIntervals = transformationFns
             .reduce((idIntervals, transformationFn) => {
-                return idIntervals.map(transformationFn).reduce(flatten)
+                return idIntervals.flatMap(transformationFn)
             }, idIntervalsToRename)
 
         return renamedIdIntervals

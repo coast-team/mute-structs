@@ -15,10 +15,6 @@ export function findPredecessor<T> (list: T[], element: T, compareFn: (a: T, b: 
     return list[l - 1]
 }
 
-export function flatten<T> (acc: T[], current: T[]): T[] {
-    return acc.concat(current)
-}
-
 /**
  * Check if an array is sorted
  *
