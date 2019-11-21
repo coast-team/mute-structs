@@ -1,40 +1,14 @@
-# Changelog
+# Change Log
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-## [2.0.0-4](https://github.com/coast-team/mute-structs/compare/v2.0.0-3...v2.0.0-4) (2019-11-15)
+<a name="2.0.0-5"></a>
+# [2.0.0-5](https://github.com/coast-team/mute-structs/compare/v2.0.0-4...v2.0.0-5) (2019-11-21)
 
 
+### Performance Improvements
 
-## [2.0.0-3](https://github.com/coast-team/mute-structs/compare/v2.0.0-2...v2.0.0-3) (2019-10-18)
-
-
-### Features
-
-* **renamablereplicablelist:** add fromPlainLogootSRopes() ([48ed1b8](https://github.com/coast-team/mute-structs/commit/48ed1b8))
-
-
-
-## [2.0.0-2](https://github.com/coast-team/mute-structs/compare/v2.0.0-1...v2.0.0-2) (2019-10-18)
-
-
-### Bug Fixes
-
-* **renamablereplicablelist:** fix clock value after  renameLocal() ([55c8ca4](https://github.com/coast-team/mute-structs/commit/55c8ca4))
-
-
-### Features
-
-* **logootsrename:** add fromPlain() ([e50a688](https://github.com/coast-team/mute-structs/commit/e50a688))
-* **renamablelogootsadd:** add fromPlain() ([6a46476](https://github.com/coast-team/mute-structs/commit/6a46476))
-* **renamablelogootsdel:** add fromPlain() ([913516c](https://github.com/coast-team/mute-structs/commit/913516c))
-* **renamingmapstore:** add purge() ([c2b6d0c](https://github.com/coast-team/mute-structs/commit/c2b6d0c))
-* **renamingmapstore:** fix fromPlain() by allowing empty stores ([8dec38b](https://github.com/coast-team/mute-structs/commit/8dec38b))
-
-
-### Tests
-
-* **renamablereplicablelist:** add new test case ([2dbf5a3](https://github.com/coast-team/mute-structs/commit/2dbf5a3))
+* **flat:** use flatMap(...) instead of map(...) + reduce(flatten) ([87b8108](https://github.com/coast-team/mute-structs/commit/87b8108))
 
 
 
