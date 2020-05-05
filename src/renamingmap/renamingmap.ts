@@ -197,8 +197,6 @@ export class RenamingMap {
             console.assert(this.newFirstId.compareTo(this.firstId) === Ordering.Less,
                 "Reaching this case should imply that newFirstId < firstId")
 
-            const closestPredecessorOfFirstId: Identifier =
-                Identifier.fromBase(this.firstId, this.firstId.lastOffset - 1)
             const [_, end] = id.truncate(1)
 
             if (end.tuples[0].random === this.newRandom) {
@@ -213,8 +211,15 @@ export class RenamingMap {
                 // To revert the renaming, just need to return end
                 return end
             }
-            if (closestPredecessorOfFirstId.compareTo(end) === Ordering.Less) {
-                return closestPredecessorOfFirstId.concat(end)
+            if (this.firstId.compareTo(end) === Ordering.Less) {
+                const closestPredecessorOfFirstId: Identifier =
+                Identifier.fromBase(this.firstId, this.firstId.lastOffset - 1)
+
+                return new Identifier([
+                    ...closestPredecessorOfFirstId.tuples,
+                    MAX_TUPLE,
+                    ...end.tuples,
+                ])
             }
             return id
         }

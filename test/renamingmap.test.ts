@@ -264,7 +264,7 @@ test(`reverseRenameId() of causally inserted id such as
     const renamingMap = generateRenamingMap(6)
 
     const idAtEpoch1 = idFactory(10, 0, 0, -1, 52, 52, 0, 0)
-    const expectedIdAtEpoch0 = idFactory(10, 6, 0, -1, 52, 52, 0, 0)
+    const expectedIdAtEpoch0 = idFactory(10, 6, 0, -1, INT32_TOP, 0, 0, 0, 52, 52, 0, 0)
     const actualIdAtEpoch0 = renamingMap.reverseRenameId(idAtEpoch1)
     t.deepEqual(actualIdAtEpoch0, expectedIdAtEpoch0, "actualId = expectedNewId")
 })
@@ -407,7 +407,7 @@ test("reverseRenameId() retains order between ids", (t) => {
     t.true(isSorted(renamedIds, compareFn), "reverseRenameId() should retain the order between ids")
 })
 
-test.failing(`reverseRenameId() retains order between id1 and id2 with
+test(`reverseRenameId() retains order between id1 and id2 with
     newFirstId < firstId,
     id1 concurrently inserted to rename op, id1 = closestPredecessorOfFirstId + tail1,
     id2 causally inserted to rename op and id1 insert op, id2 = closestPredecessorOfNewFirstId + tail2
