@@ -220,6 +220,7 @@ test("reverseRenameId() of id such as id < firstId < newFirstId", (t) => {
 
 test(`reverseRenameId() of concurrently inserted id such as
     newFirstId < id < firstId, id = closestPredecessorOfNewFirstId + closestPredecessorOfFirstId`, (t) => {
+
     /*
         <10, 6, 0>[0..3] -> <10, 0, 0>[0..3],
         <42, 1, 5>[6..9] -> <10, 0, 0>[4..7],
@@ -236,6 +237,7 @@ test(`reverseRenameId() of concurrently inserted id such as
 
 test(`reverseRenameId() of concurrently inserted id such as
     newFirstId < id < firstId, id = closestPredecessorOfnewFirstId + tail and tail ∈ ]newFirstId, firstId[`, (t) => {
+
         /*
         <10, 6, 0>[0..3] -> <10, 0, 0>[0..3],
         <42, 1, 5>[6..9] -> <10, 0, 0>[4..7],
@@ -252,6 +254,7 @@ test(`reverseRenameId() of concurrently inserted id such as
 
 test(`reverseRenameId() of causally inserted id such as
     newFirstId < id < firstId, id = closestPredecessorOfnewFirstId + tail and firstId < tail`, (t) => {
+
     /*
         <10, 6, 0>[0..3] -> <10, 0, 0>[0..3],
         <42, 1, 5>[6..9] -> <10, 0, 0>[4..7],
@@ -402,6 +405,36 @@ test("reverseRenameId() retains order between ids", (t) => {
 
     const compareFn = (a: Identifier, b: Identifier): Ordering => a.compareTo(b)
     t.true(isSorted(renamedIds, compareFn), "reverseRenameId() should retain the order between ids")
+})
+
+test.failing(`reverseRenameId() retains order between id1 and id2 with
+    newFirstId < firstId,
+    id1 concurrently inserted to rename op, id1 = closestPredecessorOfFirstId + tail1,
+    id2 causally inserted to rename op and id1 insert op, id2 = closestPredecessorOfNewFirstId + tail2
+    and tail2 < tail1`, (t) => {
+
+    /*
+        <10, 6, 0>[0..3] -> <10, 0, 0>[0..3],
+        <42, 1, 5>[6..9] -> <10, 0, 0>[4..7],
+        <53, 2, 1>[0..0] -> <10, 0, 0>[8..8],
+        <53, 2, 1>[2..5] -> <10, 0, 0>[9..12]
+    */
+    const renamingMap = generateRenamingMap(6)
+
+    const id1AtEpoch0 = idFactory(10, 6, 0, -1, 33, 0, 0, 0)
+    const id1AtEpoch1 = renamingMap.renameId(id1AtEpoch0)
+
+    const id2AtEpoch1 = idFactory(10, 0, 0, -1, 23, 0, 0, 0)
+
+    const expectedOrderAtEpoch1 = Ordering.Less
+    const actualOrderAtEpoch1 = id1AtEpoch1.compareTo(id2AtEpoch1)
+    t.is(actualOrderAtEpoch1, expectedOrderAtEpoch1, "id1AtEpoch1 < id2AtEpoch1")
+
+    const id2AtEpoch0 = renamingMap.reverseRenameId(id2AtEpoch1)
+
+    const expectedOrderAtEpoch0 = Ordering.Less
+    const actualOrderAtEpoch0 = id1AtEpoch0.compareTo(id2AtEpoch0)
+    t.is(actualOrderAtEpoch0, expectedOrderAtEpoch0, "id1AtEpoch0 < id2AtEpoch0")
 })
 
 test("reverseRename(id) retains order between ids with tail < predecessorId", (t) => {
