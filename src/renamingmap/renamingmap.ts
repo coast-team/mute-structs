@@ -199,19 +199,31 @@ export class RenamingMap {
 
             const [_, end] = id.truncate(1)
 
+            // Since closestPredecessorOfNewFirstId is not assigned to any element,
+            // it should be impossible to generate id such as
+            //      id = closestPredecessorOfNewFirstId + end with end < newFirstId
+            // Thus we don't have to handle this particular case
+            console.assert(this.newFirstId.compareTo(end) === Ordering.Less, "end should be such as newFirstId < end")
+
             if (end.tuples[0].random === this.newRandom) {
-                // This case corresponds to the following scenario:
-                // - end was inserted concurrently to the renaming operation with
+                // newFirstId < end < firstId
+                console.assert(this.newFirstId.compareTo(end) === Ordering.Less &&
+                    end.compareTo(this.firstId) === Ordering.Less,
+                    "end.tuples[0].random = this.newRandom should imply that newFirstId < end < firstId")
+
+                // This case corresponds to the following scenarios:
+                // 1. end was inserted concurrently to the rename operation with
                 //      newFirstId < end < firstId
-                // - so with
+                //    so with
                 //      newFirst.random = end.random = firstId.random
-                //   and
+                //    and
                 //      newFirst.author < end.author < firstId.author
-                // - id was thus obtained by concatenating closestPredecessorOfNewFirstId + end
-                // To revert the renaming, just need to return end
+                //    id was thus obtained by concatenating closestPredecessorOfNewFirstId + end
+                // 2. id was inserted between other ids from case 1., after the renaming
+                // In both cases, just need to return end to revert the renaming
                 return end
-            }
-            if (this.firstId.compareTo(end) === Ordering.Less) {
+            } else {
+                // firstId < end
                 const closestPredecessorOfFirstId: Identifier =
                 Identifier.fromBase(this.firstId, this.firstId.lastOffset - 1)
 
@@ -221,7 +233,6 @@ export class RenamingMap {
                     ...end.tuples,
                 ])
             }
-            return id
         }
 
         if (this.newLastId.compareTo(id) === Ordering.Less &&
