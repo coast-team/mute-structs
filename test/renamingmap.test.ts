@@ -529,3 +529,75 @@ test("reverseRenameId(renameId(id)) returns id", (t) => {
         t.deepEqual(actualId, expectedId, "reverseRenameId(renameId(id)) = id")
     })
 })
+
+test.failing(`renameId(reverseRenameId(id)) returns id with
+    newFirstId < firstId,
+    id causally inserted to rename op,
+    id = closestPredecessorOfNewFirstId + tail,
+    firstId < tail`, (t) => {
+
+    /*
+        <10, -6, 0>[0..3] -> <10, 0, 0>[0..3],
+        <42, 1, 5>[6..9] -> <10, 0, 0>[4..7],
+        <53, 2, 1>[0..0] -> <10, 0, 0>[8..8],
+        <53, 2, 1>[2..5] -> <10, 0, 0>[9..12]
+    */
+    const renamingMap = generateRenamingMap()
+
+    const idAtEpoch1 = idFactory(10, 0, 0, -1, 99, 99, 0, 0)
+    const idAtEpoch0 = renamingMap.reverseRenameId(idAtEpoch1)
+    t.is(renamingMap.renameId(idAtEpoch0), idAtEpoch1)
+})
+
+test.failing(`renameId(reverseRenameId(id)) returns id with
+    id causally inserted to rename op,
+    id = newPredId + tail,
+    tail < predId`, (t) => {
+
+    /*
+        <10, -6, 0>[0..3] -> <10, 0, 0>[0..3],
+        <42, 1, 5>[6..9] -> <10, 0, 0>[4..7],
+        <53, 2, 1>[0..0] -> <10, 0, 0>[8..8],
+        <53, 2, 1>[2..5] -> <10, 0, 0>[9..12]
+    */
+    const renamingMap = generateRenamingMap()
+
+    const idAtEpoch1 = idFactory(10, 0, 0, 4, -5, -5, 0, 0)
+    const idAtEpoch0 = renamingMap.reverseRenameId(idAtEpoch1)
+    t.is(renamingMap.renameId(idAtEpoch0), idAtEpoch1)
+})
+
+test.failing(`renameId(reverseRenameId(id)) returns id with
+    id causally inserted to rename op,
+    id = newPredId + tail,
+    tail < succId`, (t) => {
+
+    /*
+        <10, -6, 0>[0..3] -> <10, 0, 0>[0..3],
+        <42, 1, 5>[6..9] -> <10, 0, 0>[4..7],
+        <53, 2, 1>[0..0] -> <10, 0, 0>[8..8],
+        <53, 2, 1>[2..5] -> <10, 0, 0>[9..12]
+    */
+    const renamingMap = generateRenamingMap()
+
+    const idAtEpoch1 = idFactory(10, 0, 0, 4, 77, 77, 0, 0)
+    const idAtEpoch0 = renamingMap.reverseRenameId(idAtEpoch1)
+    t.is(renamingMap.renameId(idAtEpoch0), idAtEpoch1)
+})
+
+test.failing(`renameId(reverseRenameId(id)) returns id with
+    id causally inserted to rename op,
+    newLastId < id < lastId`, (t) => {
+
+    /*
+        <10, -6, 0>[0..3] -> <10, 0, 0>[0..3],
+        <42, 1, 5>[6..9] -> <10, 0, 0>[4..7],
+        <53, 2, 1>[0..0] -> <10, 0, 0>[8..8],
+        <53, 2, 1>[2..5] -> <10, 0, 0>[9..12]
+    */
+    const renamingMap = generateRenamingMap()
+
+    const idAtEpoch1 = idFactory(33, 33, 0, 0)
+    const idAtEpoch0 = renamingMap.reverseRenameId(idAtEpoch1)
+    t.is(renamingMap.renameId(idAtEpoch0), idAtEpoch1)
+})
