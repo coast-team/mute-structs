@@ -105,8 +105,23 @@ export class RenamingMap {
         if (found) {
             return createAtPosition(this.replicaNumber, this.clock, this.newRandom, index)
         } else {
+            const predecessorId = this.findIdFromIndex(index)
             const newPredecessorId =
                 createAtPosition(this.replicaNumber, this.clock, this.newRandom, index)
+            // Several cases possible
+
+            // 1.  id is such as id = predecessorId + MIN_TUPLE + tail
+            //     with tail < predecessorId
+            if (predecessorId.length + 1 < id.length) {
+                const [prefix, suffix] = id.truncate(predecessorId.length)
+                const [_, tail] = suffix.truncate(1)
+                if (prefix.compareTo(predecessorId) === Ordering.Equal
+                    && suffix.tuples[0].compareTo(MIN_TUPLE) === Ordering.Equal
+                    && tail.compareTo(predecessorId) === Ordering.Less) {
+
+                    return newPredecessorId.concat(tail)
+                }
+            }
             return newPredecessorId.concat(id)
         }
     }
