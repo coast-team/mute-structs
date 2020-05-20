@@ -122,6 +122,25 @@ export class RenamingMap {
                     return newPredecessorId.concat(tail)
                 }
             }
+            // 2.  id is such as id = closestPredecessorOfSuccessorId + MAX_TUPLE + tail
+            //     with successorId < tail
+            if (index + 1 <= this.maxOffset) {
+                const successorId = this.findIdFromIndex(index + 1)
+                if (successorId.length + 1 < id.length) {
+                    const [prefix, suffix] = id.truncate(successorId.length)
+                    const [_, tail] = suffix.truncate(1)
+
+                    const closestPredecessorOfSuccessorId = Identifier.fromBase(successorId, successorId.lastOffset - 1)
+
+                    if (prefix.compareTo(closestPredecessorOfSuccessorId) === Ordering.Equal
+                        && suffix.tuples[0].compareTo(MAX_TUPLE) === Ordering.Equal
+                        && successorId.compareTo(tail) === Ordering.Less) {
+
+                        return newPredecessorId.concat(tail)
+                    }
+                }
+            }
+
             return newPredecessorId.concat(id)
         }
     }
