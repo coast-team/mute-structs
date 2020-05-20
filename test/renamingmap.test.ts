@@ -546,7 +546,7 @@ test.failing(`renameId(reverseRenameId(id)) returns id with
 
     const idAtEpoch1 = idFactory(10, 0, 0, -1, 99, 99, 0, 0)
     const idAtEpoch0 = renamingMap.reverseRenameId(idAtEpoch1)
-    t.is(renamingMap.renameId(idAtEpoch0), idAtEpoch1)
+    t.deepEqual(renamingMap.renameId(idAtEpoch0), idAtEpoch1)
 })
 
 test.failing(`renameId(reverseRenameId(id)) returns id with
@@ -564,7 +564,7 @@ test.failing(`renameId(reverseRenameId(id)) returns id with
 
     const idAtEpoch1 = idFactory(10, 0, 0, 4, -5, -5, 0, 0)
     const idAtEpoch0 = renamingMap.reverseRenameId(idAtEpoch1)
-    t.is(renamingMap.renameId(idAtEpoch0), idAtEpoch1)
+    t.deepEqual(renamingMap.renameId(idAtEpoch0), idAtEpoch1)
 })
 
 test.failing(`renameId(reverseRenameId(id)) returns id with
@@ -582,7 +582,7 @@ test.failing(`renameId(reverseRenameId(id)) returns id with
 
     const idAtEpoch1 = idFactory(10, 0, 0, 4, 77, 77, 0, 0)
     const idAtEpoch0 = renamingMap.reverseRenameId(idAtEpoch1)
-    t.is(renamingMap.renameId(idAtEpoch0), idAtEpoch1)
+    t.deepEqual(renamingMap.renameId(idAtEpoch0), idAtEpoch1)
 })
 
 test.failing(`renameId(reverseRenameId(id)) returns id with
@@ -599,5 +599,5 @@ test.failing(`renameId(reverseRenameId(id)) returns id with
 
     const idAtEpoch1 = idFactory(33, 33, 0, 0)
     const idAtEpoch0 = renamingMap.reverseRenameId(idAtEpoch1)
-    t.is(renamingMap.renameId(idAtEpoch0), idAtEpoch1)
+    t.deepEqual(renamingMap.renameId(idAtEpoch0), idAtEpoch1)
 })
