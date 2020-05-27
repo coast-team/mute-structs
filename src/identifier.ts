@@ -351,14 +351,10 @@ export class Identifier {
         return new Identifier(tuples)
     }
 
-    truncate (length: number): [Identifier, Identifier] {
-        console.assert(0 < length && length < this.length, "length should belong to [0, this.length[")
-        const headTuples = this.tuples.slice(0, length)
-        const tailTuples = this.tuples.slice(length, this.length)
-        return [
-            new Identifier(headTuples),
-            new Identifier(tailTuples),
-        ]
+    getTail (index: number): Identifier {
+        console.assert(0 < index && index < this.length, "index should belong to [0, this.length[")
+        const tailTuples = this.tuples.slice(index)
+        return new Identifier(tailTuples)
     }
 
     digest (): number {

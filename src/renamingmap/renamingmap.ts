@@ -113,10 +113,9 @@ export class RenamingMap {
             // 1.  id is such as id = predecessorId + MIN_TUPLE + tail
             //     with tail < predecessorId
             if (predecessorId.length + 1 < id.length) {
-                const [prefix, suffix] = id.truncate(predecessorId.length)
-                const [_, tail] = suffix.truncate(1)
-                if (prefix.compareTo(predecessorId) === Ordering.Equal
-                    && suffix.tuples[0].compareTo(MIN_TUPLE) === Ordering.Equal
+                const tail = id.getTail(predecessorId.length + 1)
+                if (predecessorId.isPrefix(id)
+                    && id.tuples[predecessorId.length].compareTo(MIN_TUPLE) === Ordering.Equal
                     && tail.compareTo(predecessorId) === Ordering.Less) {
 
                     return newPredecessorId.concat(tail)
@@ -127,13 +126,12 @@ export class RenamingMap {
             if (index + 1 <= this.maxOffset) {
                 const successorId = this.findIdFromIndex(index + 1)
                 if (successorId.length + 1 < id.length) {
-                    const [prefix, suffix] = id.truncate(successorId.length)
-                    const [_, tail] = suffix.truncate(1)
+                    const tail = id.getTail(successorId.length + 1)
 
                     const closestPredecessorOfSuccessorId = Identifier.fromBase(successorId, successorId.lastOffset - 1)
 
-                    if (prefix.compareTo(closestPredecessorOfSuccessorId) === Ordering.Equal
-                        && suffix.tuples[0].compareTo(MAX_TUPLE) === Ordering.Equal
+                    if (closestPredecessorOfSuccessorId.isPrefix(id)
+                        && id.tuples[successorId.length].compareTo(MAX_TUPLE) === Ordering.Equal
                         && successorId.compareTo(tail) === Ordering.Less) {
 
                         return newPredecessorId.concat(tail)
@@ -231,7 +229,7 @@ export class RenamingMap {
             console.assert(this.newFirstId.compareTo(this.firstId) === Ordering.Less,
                 "Reaching this case should imply that newFirstId < firstId")
 
-            const [_, end] = id.truncate(1)
+            const end = id.getTail(1)
 
             // Since closestPredecessorOfNewFirstId is not assigned to any element,
             // it should be impossible to generate id such as
@@ -281,9 +279,9 @@ export class RenamingMap {
         }
 
         // newFirstId < id < newLastId
-        const [head, tail] = id.truncate(1)
+        const tail = id.getTail(1)
         const [predecessorId, successorId] =
-            this.findPredecessorAndSuccessorFromIndex(head.lastOffset)
+            this.findPredecessorAndSuccessorFromIndex(id.tuples[0].offset)
 
         if (tail.compareTo(predecessorId) === Ordering.Less) {
             // tail < predecessorId < predecessorId + MIN_TUPLE + tail < successorId
