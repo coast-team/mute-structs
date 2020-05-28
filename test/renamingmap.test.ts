@@ -585,7 +585,7 @@ test(`renameId(reverseRenameId(id)) returns id with
     t.deepEqual(renamingMap.renameId(idAtEpoch0), idAtEpoch1)
 })
 
-test.failing(`renameId(reverseRenameId(id)) returns id with
+test(`renameId(reverseRenameId(id)) returns id with
     id causally inserted to rename op,
     newLastId < id < lastId`, (t) => {
 
