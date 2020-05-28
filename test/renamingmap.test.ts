@@ -537,12 +537,12 @@ test.failing(`renameId(reverseRenameId(id)) returns id with
     firstId < tail`, (t) => {
 
     /*
-        <10, -6, 0>[0..3] -> <10, 0, 0>[0..3],
+        <10, 6, 0>[0..3] -> <10, 0, 0>[0..3],
         <42, 1, 5>[6..9] -> <10, 0, 0>[4..7],
         <53, 2, 1>[0..0] -> <10, 0, 0>[8..8],
         <53, 2, 1>[2..5] -> <10, 0, 0>[9..12]
     */
-    const renamingMap = generateRenamingMap()
+    const renamingMap = generateRenamingMap(6)
 
     const idAtEpoch1 = idFactory(10, 0, 0, -1, 99, 99, 0, 0)
     const idAtEpoch0 = renamingMap.reverseRenameId(idAtEpoch1)
