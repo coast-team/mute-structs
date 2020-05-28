@@ -89,6 +89,21 @@ export class RenamingMap {
         const maxLastId = this.lastId.compareTo(this.newLastId) === Ordering.Greater ?
             this.lastId : this.newLastId
 
+        const closestPredecessorOfFirstId: Identifier =
+            Identifier.fromBase(this.firstId, this.firstId.lastOffset - 1)
+
+        if (id.compareTo(this.firstId) === Ordering.Less
+            && closestPredecessorOfFirstId.length + 1 < id.length
+            && closestPredecessorOfFirstId.isPrefix(id)
+            && id.tuples[closestPredecessorOfFirstId.length].compareTo(MAX_TUPLE) === Ordering.Equal) {
+
+            const closestPredecessorOfNewFirstId: Identifier =
+                Identifier.fromBase(this.newFirstId, -1)
+            const tail = id.getTail(closestPredecessorOfFirstId.length + 1)
+
+            return closestPredecessorOfNewFirstId.concat(tail)
+        }
+
         if (this.newLastId.compareTo(this.lastId) === Ordering.Less
             && this.lastId.length + 1 < id.length
             && this.lastId.isPrefix(id)

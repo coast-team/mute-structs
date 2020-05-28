@@ -530,7 +530,7 @@ test("reverseRenameId(renameId(id)) returns id", (t) => {
     })
 })
 
-test.failing(`renameId(reverseRenameId(id)) returns id with
+test(`renameId(reverseRenameId(id)) returns id with
     newFirstId < firstId,
     id causally inserted to rename op,
     id = closestPredecessorOfNewFirstId + tail,
