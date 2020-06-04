@@ -21,7 +21,7 @@ import test from "ava"
 
 import {isSorted} from "../src/helpers"
 import {Identifier} from "../src/identifier"
-import {INT32_BOTTOM_USER} from "../src/idfactory"
+import {createBetweenPosition, INT32_BOTTOM_USER} from "../src/idfactory"
 import {INT32_BOTTOM, INT32_TOP} from "../src/int32"
 import {Ordering} from "../src/ordering"
 import {RenamingMap} from "../src/renamingmap/renamingmap"
@@ -600,4 +600,47 @@ test(`renameId(reverseRenameId(id)) returns id with
     const idAtEpoch1 = idFactory(33, 33, 0, 0)
     const idAtEpoch0 = renamingMap.reverseRenameId(idAtEpoch1)
     t.deepEqual(renamingMap.renameId(idAtEpoch0), idAtEpoch1)
+})
+
+test.failing(`renameId() retains order between id3 and id2 with
+    newLastId < id1 < id3 < id2 < lastId,
+    id1 causally inserted to rename op, newLastId < id1 < lastId,
+    id2 concurrently inserted to rename op, id2 = lastId + MIN_TUPLE_USER + tail,
+    id3 causally inserted to undo of the rename op between id1 and id2,
+    id3 = lastId + MIN_TUPLE + tail'
+    and lastId < tail'`, (t) => {
+    /*
+        <10, -6, 0>[0..3] -> <10, 0, 0>[0..3],
+        <42, 1, 5>[6..9] -> <10, 0, 0>[4..7],
+        <53, 2, 1>[0..0] -> <10, 0, 0>[8..8],
+        <53, 2, 1>[2..5] -> <10, 0, 0>[9..12]
+    */
+    const renamingMap = generateRenamingMap()
+
+    const id1AtEpoch1 = idFactory(33, 33, 0, 0)
+    const id1AtEpoch0 = renamingMap.reverseRenameId(id1AtEpoch1)
+
+    const id2AtEpoch0 = idFactory(53, 2, 1, 5, INT32_BOTTOM_USER, 0, 0, 0, 77, 77, 0, 0)
+    const id2AtEpoch1 = renamingMap.renameId(id2AtEpoch0)
+
+    const expectedOrder12 = Ordering.Less
+    const actualOrder12AtEpoch0 = id1AtEpoch0.compareTo(id2AtEpoch0)
+    const actualOrder12AtEpoch1 = id1AtEpoch1.compareTo(id2AtEpoch1)
+    t.is(actualOrder12AtEpoch0, expectedOrder12)
+    t.is(actualOrder12AtEpoch1, expectedOrder12)
+
+    const id3AtEpoch0 = createBetweenPosition(id1AtEpoch0, id2AtEpoch0, 100, 0)
+    const id3AtEpoch1 = renamingMap.renameId(id3AtEpoch0)
+
+    const expectedOrder13 = Ordering.Less
+    const actualOrder13AtEpoch0 = id1AtEpoch1.compareTo(id3AtEpoch0)
+    const actualOrder13AtEpoch1 = id1AtEpoch1.compareTo(id3AtEpoch1)
+    t.is(actualOrder13AtEpoch0, expectedOrder13)
+    t.is(actualOrder13AtEpoch1, expectedOrder13)
+
+    const expectedOrder32 = Ordering.Less
+    const actualOrder32AtEpoch0 = id3AtEpoch0.compareTo(id2AtEpoch0)
+    const actualOrder32AtEpoch1 = id3AtEpoch1.compareTo(id2AtEpoch1)
+    t.is(actualOrder32AtEpoch0, expectedOrder32)
+    t.is(actualOrder32AtEpoch1, expectedOrder32)
 })
