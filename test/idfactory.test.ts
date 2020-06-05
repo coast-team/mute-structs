@@ -24,6 +24,7 @@ import {IdentifierTuple} from "../src/identifiertuple.js"
 import {Ordering} from "../src/ordering.js"
 
 import {createBetweenPosition} from "../src/idfactory.js"
+import {idFactory} from "./helpers"
 
 test("two-noncontiguous-bases", (t: ExecutionContext) => {
     const replicaNumber = 0
@@ -58,4 +59,27 @@ test("is-mine", (t: ExecutionContext) => {
     const newId: Identifier = createBetweenPosition(null, null, replicaNumber, clock)
 
     t.is(newId.generator, replicaNumber)
+})
+
+test.failing(`createBetweenPosition(id1, id2) generates id3 with smallest size when
+    id1 = prefix + tail,
+    id2 = prefix' + tail'
+    and prefix'.random - prefix.random = 1`, (t) => {
+
+    const id1 = idFactory(42, 42, 0, 0, 77, 77, 0, 0)
+    const id2 = idFactory(43, 43, 0, 0, 23, 23, 0, 0)
+
+    const id3 = createBetweenPosition(id1, id2, 100, 0)
+
+    const expectedLength = 2
+    const actualLength = id3.length
+    t.is(actualLength, expectedLength)
+
+    const [expectedFirstTuple, tuple2OfId1] = id1.tuples
+    const [actualFirstTuple, tuple2OfId3] = id3.tuples
+    t.is(actualFirstTuple, expectedFirstTuple)
+
+    const expectedOrder = Ordering.Less
+    const actualOrder = tuple2OfId1.compareTo(tuple2OfId3)
+    t.is(actualOrder, expectedOrder)
 })
