@@ -617,7 +617,7 @@ test.failing(`renameId() retains order between id3 and id2 with
     */
     const renamingMap = generateRenamingMap()
 
-    const id1AtEpoch1 = idFactory(33, 33, 0, 0)
+    const id1AtEpoch1 = idFactory(52, 52, 0, 0)
     const id1AtEpoch0 = renamingMap.reverseRenameId(id1AtEpoch1)
 
     const id2AtEpoch0 = idFactory(53, 2, 1, 5, INT32_BOTTOM_USER, 0, 0, 0, 77, 77, 0, 0)
