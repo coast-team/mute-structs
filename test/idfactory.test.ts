@@ -61,7 +61,7 @@ test("is-mine", (t: ExecutionContext) => {
     t.is(newId.generator, replicaNumber)
 })
 
-test.failing(`createBetweenPosition(id1, id2) generates id3 with smallest size when
+test(`createBetweenPosition(id1, id2) generates id3 with smallest size when
     id1 = prefix + tail,
     id2 = prefix' + tail'
     and prefix'.random - prefix.random = 1`, (t) => {

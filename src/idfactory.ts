@@ -50,11 +50,18 @@ export function createBetweenPosition (
 
     let tuple1 = seq1.next().value
     let tuple2 = seq2.next().value
-    while ((tuple2.random - tuple1.random) < 2) {
+    while (tuple1.random === tuple2.random) {
         // Cannot insert a new tuple between tuple1 and tuple2
         tuples.push(tuple1)
         tuple1 = seq1.next().value
         tuple2 = seq2.next().value
+    }
+    if (tuple2.random - tuple1.random === 1) {
+        tuples.push(tuple1)
+        tuple1 = seq1.next().value
+        while (tuple2.compareTo(MAX_TUPLE_USER) !== Ordering.Equal) {
+            tuple2 = seq2.next().value
+        }
     }
     const random = randomInt32(tuple1.random + 1, tuple2.random)
         // random ∈ ]tuple1.random, tuple2.random[
