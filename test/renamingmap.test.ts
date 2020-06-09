@@ -602,7 +602,7 @@ test(`renameId(reverseRenameId(id)) returns id with
     t.deepEqual(renamingMap.renameId(idAtEpoch0), idAtEpoch1)
 })
 
-test.failing(`renameId() retains order between id3 and id2 with
+test(`renameId() retains order between id3 and id2 with
     newLastId < id1 < id3 < id2 < lastId,
     id1 causally inserted to rename op, newLastId < id1 < lastId,
     id2 concurrently inserted to rename op, id2 = lastId + MIN_TUPLE_USER + tail,
