@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0-8](https://github.com/coast-team/mute-structs/compare/v2.0.0-7...v2.0.0-8) (2020-06-16)
+
+
+### Features
+
+* **renameid:** handle properly some ids causally inserted to rename op ([3f019a3](https://github.com/coast-team/mute-structs/commit/3f019a3b5bcceb0576c22bb6d7566edb00f34ed1))
+* **renameid:** handle properly some ids causally inserted to rename op ([d59c1d5](https://github.com/coast-team/mute-structs/commit/d59c1d58f1ff58933a8e7e33f271a2a04e746a0b))
+* **renameid:** handle properly some ids causally inserted to rename op ([141a0e0](https://github.com/coast-team/mute-structs/commit/141a0e0e7027fca4dc3ee80551bb289e04c5f780))
+* **renameid:** handle properly some ids causally inserted to rename op ([c1058cc](https://github.com/coast-team/mute-structs/commit/c1058ccd60618e833ffe449227c1899aab53b2bc))
+
+
+### Bug Fixes
+
+* **idfactory:** fix createBetweenPosition() ([5b0eaa0](https://github.com/coast-team/mute-structs/commit/5b0eaa0938239e689e589753e9bea2ea3c11b20f))
+* **renamingmap:** edit createBetweenPosition() to fix failing test case ([a8ca694](https://github.com/coast-team/mute-structs/commit/a8ca6943dd2362a65cfb7449611f4cf40afe0293))
+* **renamingmap:** fix reverseRenameId() ([3fe88fe](https://github.com/coast-team/mute-structs/commit/3fe88fe42ea3608b4fcc43ada6a250c9916d475a))
+* **test:** fix initial settings of a test case ([2a18504](https://github.com/coast-team/mute-structs/commit/2a1850429870af90863554513463d0ef82754b47))
+
 ## [2.0.0-7](https://github.com/coast-team/mute-structs/compare/v2.0.0-6...v2.0.0-7) (2019-11-21)
 
 <a name="2.0.0-6"></a>
