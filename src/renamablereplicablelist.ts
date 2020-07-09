@@ -204,8 +204,9 @@ export class RenamableReplicableList {
             const previousEpoch = this.currentEpoch
             this.currentEpoch = newEpoch
 
-            const idIntervalsToRename = this.list.toList()
-            const newIdIntervals = this.renameIdIntervalsFromEpochToCurrent(idIntervalsToRename, previousEpoch)
+            const idsToRename = this.list.toList().flatMap((idInterval) => idInterval.toIds())
+            const newIds = this.renameIdsFromEpochToCurrent(idsToRename, previousEpoch)
+            const newIdIntervals = IdentifierInterval.mergeIdsIntoIntervals(newIds)
 
             const newList = new LogootSRopes(this.replicaNumber, this.clock)
             const insertOps = generateInsertOps(newIdIntervals, this.str)
@@ -238,38 +239,6 @@ export class RenamableReplicableList {
             transformationFns.reduce((ids, transformationFn) => ids.map(transformationFn), idsToRename)
 
         return renamedIds
-    }
-
-    renameIdIntervalsFromEpochToCurrent (
-        idIntervalsToRename: IdentifierInterval[],
-        fromEpoch: Epoch): IdentifierInterval[] {
-
-        const [epochsToRevert, epochsToApply] =
-            this.epochsStore.getPathBetweenEpochs(fromEpoch, this.currentEpoch)
-
-        const revertFns: Array<(idInterval: IdentifierInterval) =>  IdentifierInterval[]> =
-            epochsToRevert.map((epoch: Epoch) => {
-                const rmap = this.renamingMapStore.getRenamingMap(epoch.id) as RenamingMap
-                return (idInterval: IdentifierInterval) => {
-                    const newIds = idInterval.toIds().map((id: Identifier) => rmap.reverseRenameId(id))
-                    return IdentifierInterval.mergeIdsIntoIntervals(newIds)
-                }
-            })
-
-        const applyFns: Array<(idInterval: IdentifierInterval) =>  IdentifierInterval[]> =
-            epochsToApply.map((epoch: Epoch) => {
-                const rmap = this.renamingMapStore.getRenamingMap(epoch.id) as RenamingMap
-                return (idInterval: IdentifierInterval) => rmap.renameIdInterval(idInterval)
-            })
-
-        const transformationFns = revertFns.concat(applyFns)
-
-        const renamedIdIntervals = transformationFns
-            .reduce((idIntervals, transformationFn) => {
-                return idIntervals.flatMap(transformationFn)
-            }, idIntervalsToRename)
-
-        return renamedIdIntervals
     }
 
     getNbBlocks (): number {

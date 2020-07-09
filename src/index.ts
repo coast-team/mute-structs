@@ -35,6 +35,7 @@ export { TextOperation } from "./operations/textoperation"
 export { Epoch } from "./epoch/epoch"
 export { EpochId } from "./epoch/epochid"
 export { RenamableReplicableList } from "./renamablereplicablelist"
+export { RenamingMap } from "./renamingmap/renamingmap"
 
 export { RenamableLogootSDel } from "./operations/delete/renamablelogootsdel"
 export { RenamableLogootSAdd } from "./operations/insert/renamablelogootsadd"
