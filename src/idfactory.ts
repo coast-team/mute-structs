@@ -71,6 +71,12 @@ export function createBetweenPosition (
             tuple2 = seq2.next().value
         }
     }
+
+    if (tuple1.random + 1 === INT32_TOP_USER) {
+        tuples.push(tuple1)
+        tuple1 = seq1.next().value
+    }
+
     const random = randomInt32(tuple1.random + 1, tuple2.random)
         // random ∈ ]tuple1.random, tuple2.random[
         // tuple1.random exclusion ensures a dense set

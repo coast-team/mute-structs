@@ -23,7 +23,7 @@ import {Identifier} from "../src/identifier.js"
 import {IdentifierTuple} from "../src/identifiertuple.js"
 import {Ordering} from "../src/ordering.js"
 
-import {createBetweenPosition} from "../src/idfactory.js"
+import {createBetweenPosition, INT32_TOP_USER} from "../src/idfactory.js"
 import {idFactory} from "./helpers"
 
 test("two-noncontiguous-bases", (t: ExecutionContext) => {
@@ -105,4 +105,24 @@ test(`createBetweenPosition(id1, id2) generates valid id3 when
     const expectedOrder = Ordering.Less
     const actualOrder = tuple2OfId1.compareTo(tuple2OfId3)
     t.is(actualOrder, expectedOrder)
+})
+
+test(`createBetweenPosition(id1, id2) generates valid id3 when
+    id1 = tuple11 + tuple12,
+    id2 = successor(tuple11) and
+    tuple12.random = INT32_TOP_USER - 1`, (t) => {
+
+    const id1 = idFactory(42, 42, 0, 0, INT32_TOP_USER - 1, 77, 0, 0)
+    const id2 = idFactory(42, 42, 0, 1)
+
+    const id3 = createBetweenPosition(id1, id2, 100, 0)
+
+    const expectedLength = 3
+    const actualLength = id3.length
+    t.is(actualLength, expectedLength)
+
+    const [expectedFirstTuple, expectedSecondTuple] = id1.tuples
+    const [actualFirstTuple, actualSecondTuple, tuple3OfId1] = id3.tuples
+    t.is(actualFirstTuple, expectedFirstTuple)
+    t.is(actualSecondTuple, expectedSecondTuple)
 })
