@@ -84,7 +84,7 @@ test(`createBetweenPosition(id1, id2) generates id3 with smallest size when
     t.is(actualOrder, expectedOrder)
 })
 
-test.failing(`createBetweenPosition(id1, id2) generates valid id3 when
+test(`createBetweenPosition(id1, id2) generates valid id3 when
     id1 = tuple11 + tuple12,
     id2 = successor(tuple11) + tuple22 and
     tuple22.random < tuple12.random`, (t) => {
