@@ -83,3 +83,26 @@ test(`createBetweenPosition(id1, id2) generates id3 with smallest size when
     const actualOrder = tuple2OfId1.compareTo(tuple2OfId3)
     t.is(actualOrder, expectedOrder)
 })
+
+test.failing(`createBetweenPosition(id1, id2) generates valid id3 when
+    id1 = tuple11 + tuple12,
+    id2 = successor(tuple11) + tuple22 and
+    tuple22.random < tuple12.random`, (t) => {
+
+    const id1 = idFactory(42, 42, 0, 0, 77, 77, 0, 0)
+    const id2 = idFactory(42, 42, 0, 1, 23, 23, 0, 0)
+
+    const id3 = createBetweenPosition(id1, id2, 100, 0)
+
+    const expectedLength = 2
+    const actualLength = id3.length
+    t.is(actualLength, expectedLength)
+
+    const [expectedFirstTuple, tuple2OfId1] = id1.tuples
+    const [actualFirstTuple, tuple2OfId3] = id3.tuples
+    t.is(actualFirstTuple, expectedFirstTuple)
+
+    const expectedOrder = Ordering.Less
+    const actualOrder = tuple2OfId1.compareTo(tuple2OfId3)
+    t.is(actualOrder, expectedOrder)
+})
