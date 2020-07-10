@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0-11](https://github.com/coast-team/mute-structs/compare/v2.0.0-10...v2.0.0-11) (2020-07-10)
+
+
+### Bug Fixes
+
+* **idfactory:** edit createBetweenPosition() to prevent overflow ([a328b00](https://github.com/coast-team/mute-structs/commit/a328b0081402ae1a02c90861e2cc4d68a497c105))
+
 ## [2.0.0-10](https://github.com/coast-team/mute-structs/compare/v2.0.0-9...v2.0.0-10) (2020-07-10)
 
 
