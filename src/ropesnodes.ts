@@ -140,6 +140,20 @@ export class RopesNodes {
         return this.block.idInterval.getBaseId(this.actualEnd)
     }
 
+    get max (): Identifier {
+        if (this.right !== null) {
+            return this.right.max
+        }
+        return this.getIdEnd()
+    }
+
+    get min (): Identifier {
+        if (this.left !== null) {
+            return this.left.min
+        }
+        return this.getIdBegin()
+    }
+
     addString (length: number): void {
         console.assert(isInt32(length), "length  ∈ int32")
         // `length" may be negative

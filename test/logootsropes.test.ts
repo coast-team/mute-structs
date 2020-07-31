@@ -18,7 +18,10 @@
 */
 
 import test from "ava"
-import {LogootSRopes} from "../src/logootsropes.js"
+import { Identifier } from "../src/identifier"
+import { IdentifierTuple } from "../src/identifiertuple"
+import { LogootSRopes } from "../src/logootsropes.js"
+import { LogootSAdd } from "../src/operations/insert/logootsadd"
 
 test("fromPlain-empty-doc", (t) => {
     const replicaNumber = 1
@@ -355,6 +358,96 @@ test("commutative-insert-append-split-5", (t) => {
 
     t.is(docA.str, docB.str, "docA.str = docB.str")
     t.is(docA.digest(), docB.digest(), "docA.digest() = docB.digest()")
+})
+
+test("commutative-insert-append-split-6", (t) => {
+    const replicaNumberA = 1
+    const replicaNumberB = 2
+    const replicaNumberC = 3
+
+    const plainDoc = {
+        replicaNumber: 1,
+        clock: 1,
+        root: {
+            // "Hello"
+            block: {
+                idInterval: {
+                    idBegin: {
+                        tuples: [{
+                            random: 0,
+                            replicaNumber: replicaNumberA,
+                            clock: 0,
+                            offset: 0,
+                        }],
+                    },
+                    end: 4,
+                },
+                nbElement: 5,
+            },
+            actualBegin: 0,
+            length: 5,
+            left: null,
+            right: {
+                // "!""
+                block: {
+                    idInterval: {
+                        idBegin: {
+                            tuples: [{
+                                random: 42,
+                                replicaNumber: replicaNumberC,
+                                clock: 0,
+                                offset: 0,
+                            }],
+                        },
+                        end: 0,
+                    },
+                    nbElement: 1,
+                },
+                actualBegin: 0,
+                length: 1,
+                right: null,
+                left: {
+                    // "SPLIT"
+                    block: {
+                        idInterval: {
+                            idBegin: {
+                                tuples: [{
+                                    random: 0,
+                                    replicaNumber: replicaNumberA,
+                                    clock: 0,
+                                    offset: 4,
+                                }, {
+                                    random: 7,
+                                    replicaNumber: replicaNumberB,
+                                    clock: 0,
+                                    offset: 0,
+                                }],
+                            },
+                            end: 4,
+                        },
+                        nbElement: 5,
+                    },
+                    actualBegin: 0,
+                    length: 5,
+                    left: null,
+                    right: null,
+                },
+            },
+        },
+        str: "HelloSPLIT!",
+    }
+
+    const docC = LogootSRopes.fromPlain(plainDoc)
+
+    if (docC === null) {
+        t.fail("The doc should have been correctly instantiated")
+    } else {
+        const appendOp = new LogootSAdd(new Identifier([new IdentifierTuple(0, replicaNumberA, 0, 5)]), "world")
+        appendOp.execute(docC)
+
+        const expectedString = "HelloSPLITworld!"
+        t.is(docC.str, expectedString)
+    }
 })
 
 test("commutative-deletion1-deletion2", (t) => {
