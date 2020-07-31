@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0](https://github.com/coast-team/mute-structs/compare/v2.0.0-11...v2.0.0) (2020-07-31)
+
+
+### Bug Fixes
+
+* **logootsropes:** merge fix on append/prepend from master branch ([fee69ff](https://github.com/coast-team/mute-structs/commit/fee69ff6728ca64b546825f1242c82141e5831f6))
+
+## [1.1.0](https://github.com/coast-team/mute-structs/compare/v2.0.0-1...v1.1.0) (2019-03-04)
+
+
+### Features
+
+* **ropesnodes:** add max getter to retrieve max id from a subtree ([ee779a7](https://github.com/coast-team/mute-structs/commit/ee779a7d3662cbe2952381c7b2a7fee9ce1ac52b))
+* **ropesnodes:** add min getter to retrieve min id from a subtree ([ee2da24](https://github.com/coast-team/mute-structs/commit/ee2da24fccdc80a8c4d447ca4412627f8254fd94))
+
+
+### Bug Fixes
+
+* **logootsropes:** fix checks before appending/prepending ([91f24b5](https://github.com/coast-team/mute-structs/commit/91f24b52a2a5a7fb695b92baf087cd5e4b8ce8b9))
+
 ## [2.0.0-11](https://github.com/coast-team/mute-structs/compare/v2.0.0-10...v2.0.0-11) (2020-07-10)
 
 
