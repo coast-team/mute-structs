@@ -22,7 +22,8 @@ import { ExecutionContext } from "ava"
 
 import { Epoch } from "../src/epoch/epoch"
 import { EpochId } from "../src/epoch/epochid"
-import { EpochStore } from "../src/epoch/epochstore"
+import { compareEpochFullIds, EpochStore } from "../src/epoch/epochstore"
+import { Ordering } from "../src/ordering"
 
 function generateEpoch (replicaNumber: number, epochNumber: number, parentEpoch: Epoch): Epoch {
     return new Epoch(new EpochId(replicaNumber, epochNumber), parentEpoch.id)
@@ -60,4 +61,20 @@ test("epochStore-from-plain-factory", (t: ExecutionContext) => {
     } else {
         t.deepEqual(actualEpochStore, expectedEpochStore)
     }
+})
+
+test("compare-epoch-full-ids", (t) => {
+    t.is(compareEpochFullIds([0, 0], [0, 0]), Ordering.Equal)
+
+    t.is(compareEpochFullIds([0, 0], [0, 0, 1, 1]), Ordering.Less)
+    t.is(compareEpochFullIds([0, 0, 1, 1], [0, 0]), Ordering.Greater)
+
+    t.is(compareEpochFullIds([0, 0, 1, 1], [0, 0, 2, 1]), Ordering.Less)
+    t.is(compareEpochFullIds([0, 0, 2, 1], [0, 0, 1, 1]), Ordering.Greater)
+
+    t.is(compareEpochFullIds([0, 0], [0, 0, -1, 1]), Ordering.Less)
+    t.is(compareEpochFullIds([0, 0, -1, 1], [0, 0]), Ordering.Greater)
+
+    t.is(compareEpochFullIds([0, 0, -2, 1], [0, 0, -1, 1]), Ordering.Less)
+    t.is(compareEpochFullIds([0, 0, -1, 1], [0, 0, -2, 1]), Ordering.Greater)
 })
