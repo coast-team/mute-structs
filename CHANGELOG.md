@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.0.1](https://github.com/coast-team/mute-structs/compare/v2.0.0...v2.0.1) (2020-08-11)
+
+
+### Features
+
+* **epochstore:** add compareEpochFullIds() ([1d2de9e](https://github.com/coast-team/mute-structs/commit/1d2de9e1bdf9aa435caecacaf4269b08d3100ae0))
+
+
+### Bug Fixes
+
+* **renamablereplicablelist:** fix priority order between epochs ([d59c8d1](https://github.com/coast-team/mute-structs/commit/d59c8d12622e38c98d1e6aeea39343112f59f526))
+
 ## [2.0.0](https://github.com/coast-team/mute-structs/compare/v2.0.0-11...v2.0.0) (2020-07-31)
 
 
