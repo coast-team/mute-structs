@@ -20,7 +20,7 @@
 import { isObject } from "./data-validation"
 import { Epoch} from "./epoch/epoch"
 import { EpochId } from "./epoch/epochid"
-import { EpochStore } from "./epoch/epochstore"
+import { compareEpochFullIds, EpochStore } from "./epoch/epochstore"
 import { Identifier } from "./identifier"
 import { IdentifierInterval } from "./identifierinterval"
 import { createAtPosition } from "./idfactory"
@@ -32,6 +32,7 @@ import { LogootSAdd } from "./operations/insert/logootsadd"
 import { RenamableLogootSAdd } from "./operations/insert/renamablelogootsadd"
 import { TextInsert } from "./operations/insert/textinsert"
 import { LogootSRename } from "./operations/rename/logootsrename"
+import { Ordering } from "./ordering"
 import { RenamingMap } from "./renamingmap/renamingmap"
 import { RenamingMapStore } from "./renamingmap/renamingmapstore"
 import { mkNodeAt } from "./ropesnodes"
@@ -200,7 +201,7 @@ export class RenamableReplicableList {
         const newEpochFullId = this.epochsStore.getEpochFullId(newEpoch)
         const currentEpochFullId = this.epochsStore.getEpochFullId(this.currentEpoch)
 
-        if (currentEpochFullId < newEpochFullId) {
+        if (compareEpochFullIds(currentEpochFullId, newEpochFullId) === Ordering.Less) {
             const previousEpoch = this.currentEpoch
             this.currentEpoch = newEpoch
 
