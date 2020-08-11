@@ -18,11 +18,33 @@
 */
 
 import { isArrayFromMap, isObject } from "../data-validation"
+import { Ordering } from "../ordering"
 import { Epoch } from "./epoch"
 import { EpochId } from "./epochid"
 
 export interface EpochStoreJSON {
     readonly epochs: Array<[string, Epoch]>
+}
+
+export function compareEpochFullIds (id1: number[], id2: number[]): Ordering {
+    const minLength = id1.length < id2.length ? id1.length : id2.length
+    for (let i = 0; i < minLength; i++) {
+        const value1 = id1[i]
+        const value2 = id2[i]
+
+        if (value1 < value2) {
+            return Ordering.Less
+        } else if (value1 > value2) {
+            return Ordering.Greater
+        }
+    }
+    if (id1.length < id2.length) {
+        return Ordering.Less
+    } else if (id1.length > id2.length) {
+        return Ordering.Greater
+    } else {
+        return Ordering.Equal
+    }
 }
 
 export class EpochStore {
