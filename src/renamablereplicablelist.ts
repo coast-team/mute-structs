@@ -141,7 +141,8 @@ export class RenamableReplicableList {
 
     insertRemote (epoch: Epoch, op: LogootSAdd): TextInsert[] {
         if (!epoch.equals(this.currentEpoch)) {
-            const newIds = this.renameIdsFromEpochToCurrent(op.insertedIds, epoch)
+            const strat = (rmap: RenamingMap, ids: Identifier[]) => rmap.initRenameIds(ids)
+            const newIds = this.renameFromEpochToCurrent(op.insertedIds, epoch, strat)
             const newIdIntervals = IdentifierInterval.mergeIdsIntoIntervals(newIds)
 
             const insertOps = generateInsertOps(newIdIntervals, op.content)
@@ -160,7 +161,8 @@ export class RenamableReplicableList {
             const idsToRename = op.lid
                 .flatMap((idInterval: IdentifierInterval): Identifier[] => idInterval.toIds())
 
-            const newIds = this.renameIdsFromEpochToCurrent(idsToRename, epoch)
+            const strat = (rmap: RenamingMap, ids: Identifier[]) => rmap.initRenameIds(ids)
+            const newIds = this.renameFromEpochToCurrent(idsToRename, epoch, strat)
             const newIdIntervals = IdentifierInterval.mergeIdsIntoIntervals(newIds)
 
             const newOp = new LogootSDel(newIdIntervals, op.author)
@@ -206,7 +208,8 @@ export class RenamableReplicableList {
             this.currentEpoch = newEpoch
 
             const idsToRename = this.list.toList().flatMap((idInterval) => idInterval.toIds())
-            const newIds = this.renameIdsFromEpochToCurrent(idsToRename, previousEpoch)
+            const strat = (rmap: RenamingMap, ids: Identifier[]) => rmap.initRenameSeq(ids)
+            const newIds = this.renameFromEpochToCurrent(idsToRename, previousEpoch, strat)
             const newIdIntervals = IdentifierInterval.mergeIdsIntoIntervals(newIds)
 
             const newList = new LogootSRopes(this.replicaNumber, this.clock)
@@ -218,28 +221,27 @@ export class RenamableReplicableList {
         }
     }
 
-    renameIdsFromEpochToCurrent (idsToRename: Identifier[], fromEpoch: Epoch): Identifier[] {
+    renameFromEpochToCurrent (
+        idsToRename: Identifier[],
+        fromEpoch: Epoch,
+        strat: (rmap: RenamingMap, ids: Identifier[]) => Identifier[],
+        ): Identifier[] {
+
         const [epochsToRevert, epochsToApply] =
             this.epochsStore.getPathBetweenEpochs(fromEpoch, this.currentEpoch)
 
-        const revertFns: Array<(id: Identifier) =>  Identifier> =
-            epochsToRevert.map((epoch: Epoch) => {
-                const rmap = this.renamingMapStore.getRenamingMap(epoch.id) as RenamingMap
-                return (id: Identifier) => rmap.reverseRenameId(id)
-            })
+        let ids = idsToRename
+        epochsToRevert.forEach((epoch) => {
+            const rmap = this.renamingMapStore.getRenamingMap(epoch.id) as RenamingMap
+            ids = ids.map((id) => rmap.reverseRenameId(id))
+        })
 
-        const applyFns: Array<(id: Identifier) =>  Identifier> =
-            epochsToApply.map((epoch: Epoch) => {
-                const rmap = this.renamingMapStore.getRenamingMap(epoch.id) as RenamingMap
-                return (id: Identifier) => rmap.renameId(id)
-            })
+        epochsToApply.forEach((epoch) => {
+            const rmap = this.renamingMapStore.getRenamingMap(epoch.id) as RenamingMap
+            ids = strat(rmap, ids)
+        })
 
-        const transformationFns = revertFns.concat(applyFns)
-
-        const renamedIds =
-            transformationFns.reduce((ids, transformationFn) => ids.map(transformationFn), idsToRename)
-
-        return renamedIds
+        return ids
     }
 
     getNbBlocks (): number {
