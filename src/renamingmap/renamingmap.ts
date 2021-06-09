@@ -187,19 +187,17 @@ export class RenamingMap {
         }
         // 2.  id is such as id = closestPredecessorOfSuccessorId + MAX_TUPLE + tail
         //     with successorId < tail
-        if (index + 1 <= this.maxOffset) {
-            const successorId = this.findIdFromIndex(index + 1)
-            if (successorId.length + 1 < id.length) {
-                const tail = id.getTail(successorId.length + 1)
+        const successorId = this.findIdFromIndex(index + 1)
+        if (successorId.length + 1 < id.length) {
+            const tail = id.getTail(successorId.length + 1)
 
-                const closestPredecessorOfSuccessorId = Identifier.fromBase(successorId, successorId.lastOffset - 1)
+            const closestPredecessorOfSuccessorId = Identifier.fromBase(successorId, successorId.lastOffset - 1)
 
-                if (closestPredecessorOfSuccessorId.isPrefix(id)
-                    && id.tuples[successorId.length].compareTo(MAX_TUPLE) === Ordering.Equal
-                    && successorId.compareTo(tail) === Ordering.Less) {
+            if (closestPredecessorOfSuccessorId.isPrefix(id)
+                && id.tuples[successorId.length].compareTo(MAX_TUPLE) === Ordering.Equal
+                && successorId.compareTo(tail) === Ordering.Less) {
 
-                    return newPredecessorId.concat(tail)
-                }
+                return newPredecessorId.concat(tail)
             }
         }
 
@@ -214,11 +212,12 @@ export class RenamingMap {
 
         const closestPredecessorOfNewFirstId: Identifier =
                 Identifier.fromBase(this.newFirstId, this.newFirstId.lastOffset - 1)
+        const closestSuccessorOfNewLastId = Identifier.fromBase(this.newLastId, this.newLastId.lastOffset + 1)
 
         const minFirstId = this.firstId.compareTo(closestPredecessorOfNewFirstId) === Ordering.Less ?
             this.firstId : closestPredecessorOfNewFirstId
         const maxLastId = this.lastId.compareTo(this.newLastId) === Ordering.Greater ?
-            this.lastId : this.newLastId
+            this.lastId : closestSuccessorOfNewLastId
 
         if (id.compareTo(minFirstId) === Ordering.Less
             || maxLastId.compareTo(id) === Ordering.Less) {
@@ -266,6 +265,28 @@ export class RenamingMap {
                     MAX_TUPLE,
                     ...end.tuples,
                 ])
+            }
+        }
+
+        if (this.lastId.compareTo(this.newLastId) === Ordering.Less
+            && this.newLastId.compareTo(id) === Ordering.Less
+            && id.compareTo(closestSuccessorOfNewLastId) === Ordering.Less) {
+
+            // lastId < newLastId < id < closestSuccessorOfNewLastId
+            // id = newLastId + tail
+
+            const tail2 = id.getTail(1)
+            if (tail2.compareTo(this.lastId) === Ordering.Less) {
+                return new Identifier([
+                    ...this.lastId.tuples,
+                    MIN_TUPLE,
+                    ...tail2.tuples,
+                ])
+            } else if (this.lastId.compareTo(tail2) === Ordering.Less
+                && tail2.compareTo(this.newLastId) === Ordering.Less) {
+                return tail2
+            } else {
+                return id
             }
         }
 

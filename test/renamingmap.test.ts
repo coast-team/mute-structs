@@ -330,6 +330,58 @@ test("reverseRenameId() of concurrently inserted id such as  newLastId < id < la
     t.deepEqual(actualNewId2, expectedNewId2, "actualId = expectedNewId")
 })
 
+test("reverseRenameId() of concurrently inserted id such as lastId < id < newLastId", (t) => {
+    /*
+        <10, -6, 0>[0..3] -> <10, 0, 0>[0..3],
+    */
+    const renamedIdIntervals = [
+        generateIdIntervalFactory(10, -6, 0, 0)(3),
+    ]
+    const renamingMap = new RenamingMap(0, 0, renamedIdIntervals)
+
+    const idAtEpoch0 = idFactory(10, -2, 0, 0)
+    const expectedIdAtEpoch1 = idFactory(10, 0, 0, 3, 10, -2, 0, 0)
+    const actualIdAtEpoch1 = renamingMap.initRenameIds([idAtEpoch0])[0]
+    t.deepEqual(expectedIdAtEpoch1, actualIdAtEpoch1, "actualId = expectedNewId")
+
+    const idAtEpoch1 = idFactory(10, 0, 0, 3, 10, -2, 0, 0)
+    const expectedIdAtEpoch0 = idFactory(10, -2, 0, 0)
+    const actualIdAtEpoch0 = renamingMap.reverseRenameId(idAtEpoch1)
+    t.deepEqual(expectedIdAtEpoch0, actualIdAtEpoch0, "actualId = expectedNewId")
+})
+
+test(`reverseRenameId() of causally inserted id such as
+    lastId < newLastId, id = newLastId + tail and tail < lastId`, (t) => {
+    /*
+        <10, -6, 0>[0..3] -> <10, 0, 0>[0..3],
+    */
+    const renamedIdIntervals = [
+        generateIdIntervalFactory(10, -6, 0, 0)(3),
+    ]
+    const renamingMap = new RenamingMap(0, 0, renamedIdIntervals)
+
+    const idAtEpoch1 = idFactory(10, 0, 0, 3, -53, -2, 0, 0)
+    const expectedIdAtEpoch0 = idFactory(10, -6, 0, 3, INT32_BOTTOM, 0, 0, 0, -53, -2, 0, 0)
+    const actualIdAtEpoch0 = renamingMap.reverseRenameId(idAtEpoch1)
+    t.deepEqual(expectedIdAtEpoch0, actualIdAtEpoch0, "actualId = expectedNewId")
+})
+
+test(`reverseRenameId() of causally inserted id such as
+    lastId < newLastId, id = newLastId + tail and newLastId < tail`, (t) => {
+    /*
+        <10, -6, 0>[0..3] -> <10, 0, 0>[0..3],
+    */
+    const renamedIdIntervals = [
+        generateIdIntervalFactory(10, -6, 0, 0)(3),
+    ]
+    const renamingMap = new RenamingMap(0, 0, renamedIdIntervals)
+
+    const idAtEpoch1 = idFactory(10, 0, 0, 3, 53, -2, 0, 0)
+    const expectedIdAtEpoch0 = idFactory(10, 0, 0, 3, 53, -2, 0, 0)
+    const actualIdAtEpoch0 = renamingMap.reverseRenameId(idAtEpoch1)
+    t.deepEqual(expectedIdAtEpoch0, actualIdAtEpoch0, "actualId = expectedNewId")
+})
+
 test("renameId() retains order between ids", (t) => {
     /*
         <10, -6, 0>[0..3] -> <10, 0, 0>[0..3],
@@ -401,6 +453,30 @@ test("reverseRenameId() retains order between ids", (t) => {
         idFactory(53, 2, 1, 6),
         idFactory(57, 57, 0, 0),
     ]
+    const renamedIds =
+        ids.map((idToRename: Identifier): Identifier => renamingMap.reverseRenameId(idToRename))
+
+    const compareFn = (a: Identifier, b: Identifier): Ordering => a.compareTo(b)
+    t.true(isSorted(renamedIds, compareFn), "reverseRenameId() should retain the order between ids")
+})
+
+test("reverseRenameId() retains order between ids with lastId < newLastId", (t) => {
+    /*
+        <10, -6, 0>[0..3] -> <10, 0, 0>[0..3],
+    */
+    const renamedIdIntervals = [
+        generateIdIntervalFactory(10, -6, 0, 0)(3),
+    ]
+    const renamingMap = new RenamingMap(0, 0, renamedIdIntervals)
+
+    const ids = [
+        idFactory(10, 0, 0, 3),
+        idFactory(10, 0, 0, 3, -53, -2, 0, 0),
+        idFactory(10, 0, 0, 3, 10, -2, 0, 0),
+        idFactory(10, 0, 0, 3, 53, -2, 0, 0),
+        idFactory(10, 1, 0, 0),
+    ]
+
     const renamedIds =
         ids.map((idToRename: Identifier): Identifier => renamingMap.reverseRenameId(idToRename))
 
