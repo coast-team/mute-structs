@@ -10,10 +10,15 @@ node_js:
   - '11'
 script:
   - npm test
-deploy:
-  provider: npm
-  api_token:
-    secure: jbPUO4ggV+A8USN3aqhZ59bjav1UUiCHvLT+B/aj+XnjMv8fAH6XgdF/eb4k/nQOdg9S3VfwHnVv5FKG+6SWufDuwAoGVNiZPcsKFtlPta97YfxgICRmk5DcK4jpqfG0/jmDc1K/W710zKIjxgYHCb1ZukWF4v20DOIz7NL0diM=
-  edge: true
-  on:
-    tags: true
+jobs:
+  include:
+    - stage: npm release
+      node_js: 'node'
+      script: npm run build
+      deploy:
+        provider: npm
+        api_token:
+          secure: jbPUO4ggV+A8USN3aqhZ59bjav1UUiCHvLT+B/aj+XnjMv8fAH6XgdF/eb4k/nQOdg9S3VfwHnVv5FKG+6SWufDuwAoGVNiZPcsKFtlPta97YfxgICRmk5DcK4jpqfG0/jmDc1K/W710zKIjxgYHCb1ZukWF4v20DOIz7NL0diM=
+        edge: true
+        on:
+          tags: true
