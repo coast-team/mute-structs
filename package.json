@@ -20,7 +20,7 @@
     "@types/node": "^11.15.2",
     "ava": "^2.4.0",
     "husky": "^3.1.0",
-    "standard-version": "^7.0.1",
+    "standard-version": "^8.0.1",
     "tslint": "^5.11",
     "tslint-eslint-rules": "^5.4",
     "typescript": "^3.6.4"
