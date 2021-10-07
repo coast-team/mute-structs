@@ -47,6 +47,62 @@ export function compareEpochFullIds (id1: number[], id2: number[]): Ordering {
     }
 }
 
+export function computeRequiredEpochs (
+    epochStore: EpochStore,
+    epochs: Epoch[],
+    stateVector: Map<number, number>,
+    ): Set<Epoch> {
+
+    const requiredEpochs = new Set<Epoch>()
+    const parentEpochs = new Set<Epoch>()
+
+    let i = epochs.length - 1
+    parentEpochs.add(epochs[i])
+
+    let foundCausallyStableEpoch = false
+    let firstCausallyStableEpoch = false
+
+    while (parentEpochs.size > 0 && i >= 0) {
+        const epoch = epochs[i]
+
+        const replicaNumber = epoch.id.replicaNumber
+        const epochNumber = epoch.id.epochNumber
+        if (!foundCausallyStableEpoch &&
+            stateVector.has(replicaNumber) &&
+            epochNumber <= stateVector.get(replicaNumber)!) {
+
+            foundCausallyStableEpoch = true
+            firstCausallyStableEpoch = true
+        }
+
+        if (firstCausallyStableEpoch ||
+            (foundCausallyStableEpoch && parentEpochs.has(epoch))) {
+
+            requiredEpochs.add(epoch)
+            parentEpochs.delete(epoch)
+            if (parentEpochs.size > 0) {
+                if (epoch.parentId) {
+                    const parentEpoch = epochStore.getEpoch(epoch.parentId)!
+                    parentEpochs.add(parentEpoch)
+                }
+            }
+        } else if (!foundCausallyStableEpoch) {
+            requiredEpochs.add(epoch)
+            parentEpochs.delete(epoch)
+            if (epoch.parentId) {
+                const parentEpoch = epochStore.getEpoch(epoch.parentId)!
+                parentEpochs.add(parentEpoch)
+            }
+        }
+
+        console.log(i, "ème itération : ", requiredEpochs)
+        i--
+        firstCausallyStableEpoch = false
+    }
+
+    return requiredEpochs
+}
+
 export class EpochStore {
 
     static fromPlain (o: unknown): EpochStore | null {
@@ -123,6 +179,19 @@ export class EpochStore {
             i++
         }
         return [fromPath.slice(i).reverse(), toPath.slice(i)]
+    }
+
+    toSortedArray (): Epoch[] {
+        const epochs = new Array<Epoch>()
+
+        this.epochs.forEach((epoch) => {
+            epochs.push(epoch)
+        })
+        epochs.sort((a, b) => {
+            return compareEpochFullIds(this.getEpochFullId(a), this.getEpochFullId(b))
+        })
+
+        return epochs
     }
 
     toJSON (): EpochStoreJSON {
