@@ -22,7 +22,7 @@ import { ExecutionContext } from "ava"
 
 import { Epoch } from "../src/epoch/epoch"
 import { EpochId } from "../src/epoch/epochid"
-import { compareEpochFullIds, EpochStore } from "../src/epoch/epochstore"
+import { compareEpochFullIds, computeRequiredEpochs, EpochStore } from "../src/epoch/epochstore"
 import { Ordering } from "../src/ordering"
 
 function generateEpoch (replicaNumber: number, epochNumber: number, parentEpoch: Epoch): Epoch {
@@ -77,4 +77,122 @@ test("compare-epoch-full-ids", (t) => {
 
     t.is(compareEpochFullIds([0, 0, -2, 1], [0, 0, -1, 1]), Ordering.Less)
     t.is(compareEpochFullIds([0, 0, -1, 1], [0, 0, -2, 1]), Ordering.Greater)
+})
+
+test("computeRequiredEpochs-case-1", (t) => {
+    const origin = new Epoch(new EpochId(0, 0))
+    const epochA1 = generateEpoch(1, 1, origin)
+    const epochA8 = generateEpoch(1, 8, epochA1)
+    const epochB2 = generateEpoch(2, 2, origin)
+    const epochBottom1 = generateEpoch(-1, 1, epochB2)
+    const epochA9 = generateEpoch(1, 9, epochB2)
+    const epochB7 = generateEpoch(2, 7, epochB2)
+
+    const epochs = [
+        epochA1,
+        epochA8,
+        epochB2,
+        epochBottom1,
+        epochA9,
+        epochB7,
+    ]
+
+    const epochStore = new EpochStore(origin)
+    epochs.forEach((epoch) => epochStore.addEpoch(epoch))
+    const causalContext: Array<[number, number]> = [[1, 9], [2, 5]] // A9 Max causally stable
+    const stateVector = new Map<number, number>(causalContext)
+
+    const expectedRequiredEpochs = new Set([epochB7, epochA9, epochB2])
+    const actualRequiredEpochs = computeRequiredEpochs(epochStore, [origin, ...epochs], stateVector)
+
+    t.deepEqual(actualRequiredEpochs, expectedRequiredEpochs)
+})
+
+test("computeRequiredEpochs-case-2", (t) => {
+    const origin = new Epoch(new EpochId(0, 0))
+    const epochA1 = generateEpoch(1, 1, origin)
+    const epochA8 = generateEpoch(1, 8, epochA1)
+    const epochB2 = generateEpoch(2, 2, origin)
+    const epochBottom1 = generateEpoch(-1, 1, epochB2)
+    const epochA9 = generateEpoch(1, 9, epochB2)
+    const epochB7 = generateEpoch(2, 7, epochB2)
+
+    const epochs = [
+        epochA1,
+        epochA8,
+        epochB2,
+        epochBottom1,
+        epochA9,
+        epochB7,
+    ]
+
+    const epochStore = new EpochStore(origin)
+    epochs.forEach((epoch) => epochStore.addEpoch(epoch))
+    const causalContext: Array<[number, number]> = [[2, 5]] // B2 Max causally stable
+    const stateVector = new Map<number, number>(causalContext)
+
+    const expectedRequiredEpochs = new Set([epochB7, epochA9, epochBottom1, epochB2])
+    const actualRequiredEpochs = computeRequiredEpochs(epochStore, [origin, ...epochs], stateVector)
+
+    t.deepEqual(actualRequiredEpochs, expectedRequiredEpochs)
+})
+
+test("computeRequiredEpochs-case-3", (t) => {
+    const origin = new Epoch(new EpochId(0, 0))
+    const epochA1 = generateEpoch(1, 1, origin)
+    const epochA8 = generateEpoch(1, 8, epochA1)
+    const epochB2 = generateEpoch(2, 2, origin)
+    const epochBottom1 = generateEpoch(-1, 1, epochB2)
+    const epochA9 = generateEpoch(1, 9, epochB2)
+    const epochB7 = generateEpoch(2, 7, epochB2)
+
+    const epochs = [
+        epochA1,
+        epochA8,
+        epochB2,
+        epochBottom1,
+        epochA9,
+        epochB7,
+    ]
+
+    const epochStore = new EpochStore(origin)
+    epochs.forEach((epoch) => epochStore.addEpoch(epoch))
+    const causalContext: Array<[number, number]> = [[1, 8]] // A8 Max causally stable
+    const stateVector = new Map<number, number>(causalContext)
+
+    const expectedRequiredEpochs = new Set([epochB7, epochA9, epochBottom1, epochB2, epochA8, epochA1, origin])
+    const actualRequiredEpochs = computeRequiredEpochs(epochStore, [origin, ...epochs], stateVector)
+
+    t.deepEqual(actualRequiredEpochs, expectedRequiredEpochs)
+})
+
+test("computeRequiredEpochs-case-4", (t) => {
+    const origin = new Epoch(new EpochId(0, 0))
+    const epochA1 = generateEpoch(1, 1, origin)
+    const epochA8 = generateEpoch(1, 8, epochA1)
+    const epochB2 = generateEpoch(2, 2, origin)
+    const epochBottom1 = generateEpoch(-1, 1, epochB2)
+    const epochA9 = generateEpoch(1, 9, epochB2)
+    const epochB7 = generateEpoch(2, 7, epochB2)
+    const epochC1 = generateEpoch(3, 1, origin)
+
+    const epochs = [
+        epochA1,
+        epochA8,
+        epochB2,
+        epochBottom1,
+        epochA9,
+        epochB7,
+        epochC1,
+    ]
+
+    const epochStore = new EpochStore(origin)
+    epochs.forEach((epoch) => epochStore.addEpoch(epoch))
+    const causalContext: Array<[number, number]> = [[2, 7]] // B7 Max causally stable
+    const stateVector = new Map<number, number>(causalContext)
+
+    const expectedRequiredEpochs = new Set([epochC1, epochB7, epochB2, origin])
+    const actualRequiredEpochs = computeRequiredEpochs(epochStore, [origin, ...epochs], stateVector)
+
+    t.deepEqual(actualRequiredEpochs, expectedRequiredEpochs)
 })
