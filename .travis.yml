@@ -1,7 +1,7 @@
+os: linux
+dist: xenial
 language: node_js
-cache:
-  directories:
-    - ~/.npm
+cache: npm
 notifications:
   email: false
 node_js:
@@ -10,17 +10,10 @@ node_js:
   - '11'
 script:
   - npm test
-jobs:
-  include:
-    - stage: release
-      if: tag IS present
-      node_js: 'node'
-      script: npm run build
-      deploy:
-        provider: npm
-        email: nicolasmatthieu57@gmail.com
-        api_key:
-          secure: jbPUO4ggV+A8USN3aqhZ59bjav1UUiCHvLT+B/aj+XnjMv8fAH6XgdF/eb4k/nQOdg9S3VfwHnVv5FKG+6SWufDuwAoGVNiZPcsKFtlPta97YfxgICRmk5DcK4jpqfG0/jmDc1K/W710zKIjxgYHCb1ZukWF4v20DOIz7NL0diM=
-        skip_cleanup: true
-        on:
-          tags: true
+deploy:
+  provider: npm
+  api_token:
+    secure: jbPUO4ggV+A8USN3aqhZ59bjav1UUiCHvLT+B/aj+XnjMv8fAH6XgdF/eb4k/nQOdg9S3VfwHnVv5FKG+6SWufDuwAoGVNiZPcsKFtlPta97YfxgICRmk5DcK4jpqfG0/jmDc1K/W710zKIjxgYHCb1ZukWF4v20DOIz7NL0diM=
+  edge: true
+  on:
+    tags: true
